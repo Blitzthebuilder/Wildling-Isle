@@ -30,6 +30,8 @@
     background: radial-gradient(120% 90% at 50% 0%, var(--ground) 0%, var(--ground-2) 100%);
     color:var(--ink);
     font-family:"Segoe UI", system-ui, sans-serif;
+    user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+    touch-action:manipulation;
   }
   .page{ min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:28px 12px 48px; gap:18px; }
   .shell{
@@ -87,15 +89,26 @@
   }
   .help{ max-width:640px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:1.6; }
   .help b{ color:var(--ink); font-weight:600; }
+  .help summary{
+    cursor:pointer; display:inline-block; list-style:none;
+    font-family:Consolas, ui-monospace, monospace; font-size:10px; letter-spacing:.28em;
+    color:var(--ink-soft); padding:7px 18px; border-radius:999px;
+    border:1px solid rgba(128,140,130,.35);
+  }
+  .help summary::-webkit-details-marker{ display:none; }
+  .help[open] summary{ color:var(--ink); }
+  .help p{ margin:12px 0 0; }
   @media (max-width:560px){
     .page{ padding:10px 4px 32px; }
     .shell{ padding:12px 10px 20px; border-radius:20px 20px 32px 32px; }
     .bezel{ padding:8px 8px 10px; }
     .controls{ padding:0; margin-top:14px; }
-    .dpad{ grid-template-columns:repeat(3,44px); grid-template-rows:repeat(3,44px); }
-    .ab{ gap:10px; }
-    .ab button{ width:50px; height:50px; }
-    .pills button{ padding:6px 10px; letter-spacing:.18em; }
+    .dpad{ grid-template-columns:repeat(3,54px); grid-template-rows:repeat(3,54px); }
+    .dpad button{ font-size:18px; }
+    .ab{ gap:8px; }
+    .ab button{ width:54px; height:54px; font-size:18px; }
+    .ab .b-btn{ margin-top:30px; }
+    .pills button{ padding:6px 8px; letter-spacing:.14em; font-size:8px; }
     .grille{ display:none; }
     .help{ font-size:11px; }
   }
@@ -128,12 +141,16 @@
     </div>
     <div class="grille"></div>
   </div>
-  <p class="help">
-    <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team, twice = Wildling-dex.<br>
-    Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
-    Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
-    Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!
-  </p>
+  <details class="help">
+    <summary>HOW&nbsp;TO&nbsp;PLAY</summary>
+    <p>
+      <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team, twice = Wildling-dex.<br>
+      Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
+      Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
+      Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!<br>
+      Rumor has it a rare <b>Mystic</b> Wildling drifts through every corner of the isle...
+    </p>
+  </details>
 </div>
 
 <script>
@@ -174,7 +191,7 @@ const PAL = {
   r:'#e2573d', R:'#f2855f', y:'#f5d67b', c:'#5cb8e6', C:'#a8dcf5', p:'#f093b1',
   g:'#57b04c', G:'#8fd07a', d:'#2e6e3a', m:'#7aa03c', n:'#9a6b42', N:'#c49a68',
   s:'#aab2b8', S:'#d5dade', e:'#ffd94a', o:'#3a3f36',
-  O:'#e8842e', B:'#2f6bc4'
+  O:'#e8842e', B:'#2f6bc4', v:'#a678d4', V:'#d3b3f0'
 };
 const ART = {
   hero: [
@@ -538,6 +555,300 @@ const ART = {
     '..cccccccc..',
     '...cccccc...',
     '..cc....cc..'
+  ],
+  flarepup: [
+    '.r........r.',
+    '.rr......rr.',
+    '.rrrrrrrrrr.',
+    '.rrkrrrrkrr.',
+    '.rrrrrrrrrr.',
+    '..rrryyrrr..',
+    '..rryyyyrr..',
+    '..rrrrrrrr.e',
+    '..rrrrrrrr.R',
+    '..rr....rr.e',
+    '..kk....kk..',
+    '............'
+  ],
+  scorchound: [
+    '.rr......rr.',
+    '.rrr....rrr.',
+    '.errrrrrrre.',
+    '.rrkrrrrkrr.',
+    'errrrrrrrrre',
+    '.rrryyyyrr..',
+    '.rryyyyyyr..',
+    '.rrrrrrrrr.e',
+    '.rrrrrrrrr.R',
+    '.rrr....rrr.',
+    '.kk......kk.',
+    '............'
+  ],
+  pyrewolf: [
+    '.ee......ee.',
+    '.rre....err.',
+    '.rrrrrrrrrr.',
+    '.rkrrrrrrkr.',
+    'errrrrrrrrre',
+    'eRrryyyyrrRe',
+    '.rryyyyyyrr.',
+    '.rrrrrrrrrr.',
+    '.rrrr..rrrr.',
+    '.rrr....rrr.',
+    '.kk......kk.',
+    '.e........e.'
+  ],
+  finlet: [
+    '............',
+    '.....ccc....',
+    '...ccccccc..',
+    '..ckcccccc..',
+    '.cccccCCccc.',
+    '.ccCCCCCc.c.',
+    '..ccccccccc.',
+    '...ccccc.c..',
+    '.....ccc....',
+    '............',
+    '............',
+    '............'
+  ],
+  marfin: [
+    '............',
+    '.....cccc...',
+    '...cccccccB.',
+    'w.ckccccccB.',
+    'wwcccCCcccBB',
+    '..ccCCCCcc.B',
+    '...ccccccc..',
+    '.....cccc.B.',
+    '.......cc...',
+    '............',
+    '............',
+    '............'
+  ],
+  leviafin: [
+    '....BBBB....',
+    '..BBccccBB..',
+    '.Bckccccc.B.',
+    '.BcccCCccc..',
+    '..ccCCCCcc..',
+    '...ccccccc..',
+    '....cccccc..',
+    '.....cccccB.',
+    '...cc..ccc..',
+    '..cc....cc..',
+    '.BB......BB.',
+    '............'
+  ],
+  petalit: [
+    '.....pp.....',
+    '....pyyp....',
+    '....pppp....',
+    '....GGGG....',
+    '...GGGGGG...',
+    '..GkGGGGkG..',
+    '..GGGGGGGG..',
+    '...GGGGGG...',
+    '....G..G....',
+    '............',
+    '............',
+    '............'
+  ],
+  thistlash: [
+    '....pppp....',
+    '...pyyyyp...',
+    '...pppppp...',
+    'd..GGGGGG..d',
+    '.d.GGGGGG.d.',
+    '..GkGGGGkG..',
+    '..GGGGGGGG..',
+    '..GGGGGGGG..',
+    '...GGGGGG...',
+    '...GG..GG...',
+    '...d....d...',
+    '............'
+  ],
+  verdantis: [
+    '..p.pppp.p..',
+    '.ppyyyyyypp.',
+    '..pyyyyyyp..',
+    '...pppppp...',
+    '..GGGGGGGG..',
+    '.GGkGGGGkGG.',
+    '.GGGGGGGGGG.',
+    '.dGGGGGGGGd.',
+    '.dGGGGGGGGd.',
+    '..GGG..GGG..',
+    '..dd....dd..',
+    '............'
+  ],
+  statikit: [
+    '..e......e..',
+    '..ee....ee..',
+    '..eeeeeeee..',
+    '..ekeeeeke..',
+    '..eeeeeeee..',
+    '...eekkee...',
+    '..eeeeeeee..',
+    '..eeeeeeee..',
+    '..ee.ee.ee..',
+    '..k......k..',
+    '............',
+    '............'
+  ],
+  voltcat: [
+    '..ee....ee..',
+    '..kee..eek..',
+    '..eeeeeeee..',
+    '.eekeeeekee.',
+    '.eeeeeeeeee.',
+    '..eewwwwee..',
+    '.eeeeeeeeee.',
+    '.eeeeeeeeee.',
+    '.ee..ee..ee.',
+    '.k........k.',
+    '....e..e....',
+    '............'
+  ],
+  thunderlynx: [
+    '.we......ew.',
+    '.kee....eek.',
+    '.eeeeeeeeee.',
+    'eekeeeeeekee',
+    '.eeewwwweee.',
+    '.eewwwwwwee.',
+    '.eeeeeeeeee.',
+    '.eeeeeeeeee.',
+    '.ee..ee..ee.',
+    '.kk......kk.',
+    '..w.e..e.w..',
+    '............'
+  ],
+  breezel: [
+    '............',
+    '....SSSS....',
+    '...SSSSSS...',
+    '..SkSSSSS...',
+    '.cSSSSSSSc..',
+    'ccSSSSSSScc.',
+    '..SSSSSS....',
+    '...SSSS.....',
+    '....ss......',
+    '....e.e.....',
+    '............',
+    '............'
+  ],
+  cyclonet: [
+    '....SSSS....',
+    '...SSSSSS...',
+    '..SkSSSSSS..',
+    '.cSSSSSSSSc.',
+    'ccSSSSSSSScc',
+    'c.SSSSSSSS.c',
+    '..SSSSSSS...',
+    '...SSSSS....',
+    '....sss.....',
+    '...e..e.....',
+    '............',
+    '............'
+  ],
+  tempestrel: [
+    '.c..SSSS..c.',
+    '.ccSSSSSScc.',
+    '.SSkSSSSSS..',
+    'cSSSSSSSSSc.',
+    'ccSSSSSSSScc',
+    'c.SSSSSSSS.c',
+    '..SSSSSSSS..',
+    '...SSSSSS...',
+    '....ssss....',
+    '...e...e....',
+    '..e.....e...',
+    '............'
+  ],
+  shalecub: [
+    '............',
+    '..NN....NN..',
+    '..NNNNNNNN..',
+    '..NkNNNNkN..',
+    '..NNNnnNNN..',
+    '..NNnnnnNN..',
+    '..NNNNNNNN..',
+    '..NNNNNNNN..',
+    '..NN.NN.NN..',
+    '..nn....nn..',
+    '............',
+    '............'
+  ],
+  bouldbear: [
+    '..ss....ss..',
+    '.sNN....NNs.',
+    '.NNNNNNNNNN.',
+    '.NkNNNNNNkN.',
+    '.NNNnnnnNNN.',
+    '.NNnnnnnnNN.',
+    'sNNNNNNNNNNs',
+    '.NNNNNNNNNN.',
+    '.NNN.NN.NNN.',
+    '.nn......nn.',
+    '............',
+    '............'
+  ],
+  terragrizz: [
+    '.sSs....sSs.',
+    '.sNNNNNNNNs.',
+    '.NNkNNNNkNN.',
+    'sNNNnnnnNNNs',
+    'SNNnnnnnnNNS',
+    'sNNNNNNNNNNs',
+    '.NNNNNNNNNN.',
+    '.NNNNNNNNNN.',
+    '.NNN.NN.NNN.',
+    '.nnn....nnn.',
+    '.ss......ss.',
+    '............'
+  ],
+  wispurr: [
+    '............',
+    '..v......v..',
+    '..vv....vv..',
+    '..vvvvvvvv..',
+    '..vkvvvvkv..',
+    '..vvvvvvvv..',
+    '...vVVVVv...',
+    '..vvVVVVvv..',
+    '...vvvvvv...',
+    '....v..v....',
+    '.....vv.....',
+    '............'
+  ],
+  mystifur: [
+    '..v......v..',
+    '..vv....vv..',
+    '.vvvvvvvvvv.',
+    '.vkvvvvvvkv.',
+    '.vvvvvvvvvv.',
+    '..vVVVVVVv..',
+    '.vvVVVVVVvv.',
+    '..vvvvvvvv..',
+    '...vv..vv...',
+    '..V......V..',
+    '....vvvv....',
+    '............'
+  ],
+  oraclaw: [
+    '.V..vvvv..V.',
+    '.vvvvvvvvvv.',
+    '.vkvvwwvvkv.',
+    'vvvvvwwvvvvv',
+    '.vvvvvvvvvv.',
+    '.vVVVVVVVVv.',
+    'vvVVVVVVVVvv',
+    '.vvvvvvvvvv.',
+    '..vvv..vvv..',
+    '..VV....VV..',
+    '...vv..vv...',
+    '............'
   ]
 };
 function drawArt(key, x, y, sc) {
@@ -552,14 +863,15 @@ function drawArt(key, x, y, sc) {
 }
 
 /* ---------- creature data (all original) ---------- */
-const TYPE_COL = { Ember:'#e2573d', Tide:'#4a90d8', Flora:'#57b04c', Spark:'#d8b23c', Gale:'#8fb0c0', Stone:'#a08858', Wild:'#96968a' };
+const TYPE_COL = { Ember:'#e2573d', Tide:'#4a90d8', Flora:'#57b04c', Spark:'#d8b23c', Gale:'#8fb0c0', Stone:'#a08858', Mystic:'#a678d4', Wild:'#96968a' };
 const CHART = {
   Ember:{ Flora:2, Tide:.5, Stone:.5, Ember:.5 },
   Tide:{ Ember:2, Stone:2, Flora:.5, Tide:.5 },
   Flora:{ Tide:2, Stone:2, Ember:.5, Gale:.5, Flora:.5 },
   Spark:{ Tide:2, Gale:2, Stone:.5 },
-  Gale:{ Flora:2, Spark:.5, Stone:.5 },
+  Gale:{ Flora:2, Mystic:2, Spark:.5, Stone:.5 },
   Stone:{ Ember:2, Spark:2, Gale:2, Tide:.5, Flora:.5 },
+  Mystic:{ Stone:2, Spark:2, Mystic:.5 },
   Wild:{}
 };
 const MOVES = {
@@ -582,7 +894,10 @@ const MOVES = {
   'Pebble Toss': { type:'Stone', pow:45, acc:100 },
   'Rock Slide':  { type:'Stone', pow:75, acc:90 },
   'Moss Wrap':   { type:'Flora', pow:30, acc:100 },
-  'Bubble Pop':  { type:'Tide',  pow:30, acc:100 }
+  'Bubble Pop':  { type:'Tide',  pow:30, acc:100 },
+  'Hex Pulse':   { type:'Mystic', pow:45, acc:100 },
+  'Mind Lash':   { type:'Mystic', pow:75, acc:90 },
+  'Astral Burst':{ type:'Mystic', pow:85, acc:85 }
 };
 const SPECIES = {
   /* starter lines — evolve at 13 and 25 */
@@ -634,7 +949,51 @@ const SPECIES = {
   bubblun:    { name:'Bubblun',    type:'Tide',  base:{hp:55,atk:56,def:52,spd:60}, catch:.3, evolve:{at:24,to:'geyserun'},
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge']], blurb:'the twin bubble' },
   geyserun:   { name:'Geyserun',   type:'Tide',  base:{hp:70,atk:70,def:64,spd:74}, catch:.12,
-                learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge'],[24,'Riptide']], blurb:'the geyser spirit' }
+                learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge'],[24,'Riptide']], blurb:'the geyser spirit' },
+  /* v0.4 lines — one per type, evolve at 12 and 24 */
+  flarepup:   { name:'Flarepup',   type:'Ember', base:{hp:42,atk:52,def:40,spd:56}, catch:.7, evolve:{at:12,to:'scorchound'},
+                learn:[[1,'Tackle'],[3,'Singe']], blurb:'the cinder pup' },
+  scorchound: { name:'Scorchound', type:'Ember', base:{hp:54,atk:66,def:52,spd:72}, catch:.3, evolve:{at:24,to:'pyrewolf'},
+                learn:[[1,'Tackle'],[3,'Singe'],[14,'Pounce'],[18,'Flame Burst']], blurb:'the ember hound' },
+  pyrewolf:   { name:'Pyrewolf',   type:'Ember', base:{hp:68,atk:84,def:62,spd:88}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Singe'],[14,'Pounce'],[18,'Flame Burst'],[24,'Inferno']], blurb:'the blaze alpha' },
+  finlet:     { name:'Finlet',     type:'Tide',  base:{hp:44,atk:46,def:44,spd:52}, catch:.7, evolve:{at:12,to:'marfin'},
+                learn:[[1,'Tackle'],[3,'Splash Jet']], blurb:'the darting fry' },
+  marfin:     { name:'Marfin',     type:'Tide',  base:{hp:56,atk:60,def:56,spd:68}, catch:.3, evolve:{at:24,to:'leviafin'},
+                learn:[[1,'Tackle'],[3,'Splash Jet'],[14,'Pounce'],[18,'Tide Surge']], blurb:'the swift sail' },
+  leviafin:   { name:'Leviafin',   type:'Tide',  base:{hp:72,atk:76,def:70,spd:82}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Splash Jet'],[14,'Pounce'],[18,'Tide Surge'],[24,'Riptide']], blurb:'the deep current' },
+  petalit:    { name:'Petalit',    type:'Flora', base:{hp:42,atk:44,def:44,spd:50}, catch:.75, evolve:{at:12,to:'thistlash'},
+                learn:[[1,'Tackle'],[3,'Leaf Flick']], blurb:'the stray petal' },
+  thistlash:  { name:'Thistlash',  type:'Flora', base:{hp:54,atk:60,def:56,spd:62}, catch:.3, evolve:{at:24,to:'verdantis'},
+                learn:[[1,'Tackle'],[3,'Leaf Flick'],[14,'Pounce'],[18,'Vine Snap']], blurb:'the thorn dancer' },
+  verdantis:  { name:'Verdantis',  type:'Flora', base:{hp:70,atk:76,def:72,spd:74}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Leaf Flick'],[14,'Pounce'],[18,'Vine Snap'],[24,'Thorn Storm']], blurb:'the crowned garden' },
+  statikit:   { name:'Statikit',   type:'Spark', base:{hp:38,atk:52,def:36,spd:62}, catch:.7, evolve:{at:12,to:'voltcat'},
+                learn:[[1,'Tackle'],[3,'Static Zap']], blurb:'the static kitten' },
+  voltcat:    { name:'Voltcat',    type:'Spark', base:{hp:50,atk:66,def:48,spd:78}, catch:.3, evolve:{at:24,to:'thunderlynx'},
+                learn:[[1,'Tackle'],[3,'Static Zap'],[14,'Pounce'],[18,'Volt Storm']], blurb:'the charged prowler' },
+  thunderlynx:{ name:'Thunderlynx',type:'Spark', base:{hp:62,atk:82,def:58,spd:94}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Static Zap'],[14,'Pounce'],[18,'Volt Storm'],[24,'Slam']], blurb:'the storm stalker' },
+  breezel:    { name:'Breezel',    type:'Gale',  base:{hp:40,atk:46,def:38,spd:64}, catch:.7, evolve:{at:12,to:'cyclonet'},
+                learn:[[1,'Tackle'],[3,'Wing Flick']], blurb:'the breeze chick' },
+  cyclonet:   { name:'Cyclonet',   type:'Gale',  base:{hp:52,atk:60,def:50,spd:80}, catch:.3, evolve:{at:24,to:'tempestrel'},
+                learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force']], blurb:'the whirlwind' },
+  tempestrel: { name:'Tempestrel', type:'Gale',  base:{hp:64,atk:74,def:60,spd:96}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force'],[24,'Slam']], blurb:'the tempest rider' },
+  shalecub:   { name:'Shalecub',   type:'Stone', base:{hp:52,atk:50,def:56,spd:28}, catch:.7, evolve:{at:12,to:'bouldbear'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the shale cub' },
+  bouldbear:  { name:'Bouldbear',  type:'Stone', base:{hp:68,atk:64,def:74,spd:36}, catch:.3, evolve:{at:24,to:'terragrizz'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[14,'Pounce'],[18,'Rock Slide']], blurb:'the boulder bear' },
+  terragrizz: { name:'Terragrizz', type:'Stone', base:{hp:86,atk:78,def:92,spd:42}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[14,'Pounce'],[18,'Rock Slide'],[24,'Slam']], blurb:'the landslide' },
+  /* mystic line — rare everywhere, evolves late */
+  wispurr:    { name:'Wispurr',    type:'Mystic', base:{hp:40,atk:52,def:38,spd:62}, catch:.4, evolve:{at:14,to:'mystifur'},
+                learn:[[1,'Hex Pulse'],[5,'Pounce']], blurb:'the will-o-cat' },
+  mystifur:   { name:'Mystifur',   type:'Mystic', base:{hp:52,atk:68,def:50,spd:80}, catch:.15, evolve:{at:28,to:'oraclaw'},
+                learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash']], blurb:'the veiled seer' },
+  oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08,
+                learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
@@ -652,7 +1011,10 @@ const xpNeed = l => l * l * 5;
 const DEX_ORDER = [
   'cindret','cinderox','pyrelisk','drippet','drizzol','torrentide','thornbud','thornvine','bramblore',
   'puffowl','galehoot','stratowl','zapmite','voltmite','fulmite','rockit','boulderit','cragolith',
-  'mossling','mossoak','eldermoss','bubbet','bubblun','geyserun'
+  'mossling','mossoak','eldermoss','bubbet','bubblun','geyserun',
+  'flarepup','scorchound','pyrewolf','finlet','marfin','leviafin','petalit','thistlash','verdantis',
+  'statikit','voltcat','thunderlynx','breezel','cyclonet','tempestrel','shalecub','bouldbear','terragrizz',
+  'wispurr','mystifur','oraclaw'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -688,7 +1050,7 @@ const AREAS = {
       'T,,,,,.........,,,,,,......T',
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
     ],
-    wilds: ['puffowl','zapmite','rockit','mossling','bubbet'], lvl: [2, 7],
+    wilds: ['puffowl','puffowl','zapmite','zapmite','rockit','rockit','mossling','mossling','bubbet','bubbet','flarepup','flarepup','petalit','petalit','wispurr'], lvl: [2, 7],
     exits: { '1': { to:'cavern', x:1, y:10 } },
     gate: {
       x:26, y:7, flag:'gate1',
@@ -738,7 +1100,7 @@ const AREAS = {
       'R..........................R',
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRR'
     ],
-    wilds: ['zapmite','zapmite','rockit','rockit','mossling','bubbet','voltmite','boulderit'], lvl: [8, 14],
+    wilds: ['zapmite','zapmite','rockit','rockit','mossling','bubbet','voltmite','boulderit','statikit','statikit','shalecub','shalecub','flarepup','wispurr'], lvl: [8, 14],
     exits: { '1': { to:'meadow', x:25, y:7 }, '2': { to:'shore', x:1, y:18 } },
     gate: {
       x:26, y:10, flag:'gate2',
@@ -786,7 +1148,7 @@ const AREAS = {
       'T,,,,,,........,,,,........T',
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
     ],
-    wilds: ['puffowl','puffowl','bubbet','bubbet','rockit','galehoot','bubblun','mossoak'], lvl: [13, 19],
+    wilds: ['puffowl','bubbet','bubbet','rockit','galehoot','bubblun','mossoak','finlet','finlet','breezel','breezel','marfin','cyclonet','wispurr','mystifur'], lvl: [13, 19],
     exits: { '1': { to:'cavern', x:25, y:10 } },
     gate: {
       x:13, y:2, flag:'champion',
@@ -1273,8 +1635,8 @@ function update() {
   if (mode === 'dex') {
     if (tap('left')) { dexIdx = (dexIdx + DEX_ORDER.length - 1) % DEX_ORDER.length; sMove(); }
     if (tap('right')) { dexIdx = (dexIdx + 1) % DEX_ORDER.length; sMove(); }
-    if (tap('up')) { dexIdx = (dexIdx + DEX_ORDER.length - 6) % DEX_ORDER.length; sMove(); }
-    if (tap('down')) { dexIdx = (dexIdx + 6) % DEX_ORDER.length; sMove(); }
+    if (tap('up')) { dexIdx = (dexIdx + DEX_ORDER.length - 8) % DEX_ORDER.length; sMove(); }
+    if (tap('down')) { dexIdx = (dexIdx + 8) % DEX_ORDER.length; sMove(); }
     if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
     return;
   }
@@ -1600,15 +1962,15 @@ function drawTeamList(idx, inBattle) {
 function drawDex(idx) {
   px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
   const caught = DEX_ORDER.filter(sp => dex[sp] === 2).length;
-  text('WILDLING-DEX', 12, 8, '#e8b84b');
-  text('CAUGHT ' + caught + '/' + DEX_ORDER.length, 160, 8, '#8fa396', 7);
+  text('WILDLING-DEX', 12, 6, '#e8b84b');
+  text('CAUGHT ' + caught + '/' + DEX_ORDER.length, 156, 6, '#8fa396', 7);
   DEX_ORDER.forEach((sp, i) => {
-    const cx = 10 + (i % 6) * 38, cy = 24 + Math.floor(i / 6) * 27;
-    if (i === idx) px(cx - 2, cy - 2, 34, 26, 'rgba(232,184,75,.22)');
+    const cx = 8 + (i % 8) * 29, cy = 20 + Math.floor(i / 8) * 19;
+    if (i === idx) px(cx - 2, cy - 1, 27, 17, 'rgba(232,184,75,.25)');
     const st = dex[sp] || 0;
-    if (st > 0) drawArt(sp, cx + 3, cy, 1.5);
-    else { px(cx + 6, cy + 3, 18, 18, '#22291f'); text('?', cx + 13, cy + 8, '#4c5c50'); }
-    if (st === 1) text('?', cx + 26, cy + 14, '#e8b84b', 7);
+    if (st > 0) drawArt(sp, cx + 5, cy + 1, 1);
+    else { px(cx + 5, cy + 2, 12, 12, '#22291f'); text('?', cx + 9, cy + 5, '#4c5c50', 7); }
+    if (st === 1) text('?', cx + 18, cy + 8, '#e8b84b', 7);
   });
   drawBox(4, 134, 232, 22);
   const sel = DEX_ORDER[idx], sst = dex[sel] || 0;
@@ -1703,7 +2065,11 @@ window.DBG = {
   party: () => party,
   flags: () => flags,
   dex: () => dex,
+  speciesKeys: () => Object.keys(SPECIES),
+  artKeys: () => Object.keys(ART),
+  dexOrder: () => DEX_ORDER.slice(),
   warp: (a, x, y) => warp(a, x, y),
+  menu: i => { if (battle) battle.mi = i; },
   forceBattle: sp => startBattle(makeMon(sp || A.wilds[ri(A.wilds.length)], 3))
 };
 })();
