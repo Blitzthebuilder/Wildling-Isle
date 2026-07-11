@@ -118,6 +118,7 @@
       </div>
       <div class="pills">
         <button id="teamBtn">TEAM</button>
+        <button id="codeBtn">CODE</button>
         <button id="resetBtn">NEW&nbsp;GAME</button>
       </div>
       <div class="ab">
@@ -128,8 +129,9 @@
     <div class="grille"></div>
   </div>
   <p class="help">
-    <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team.<br>
+    <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team, twice = Wildling-dex.<br>
     Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
+    Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
     Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!
   </p>
 </div>
@@ -645,8 +647,13 @@ function makeMon(sp, lvl) {
   m.moves = movesFor(sp, lvl);
   return m;
 }
-const nameOf = m => SPECIES[m.sp].name;
+const nameOf = m => m.nick || SPECIES[m.sp].name;
 const xpNeed = l => l * l * 5;
+const DEX_ORDER = [
+  'cindret','cinderox','pyrelisk','drippet','drizzol','torrentide','thornbud','thornvine','bramblore',
+  'puffowl','galehoot','stratowl','zapmite','voltmite','fulmite','rockit','boulderit','cragolith',
+  'mossling','mossoak','eldermoss','bubbet','bubblun','geyserun'
+];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
 
@@ -814,7 +821,7 @@ const SOLID = 'T~HSRc';
 const START = { x: 9, y: 18 };
 
 /* ---------- state ---------- */
-let mode = 'title';           // title | intro | starter | world | team | battle
+let mode = 'title';           // title | intro | starter | world | team | dex | battle
 let frame = 0;
 let party = [];
 let orbs = 5;
@@ -828,6 +835,17 @@ let A = AREAS.meadow;
 let flags = {};
 let chosen = 'cindret';
 let banner = null;            // { text, until }
+let dex = {};                 // sp -> 1 seen, 2 caught
+let dexIdx = 0;
+const markSeen = sp => { if (!dex[sp]) dex[sp] = 1; };
+const markCaught = sp => { dex[sp] = 2; };
+function askNick(promptText, current) {
+  try {
+    const nk = window.prompt(promptText, current || '');
+    if (nk == null) return undefined;               // cancelled
+    return String(nk).trim().slice(0, 10) || null;  // blank clears
+  } catch (e) { return undefined; }
+}
 const P = { tx: START.x, ty: START.y, px: START.x * 16, py: START.y * 16, dir: 'down', moving: false, gx: 0, gy: 0 };
 
 const held = new Set();
@@ -838,30 +856,59 @@ const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= A.mh) ? A.map[0][0] 
 /* ---------- save ---------- */
 const SAVE_KEY = 'wildling-isle-save';
 let championSeen = false;
+function saveData() {
+  return {
+    v: 3, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex,
+    party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null }))
+  };
+}
 function save() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({
-      v: 2, area, orbs, tx: P.tx, ty: P.ty, chosen, flags,
-      party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves }))
-    }));
-  } catch (e) {}
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveData())); } catch (e) {}
   if (flags.champion) championSeen = true;
 }
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
+function applyData(d) {
+  if (!d || !d.party || !d.party.length) return false;
+  if (!d.party.every(m => m && SPECIES[m.sp])) return false;
+  party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null }));
+  orbs = d.orbs != null ? d.orbs : 5;
+  area = (d.v >= 2 && AREAS[d.area]) ? d.area : 'meadow';
+  A = AREAS[area];
+  flags = (d.v >= 2 && d.flags) ? d.flags : {};
+  chosen = (d.v >= 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
+  dex = (d.v >= 3 && d.dex) ? d.dex : {};
+  party.forEach(m => markCaught(m.sp));
+  P.tx = clamp(d.tx | 0, 1, MW - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
+  P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
+  if (flags.champion) championSeen = true;
+  return true;
+}
 function load() {
+  try { return applyData(JSON.parse(localStorage.getItem(SAVE_KEY))); } catch (e) { return false; }
+}
+function exportCode() {
   try {
-    const d = JSON.parse(localStorage.getItem(SAVE_KEY));
-    if (!d || !d.party || !d.party.length) return false;
-    party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level) }));
-    orbs = d.orbs != null ? d.orbs : 5;
-    area = (d.v === 2 && AREAS[d.area]) ? d.area : 'meadow';
-    A = AREAS[area];
-    flags = (d.v === 2 && d.flags) ? d.flags : {};
-    chosen = (d.v === 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
-    P.tx = d.tx; P.ty = d.ty; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
-    if (flags.champion) championSeen = true;
-    return true;
-  } catch (e) { return false; }
+    const code = btoa(unescape(encodeURIComponent(JSON.stringify(saveData()))));
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(code).catch(() => {});
+    } catch (e) {}
+    banner = { text: 'SAVE CODE READY', until: frame + 150 };
+    try { window.prompt('Your save code - copy it and keep it safe:', code); } catch (e) {}
+  } catch (e) {}
+}
+function importCode() {
+  let c = null;
+  try { c = window.prompt('Paste your save code:', ''); } catch (e) {}
+  if (!c) return;
+  try {
+    const d = JSON.parse(decodeURIComponent(escape(atob(c.trim()))));
+    if (applyData(d)) {
+      mode = 'world';
+      save();
+      say(['Save code accepted!', 'Welcome back, field assistant.']);
+    } else say(['That code did not look right...']);
+  } catch (e) { say(['That code did not look right...']); }
 }
 try {
   const d = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -889,6 +936,7 @@ function pickAlive() { return party.findIndex(m => m.hp > 0); }
 function startBattle(enemy) {
   const ai = pickAlive();
   if (ai < 0) return;
+  markSeen(enemy.sp);
   mode = 'battle';
   battle = {
     enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
@@ -901,6 +949,7 @@ function startBattle(enemy) {
 function startTrainerBattle(tr) {
   const ai = pickAlive();
   if (ai < 0) return;
+  markSeen(tr.party[0].sp);
   mode = 'battle';
   battle = {
     enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
@@ -980,8 +1029,9 @@ function victory(q) {
       const oldName = nameOf(me), preMax = maxHp(me);
       me.sp = ev.to;
       me.hp += maxHp(me) - preMax;
+      markCaught(me.sp);
       sEvolve();
-      q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${nameOf(me)}, ${SPECIES[me.sp].blurb}!`);
+      q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[me.sp].name}, ${SPECIES[me.sp].blurb}!`);
     }
     for (const [lv, mv] of SPECIES[me.sp].learn) {
       if (lv === me.level && !me.moves.includes(mv)) {
@@ -994,6 +1044,7 @@ function victory(q) {
   if (tr && tr.i < tr.party.length - 1) {
     tr.i++;
     const nx = tr.party[tr.i];
+    markSeen(nx.sp);
     battle.enemy = nx;
     battle.dispEn = nx.hp;
     q.push(`${tr.name} sends out ${nameOf(nx)}!`);
@@ -1025,6 +1076,9 @@ function tryCatch() {
     sCatch();
     if (party.length < 6) {
       party.push(en);
+      markCaught(en.sp);
+      const nick = askNick('Caught ' + SPECIES[en.sp].name + '! Give it a nickname? (blank = no)');
+      if (nick !== undefined) en.nick = nick;
       q.push(`Gotcha! ${nameOf(en)} joined your team!`);
     } else {
       q.push(`Caught... but your team is full!`, `${nameOf(en)} scampered off, orb and all.`);
@@ -1098,7 +1152,7 @@ const KEYMAP = {
   arrowleft:'left', a:'left', arrowright:'right', d:'right',
   z:'A', enter:'A', ' ':'A',
   x:'B', escape:'B', backspace:'B',
-  c:'C'
+  c:'C', v:'V'
 };
 addEventListener('keydown', e => {
   const k = KEYMAP[e.key.toLowerCase()];
@@ -1120,6 +1174,7 @@ document.querySelectorAll('[data-k]').forEach(btn => {
   btn.addEventListener('pointerleave', up);
 });
 document.getElementById('teamBtn').addEventListener('click', () => taps.push('C'));
+document.getElementById('codeBtn').addEventListener('click', () => taps.push('V'));
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (confirm('Start a brand new adventure? Your save will be erased.')) {
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
@@ -1152,8 +1207,9 @@ function update() {
   const tap = k => tapped.includes(k);
 
   if (dlg) {
-    if (tap('A') || tap('B')) {
-      sOk();
+    const auto = held.has('A') && frame % 8 === 0;
+    if (tap('A') || tap('B') || auto) {
+      if (!auto) sOk();
       dlg.i++;
       if (dlg.i >= dlg.lines.length) { const cb = dlg.onDone; dlg = null; if (cb) cb(); }
     }
@@ -1161,6 +1217,7 @@ function update() {
   }
 
   if (mode === 'title') {
+    if (tap('V')) { importCode(); return; }
     const options = hasSave() ? 2 : 1;
     if (options === 2 && (tap('up') || tap('down'))) { titleIdx = 1 - titleIdx; sMove(); }
     if (tap('A')) {
@@ -1181,6 +1238,8 @@ function update() {
       party = [makeMon(sp, 5)];
       orbs = 5;
       flags = {};
+      dex = {};
+      markCaught(sp);
       area = 'meadow'; A = AREAS.meadow;
       P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
       say([
@@ -1197,15 +1256,31 @@ function update() {
   if (mode === 'team') {
     if (tap('up')) { teamIdx = (teamIdx + party.length - 1) % party.length; sMove(); }
     if (tap('down')) { teamIdx = (teamIdx + 1) % party.length; sMove(); }
-    if (tap('A') && teamIdx !== 0) {
-      const t = party[0]; party[0] = party[teamIdx]; party[teamIdx] = t;
-      teamIdx = 0; sOk();
+    if (tap('A')) {
+      if (teamIdx !== 0) {
+        const t = party[0]; party[0] = party[teamIdx]; party[teamIdx] = t;
+        teamIdx = 0; sOk();
+      } else {
+        const nick = askNick('Nickname for ' + SPECIES[party[0].sp].name + '?', party[0].nick || '');
+        if (nick !== undefined) { party[0].nick = nick; save(); sOk(); }
+      }
     }
+    if (tap('C')) { dexIdx = 0; mode = 'dex'; sOk(); }
+    else if (tap('B')) { sBack(); mode = 'world'; }
+    return;
+  }
+
+  if (mode === 'dex') {
+    if (tap('left')) { dexIdx = (dexIdx + DEX_ORDER.length - 1) % DEX_ORDER.length; sMove(); }
+    if (tap('right')) { dexIdx = (dexIdx + 1) % DEX_ORDER.length; sMove(); }
+    if (tap('up')) { dexIdx = (dexIdx + DEX_ORDER.length - 6) % DEX_ORDER.length; sMove(); }
+    if (tap('down')) { dexIdx = (dexIdx + 6) % DEX_ORDER.length; sMove(); }
     if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
     return;
   }
 
   if (mode === 'world') {
+    if (tap('V')) { exportCode(); return; }
     if (tap('C')) { teamIdx = 0; mode = 'team'; sOk(); return; }
     if (tap('A')) {
       const dx = P.dir === 'left' ? -1 : P.dir === 'right' ? 1 : 0;
@@ -1257,7 +1332,7 @@ function update() {
           warp(ex.to, ex.x, ex.y);
           return;
         }
-        if (ch === ',' && Math.random() < 0.14) {
+        if (ch === ',' && Math.random() < 0.12) {
           const sp = A.wilds[ri(A.wilds.length)];
           const lvl = A.lvl[0] + ri(A.lvl[1] - A.lvl[0] + 1);
           startBattle(makeMon(sp, lvl));
@@ -1274,7 +1349,8 @@ function update() {
     b.dispEn += (b.enemy.hp - b.dispEn) * 0.12;
 
     if (b.phase === 'text') {
-      if (tap('A') || tap('B')) { sOk(); nextText(); }
+      const auto = held.has('A') && frame % 8 === 0;
+      if (tap('A') || tap('B') || auto) { if (!auto) sOk(); nextText(); }
       return;
     }
     if (b.phase === 'menu') {
@@ -1506,17 +1582,39 @@ function drawBattle() {
 function drawTeamList(idx, inBattle) {
   px(0, 0, 240, 160, 'rgba(16,22,18,.92)');
   text(inBattle ? 'CHOOSE A WILDLING' : 'YOUR TEAM', 12, 8, '#e8b84b');
-  if (!inBattle) text('A: make leader  B: back', 110, 8, '#8fa396', 7);
+  if (!inBattle) text('A:lead/name B:back C:dex', 108, 8, '#8fa396', 7);
   party.forEach((m, i) => {
     const y = 22 + i * 22;
     if (i === idx) { px(4, y - 2, 232, 20, 'rgba(232,184,75,.18)'); text('>', 6, y + 4, '#e8b84b'); }
     drawArt(m.sp, 14, y - 2, 1.5);
     text(nameOf(m) + '  L' + m.level, 40, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66');
     drawBar(40, y + 11, 60, m.hp / maxHp(m));
+    px(40, y + 16, 60, 1, '#2c3a30');
+    px(40, y + 16, Math.round(60 * clamp(m.xp / xpNeed(m.level), 0, 1)), 1, '#4a90d8');
     text(m.hp + '/' + maxHp(m), 106, y + 8, '#cfe3d2', 7);
     if (i === 0 && !inBattle) text('LEADER', 176, y + 2, '#8fb69c', 7);
     if (m.hp <= 0) text('FNT', 176, y + 2, '#e2573d', 7);
   });
+}
+
+function drawDex(idx) {
+  px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
+  const caught = DEX_ORDER.filter(sp => dex[sp] === 2).length;
+  text('WILDLING-DEX', 12, 8, '#e8b84b');
+  text('CAUGHT ' + caught + '/' + DEX_ORDER.length, 160, 8, '#8fa396', 7);
+  DEX_ORDER.forEach((sp, i) => {
+    const cx = 10 + (i % 6) * 38, cy = 24 + Math.floor(i / 6) * 27;
+    if (i === idx) px(cx - 2, cy - 2, 34, 26, 'rgba(232,184,75,.22)');
+    const st = dex[sp] || 0;
+    if (st > 0) drawArt(sp, cx + 3, cy, 1.5);
+    else { px(cx + 6, cy + 3, 18, 18, '#22291f'); text('?', cx + 13, cy + 8, '#4c5c50'); }
+    if (st === 1) text('?', cx + 26, cy + 14, '#e8b84b', 7);
+  });
+  drawBox(4, 134, 232, 22);
+  const sel = DEX_ORDER[idx], sst = dex[sel] || 0;
+  if (sst === 2) text('#' + (idx + 1) + ' ' + SPECIES[sel].name + ', ' + SPECIES[sel].blurb, 12, 141, '#20242c', 7);
+  else if (sst === 1) text('#' + (idx + 1) + ' ??? (spotted, not yet caught)', 12, 141, '#4c5c50', 7);
+  else text('#' + (idx + 1) + ' - - -', 12, 141, '#8a8570', 7);
 }
 
 function drawTitle() {
@@ -1531,6 +1629,7 @@ function drawTitle() {
   ctx.fillStyle = '#0e1a14'; ctx.fillText('WILDLING ISLE', 29, 47);
   ctx.fillStyle = '#e8b84b'; ctx.fillText('WILDLING ISLE', 27, 45);
   if (championSeen) text('* CHAMPION *', 84, 68, '#e8b84b', 7);
+  text('CODE: load a save code', 66, 108, '#5f8a6e', 7);
   drawArt('cindret', 48, 78, 2);
   drawArt('drippet', 104, 78, 2);
   drawArt('thornbud', 160, 78, 2);
@@ -1571,6 +1670,7 @@ function draw() {
   else if (mode === 'starter') drawStarter();
   else if (mode === 'world') drawWorld();
   else if (mode === 'team') drawTeamList(teamIdx, false);
+  else if (mode === 'dex') drawDex(dexIdx);
   else if (mode === 'battle') drawBattle();
   if (dlg) drawDialog(dlg.lines, dlg.i);
 }
@@ -1602,6 +1702,7 @@ window.DBG = {
   }),
   party: () => party,
   flags: () => flags,
+  dex: () => dex,
   warp: (a, x, y) => warp(a, x, y),
   forceBattle: sp => startBattle(makeMon(sp || A.wilds[ri(A.wilds.length)], 3))
 };
