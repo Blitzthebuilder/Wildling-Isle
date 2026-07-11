@@ -1729,9 +1729,21 @@ function update() {
       return;
     }
     if (b.phase === 'moves') {
-      const mv = curMon().moves;
-      if (tap('up')) { b.vi = (b.vi + mv.length - 1) % mv.length; sMove(); }
-      if (tap('down')) { b.vi = (b.vi + 1) % mv.length; sMove(); }
+      const mv = curMon().moves, n = mv.length;
+      if (tap('left') || tap('right')) {
+        const t = (b.vi % 2 === 0) ? b.vi + 1 : b.vi - 1;
+        if (t >= 0 && t < n) { b.vi = t; sMove(); }
+      }
+      if (tap('up') || tap('down')) {
+        if (n > 2) {
+          const span = Math.ceil(n / 2) * 2;
+          let t = b.vi + (tap('down') ? 2 : -2);
+          t = ((t % span) + span) % span;
+          if (t >= n) t = tap('down') ? b.vi % 2 : t - 2;
+          if (t >= n) t = b.vi % 2;
+          if (t !== b.vi) { b.vi = t; sMove(); }
+        } else if (n === 2) { b.vi = 1 - b.vi; sMove(); }
+      }
       if (tap('B')) { sBack(); b.phase = 'menu'; }
       if (tap('A')) { sOk(); doRound(mv[b.vi]); }
       return;
@@ -2061,6 +2073,7 @@ window.DBG = {
     dlg: dlg ? dlg.lines[dlg.i] : null,
     battlePhase: battle && battle.phase,
     battleText: battle && battle.cur,
+    battleVi: battle && battle.vi,
     trainer: battle && battle.trainer && battle.trainer.name
   }),
   party: () => party,
