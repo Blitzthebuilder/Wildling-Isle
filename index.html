@@ -855,6 +855,20 @@ const ART = {
     '..VV....VV..',
     '...vv..vv...',
     '............'
+  ],
+  sylvarch: [
+    '.G.n....n.G.',
+    '..Gn....nG..',
+    '...nnnnnn...',
+    '...nknnkn...',
+    '...nnnnnn...',
+    '....nwwn....',
+    '..nnnnnnnn..',
+    '.nnnnnnnnnn.',
+    '.nnGGGGGGnn.',
+    '.nnnnnnnnnn.',
+    '..nn.nn.nn..',
+    '..ww.ww.ww..'
   ]
 };
 function drawArt(key, x, y, sc) {
@@ -999,7 +1013,10 @@ const SPECIES = {
   mystifur:   { name:'Mystifur',   type:'Mystic', base:{hp:52,atk:68,def:50,spd:80}, catch:.15, evolve:{at:28,to:'oraclaw'},
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash']], blurb:'the veiled seer' },
   oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08,
-                learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' }
+                learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' },
+  /* legendary — found only by those who know where to look */
+  sylvarch:   { name:'Sylvarch',   type:'Mystic', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
+                learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
@@ -1020,7 +1037,7 @@ const DEX_ORDER = [
   'mossling','mossoak','eldermoss','bubbet','bubblun','geyserun',
   'flarepup','scorchound','pyrewolf','finlet','marfin','leviafin','petalit','thistlash','verdantis',
   'statikit','voltcat','thunderlynx','breezel','cyclonet','tempestrel','shalecub','bouldbear','terragrizz',
-  'wispurr','mystifur','oraclaw'
+  'wispurr','mystifur','oraclaw','sylvarch'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -1466,6 +1483,7 @@ function tryCatch() {
     } else {
       q.push('Caught... but your team AND the Ranch are full!', `${nameOf(en)} scampered off, orb and all.`);
     }
+    if (en.sp === 'sylvarch' && (party.includes(en) || ranch.includes(en))) flags.sylvarch = true;
     battle.endKind = 'caught';
     battle.after = 'end';
     battle.q = q; battle.phase = 'text'; nextText();
@@ -1715,6 +1733,12 @@ function update() {
       const g = A.gate;
       if (g && !flags[g.flag] && fx === g.x && fy === g.y) { gateChallenge(); return; }
       const t = tileAt(fx, fy);
+      if (area === 'meadow' && fx === 3 && fy === 11 && t === 'T') {
+        if (flags.sylvarch) say(['The old tree stands quiet and content.', 'Its heart travels with you now.']);
+        else if (!flags.champion) say(['The old tree hums softly...', 'Something deep within is watching you.', 'It does not stir. Not yet.']);
+        else say(['The old tree trembles!', 'A presence uncoils from its roots...'], () => startBattle(makeMon('sylvarch', 32)));
+        return;
+      }
       if (t === 'H') {
         healParty(['Doc Bramble welcomes you in.', 'Your team is fully rested!', 'Charm Orbs restocked to 5.']);
         return;
