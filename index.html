@@ -118,6 +118,7 @@
       </div>
       <div class="pills">
         <button id="teamBtn">TEAM</button>
+        <button id="codeBtn">CODE</button>
         <button id="resetBtn">NEW&nbsp;GAME</button>
       </div>
       <div class="ab">
@@ -130,6 +131,7 @@
   <p class="help">
     <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team, twice = Wildling-dex.<br>
     Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
+    Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
     Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!
   </p>
 </div>
@@ -854,32 +856,59 @@ const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= A.mh) ? A.map[0][0] 
 /* ---------- save ---------- */
 const SAVE_KEY = 'wildling-isle-save';
 let championSeen = false;
+function saveData() {
+  return {
+    v: 3, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex,
+    party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null }))
+  };
+}
 function save() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify({
-      v: 3, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex,
-      party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null }))
-    }));
-  } catch (e) {}
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveData())); } catch (e) {}
   if (flags.champion) championSeen = true;
 }
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
+function applyData(d) {
+  if (!d || !d.party || !d.party.length) return false;
+  if (!d.party.every(m => m && SPECIES[m.sp])) return false;
+  party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null }));
+  orbs = d.orbs != null ? d.orbs : 5;
+  area = (d.v >= 2 && AREAS[d.area]) ? d.area : 'meadow';
+  A = AREAS[area];
+  flags = (d.v >= 2 && d.flags) ? d.flags : {};
+  chosen = (d.v >= 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
+  dex = (d.v >= 3 && d.dex) ? d.dex : {};
+  party.forEach(m => markCaught(m.sp));
+  P.tx = clamp(d.tx | 0, 1, MW - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
+  P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
+  if (flags.champion) championSeen = true;
+  return true;
+}
 function load() {
+  try { return applyData(JSON.parse(localStorage.getItem(SAVE_KEY))); } catch (e) { return false; }
+}
+function exportCode() {
   try {
-    const d = JSON.parse(localStorage.getItem(SAVE_KEY));
-    if (!d || !d.party || !d.party.length) return false;
-    party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null }));
-    orbs = d.orbs != null ? d.orbs : 5;
-    area = (d.v >= 2 && AREAS[d.area]) ? d.area : 'meadow';
-    A = AREAS[area];
-    flags = (d.v >= 2 && d.flags) ? d.flags : {};
-    chosen = (d.v >= 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
-    dex = (d.v >= 3 && d.dex) ? d.dex : {};
-    party.forEach(m => markCaught(m.sp));
-    P.tx = d.tx; P.ty = d.ty; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
-    if (flags.champion) championSeen = true;
-    return true;
-  } catch (e) { return false; }
+    const code = btoa(unescape(encodeURIComponent(JSON.stringify(saveData()))));
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(code).catch(() => {});
+    } catch (e) {}
+    banner = { text: 'SAVE CODE READY', until: frame + 150 };
+    try { window.prompt('Your save code - copy it and keep it safe:', code); } catch (e) {}
+  } catch (e) {}
+}
+function importCode() {
+  let c = null;
+  try { c = window.prompt('Paste your save code:', ''); } catch (e) {}
+  if (!c) return;
+  try {
+    const d = JSON.parse(decodeURIComponent(escape(atob(c.trim()))));
+    if (applyData(d)) {
+      mode = 'world';
+      save();
+      say(['Save code accepted!', 'Welcome back, field assistant.']);
+    } else say(['That code did not look right...']);
+  } catch (e) { say(['That code did not look right...']); }
 }
 try {
   const d = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -1123,7 +1152,7 @@ const KEYMAP = {
   arrowleft:'left', a:'left', arrowright:'right', d:'right',
   z:'A', enter:'A', ' ':'A',
   x:'B', escape:'B', backspace:'B',
-  c:'C'
+  c:'C', v:'V'
 };
 addEventListener('keydown', e => {
   const k = KEYMAP[e.key.toLowerCase()];
@@ -1145,6 +1174,7 @@ document.querySelectorAll('[data-k]').forEach(btn => {
   btn.addEventListener('pointerleave', up);
 });
 document.getElementById('teamBtn').addEventListener('click', () => taps.push('C'));
+document.getElementById('codeBtn').addEventListener('click', () => taps.push('V'));
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (confirm('Start a brand new adventure? Your save will be erased.')) {
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
@@ -1187,6 +1217,7 @@ function update() {
   }
 
   if (mode === 'title') {
+    if (tap('V')) { importCode(); return; }
     const options = hasSave() ? 2 : 1;
     if (options === 2 && (tap('up') || tap('down'))) { titleIdx = 1 - titleIdx; sMove(); }
     if (tap('A')) {
@@ -1249,6 +1280,7 @@ function update() {
   }
 
   if (mode === 'world') {
+    if (tap('V')) { exportCode(); return; }
     if (tap('C')) { teamIdx = 0; mode = 'team'; sOk(); return; }
     if (tap('A')) {
       const dx = P.dir === 'left' ? -1 : P.dir === 'right' ? 1 : 0;
@@ -1597,6 +1629,7 @@ function drawTitle() {
   ctx.fillStyle = '#0e1a14'; ctx.fillText('WILDLING ISLE', 29, 47);
   ctx.fillStyle = '#e8b84b'; ctx.fillText('WILDLING ISLE', 27, 45);
   if (championSeen) text('* CHAMPION *', 84, 68, '#e8b84b', 7);
+  text('CODE: load a save code', 66, 108, '#5f8a6e', 7);
   drawArt('cindret', 48, 78, 2);
   drawArt('drippet', 104, 78, 2);
   drawArt('thornbud', 160, 78, 2);
