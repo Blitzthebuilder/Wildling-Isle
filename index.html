@@ -1216,7 +1216,8 @@ let taps = [];
 const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= A.mh) ? A.map[0][0] : A.map[y][x];
 
 /* ---------- save ---------- */
-const SAVE_KEY = 'wildling-isle-save';
+const SAVE_KEY = (typeof location !== 'undefined' && location.pathname.indexOf('/beta') !== -1)
+  ? 'wildling-isle-save-beta' : 'wildling-isle-save';
 let championSeen = false;
 function saveData() {
   return {
