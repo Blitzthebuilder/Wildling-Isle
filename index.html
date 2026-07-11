@@ -133,6 +133,7 @@
         <button id="teamBtn">TEAM</button>
         <button id="codeBtn">CODE</button>
         <button id="resetBtn">NEW&nbsp;GAME</button>
+        <button id="muteBtn">SOUND&nbsp;ON</button>
       </div>
       <div class="ab">
         <button class="b-btn" data-k="B" aria-label="B button">B</button>
@@ -166,7 +167,11 @@ const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
 /* ---------- audio ---------- */
 let AC = null;
+const MUTE_KEY = 'wildling-isle-muted';
+let muted = false;
+try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) {}
 function blip(f, d, type, v) {
+  if (muted) return;
   d = d || 0.06; type = type || 'square'; v = v || 0.035;
   try {
     AC = AC || new (window.AudioContext || window.webkitAudioContext)();
@@ -1538,6 +1543,15 @@ document.querySelectorAll('[data-k]').forEach(btn => {
 });
 document.getElementById('teamBtn').addEventListener('click', () => taps.push('C'));
 document.getElementById('codeBtn').addEventListener('click', () => taps.push('V'));
+const muteBtn = document.getElementById('muteBtn');
+function setMuteLabel() { muteBtn.textContent = muted ? 'SOUND OFF' : 'SOUND ON'; }
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {}
+  setMuteLabel();
+  if (!muted) sOk();
+});
+setMuteLabel();
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (confirm('Start a brand new adventure? Your save will be erased.')) {
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
