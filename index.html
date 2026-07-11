@@ -129,7 +129,8 @@
   </div>
   <p class="help">
     <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team.<br>
-    Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin to heal. Progress auto-saves.
+    Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
+    Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!
   </p>
 </div>
 
@@ -163,13 +164,15 @@ const sBack = () => blip(340, .05);
 const sHit = () => blip(180, .1, 'sawtooth', .05);
 const sCatch = () => { blip(660, .08); setTimeout(() => blip(880, .08), 90); setTimeout(() => blip(1100, .14), 180); };
 const sFaint = () => { blip(300, .1, 'triangle'); setTimeout(() => blip(180, .16, 'triangle'), 100); };
+const sEvolve = () => { blip(520, .1); setTimeout(() => blip(700, .1), 110); setTimeout(() => blip(940, .1), 220); setTimeout(() => blip(1250, .18), 330); };
 
 /* ---------- pixel art ---------- */
 const PAL = {
   h:'#6b4a2f', f:'#f2c9a0', t:'#2e8f8a', j:'#3f4f8f', k:'#20242c', w:'#f8f8f8',
   r:'#e2573d', R:'#f2855f', y:'#f5d67b', c:'#5cb8e6', C:'#a8dcf5', p:'#f093b1',
   g:'#57b04c', G:'#8fd07a', d:'#2e6e3a', m:'#7aa03c', n:'#9a6b42', N:'#c49a68',
-  s:'#aab2b8', S:'#d5dade', e:'#ffd94a', o:'#3a3f36'
+  s:'#aab2b8', S:'#d5dade', e:'#ffd94a', o:'#3a3f36',
+  O:'#e8842e', B:'#2f6bc4'
 };
 const ART = {
   hero: [
@@ -185,6 +188,19 @@ const ART = {
     '...jj..jj...',
     '...kk..kk...'
   ],
+  rival: [
+    '....oooo....',
+    '...oooooo...',
+    '...offffo...',
+    '...ofkfko...',
+    '....ffff....',
+    '...OOOOOO...',
+    '..fOOOOOOf..',
+    '...OOOOOO...',
+    '...kkkkkk...',
+    '...kk..kk...',
+    '...oo..oo...'
+  ],
   cindret: [
     '............',
     '..rrr.......',
@@ -198,6 +214,34 @@ const ART = {
     '..rrrrr.....',
     '..rr..rr....',
     '............'
+  ],
+  cinderox: [
+    '.e...rr..e..',
+    '..e.rrrr.e..',
+    '..rrrkrr....',
+    '..rrrrrr.ee.',
+    '.rrrrrrr.eR.',
+    '.rryyrrrrRR.',
+    '.rryyrrrrRR.',
+    '.rryyrrrrR..',
+    '.rrrrrrrr...',
+    '..rrrrrr....',
+    '..rr..rr....',
+    '..kk..kk....'
+  ],
+  pyrelisk: [
+    '...eeee.....',
+    '..eRRRRe....',
+    '..eRkRRe....',
+    '..RRRRRR.ee.',
+    '...rrrr..eR.',
+    '..rryyrr.eR.',
+    '..rryyrrrRR.',
+    '..rryyrrrR..',
+    '..rrrrrrrr..',
+    '..rrrrrrr...',
+    '..rrr.rrr...',
+    '..kk...kk...'
   ],
   drippet: [
     '............',
@@ -213,6 +257,34 @@ const ART = {
     '...cc..cc...',
     '............'
   ],
+  drizzol: [
+    '.pp.cccc.pp.',
+    '.ppccccccpp.',
+    '..pccccccp..',
+    '..ckccckcc..',
+    '.cccccccccc.',
+    '.ccCCCCCCcc.',
+    '..cyyyyyyc..',
+    '..ccyyyycc..',
+    '.cccccccccc.',
+    '..cccccccc..',
+    '..cc.cc.cc..',
+    '............'
+  ],
+  torrentide: [
+    '.BB.BBBB.BB.',
+    '.BBBccccBBB.',
+    '..BccccccB..',
+    '..ckccckcc..',
+    '.cccccccccc.',
+    '.ccCCCCCCcc.',
+    '.cCCyyyyCCc.',
+    '..cCyyyyCc..',
+    '.cccCCCCccc.',
+    '..cccccccc..',
+    '.ccc.cc.ccc.',
+    '..B......B..'
+  ],
   thornbud: [
     '.....dd.....',
     '..d.dddd.d..',
@@ -227,6 +299,34 @@ const ART = {
     '...GG..GG...',
     '............'
   ],
+  thornvine: [
+    '....dddd....',
+    '..d.dddd.d..',
+    '.dddddddddd.',
+    '..dddddddd..',
+    '...GGGGGG...',
+    '..GGGGGGGG..',
+    '.GGkGGGGkGG.',
+    '.GGGGGGGGGG.',
+    '.dGGyyyyGGd.',
+    '.dGGGGGGGGd.',
+    '..dGG..GGd..',
+    '...d....d...'
+  ],
+  bramblore: [
+    '...pppppp...',
+    '..ppyyyypp..',
+    '..pyyyyyyp..',
+    '..ppyyyypp..',
+    '...pppppp...',
+    '..GGGGGGGG..',
+    '.GGkGGGGkGG.',
+    '.GGGGGGGGGG.',
+    '.dGGGGGGGGd.',
+    '.ddGGGGGGdd.',
+    '..dGG..GGd..',
+    '...dd..dd...'
+  ],
   puffowl: [
     '...S....S...',
     '...SSSSSS...',
@@ -239,6 +339,34 @@ const ART = {
     '..sSSSSSSs..',
     '...ssssss...',
     '....e..e....',
+    '............'
+  ],
+  galehoot: [
+    '...S....S...',
+    '..SSSSSSSS..',
+    '.SSwkSSwkSS.',
+    '.SSwwSSwwSS.',
+    'sSSSSeeSSSSs',
+    'ssSSSeeSSSss',
+    's.SSSSSSSS.s',
+    '..sSSSSSSs..',
+    '...ssssss...',
+    '....ssss....',
+    '....e..e....',
+    '............'
+  ],
+  stratowl: [
+    '..w.SSSS.w..',
+    '..wSSSSSSw..',
+    '.SSwkSSwkSS.',
+    '.SSwwSSwwSS.',
+    'cSSSSeeSSSSc',
+    'ccSSSeeSSScc',
+    'c.SSSSSSSS.c',
+    '..sSSSSSSs..',
+    '..sSSSSSSs..',
+    '...ssssss...',
+    '...e....e...',
     '............'
   ],
   rockit: [
@@ -255,6 +383,34 @@ const ART = {
     '..NN..NN....',
     '............'
   ],
+  boulderit: [
+    '..N....N....',
+    '..NN..NN....',
+    '.sNN..NNs...',
+    '.sNNNNNNs...',
+    '.NNkNNkNN...',
+    '.NNNNNNNNss.',
+    '.NNNNNNNsss.',
+    'NNNNNNNNsss.',
+    'NNNNNNNN.s..',
+    '.NNNNNNN....',
+    '.NNN..NNN...',
+    '............'
+  ],
+  cragolith: [
+    '..s......s..',
+    '.sSSs..sSSs.',
+    '.sSNNNNNNs..',
+    '..NNkNNkNN..',
+    '..NNNNNNNN..',
+    '.sNNNNNNNNs.',
+    'sSNNNNNNNNSs',
+    'sS.NNNNNN.Ss',
+    '...NNNNNN...',
+    '..NNN..NNN..',
+    '..sss..sss..',
+    '............'
+  ],
   zapmite: [
     '..k......k..',
     '...k....k...',
@@ -267,6 +423,34 @@ const ART = {
     '...eeeeee...',
     '..k.e..e.k..',
     '............',
+    '............'
+  ],
+  voltmite: [
+    '.k.k....k.k.',
+    '..k.k..k.k..',
+    '...eeeeee...',
+    '..eekeekee..',
+    '.eeeeeeeeee.',
+    '.kkeeeeeekk.',
+    '.eeeeeeeeee.',
+    '.eekkkkkkee.',
+    '..eeeeeeee..',
+    '.k.e.ee.e.k.',
+    '............',
+    '............'
+  ],
+  fulmite: [
+    'w.k......k.w',
+    '.wk.k..k.kw.',
+    '...eeeeee...',
+    '..eekeekee..',
+    '.eeewwwweee.',
+    '.kkewwwwekk.',
+    '.eeewwwweee.',
+    '.eeekkkkeee.',
+    '..eeeeeeee..',
+    '.ke.e..e.ek.',
+    '.w........w.',
     '............'
   ],
   mossling: [
@@ -283,6 +467,34 @@ const ART = {
     '....m..m....',
     '............'
   ],
+  mossoak: [
+    '....mmmm....',
+    '..mmmmmmmm..',
+    '.mmdmmmmdmm.',
+    '.mmmmmmmmmm.',
+    '.mwkmmmmwkm.',
+    '.mmmmmmmmmm.',
+    '..mmmmmmmm..',
+    '....nnnn....',
+    '...nnnnnn...',
+    '...nn..nn...',
+    '...nn..nn...',
+    '............'
+  ],
+  eldermoss: [
+    '..mmmmmmmm..',
+    '.mmdmmmmdmm.',
+    'mmmmmmmmmmmm',
+    'mmwkmmmmwkmm',
+    'mmmmmmmmmmmm',
+    '.mmdmmmmdmm.',
+    '..mmmmmmmm..',
+    '....nnnn....',
+    '...nnnnnn...',
+    '..nnn..nnn..',
+    '..nn....nn..',
+    '.nnn....nnn.'
+  ],
   bubbet: [
     '............',
     '....cccc....',
@@ -296,6 +508,34 @@ const ART = {
     '......ccc...',
     '.......c....',
     '............'
+  ],
+  bubblun: [
+    '....cccc....',
+    '...cccccc...',
+    '..cckccckc..',
+    '..cccccccc..',
+    '.ccCCCCCCcc.',
+    '.ccCCCCCCcc.',
+    '..cCCCCCCc..',
+    '..cccccccc..',
+    '...cccccc.c.',
+    '....ccc..cc.',
+    '.......ccc..',
+    '........c...'
+  ],
+  geyserun: [
+    '.....ww.....',
+    '....wCCw....',
+    '...wCCCCw...',
+    '....cccc....',
+    '..cckccckc..',
+    '.cccccccccc.',
+    '.ccCCCCCCcc.',
+    '.cCCCCCCCCc.',
+    '.ccCCCCCCcc.',
+    '..cccccccc..',
+    '...cccccc...',
+    '..cc....cc..'
   ]
 };
 function drawArt(key, x, y, sc) {
@@ -323,30 +563,78 @@ const CHART = {
 const MOVES = {
   'Tackle':      { type:'Wild',  pow:35, acc:100 },
   'Pounce':      { type:'Wild',  pow:50, acc:95 },
+  'Slam':        { type:'Wild',  pow:70, acc:95 },
   'Singe':       { type:'Ember', pow:40, acc:100 },
   'Flame Burst': { type:'Ember', pow:65, acc:90 },
+  'Inferno':     { type:'Ember', pow:85, acc:85 },
   'Splash Jet':  { type:'Tide',  pow:40, acc:100 },
   'Tide Surge':  { type:'Tide',  pow:65, acc:90 },
+  'Riptide':     { type:'Tide',  pow:85, acc:85 },
   'Leaf Flick':  { type:'Flora', pow:40, acc:100 },
   'Vine Snap':   { type:'Flora', pow:65, acc:90 },
+  'Thorn Storm': { type:'Flora', pow:85, acc:85 },
   'Static Zap':  { type:'Spark', pow:45, acc:100 },
+  'Volt Storm':  { type:'Spark', pow:75, acc:90 },
   'Wing Flick':  { type:'Gale',  pow:45, acc:100 },
+  'Gale Force':  { type:'Gale',  pow:75, acc:90 },
   'Pebble Toss': { type:'Stone', pow:45, acc:100 },
+  'Rock Slide':  { type:'Stone', pow:75, acc:90 },
   'Moss Wrap':   { type:'Flora', pow:30, acc:100 },
   'Bubble Pop':  { type:'Tide',  pow:30, acc:100 }
 };
 const SPECIES = {
-  cindret:  { name:'Cindret',  type:'Ember', base:{hp:44,atk:54,def:42,spd:55}, catch:.45, learn:[[1,'Tackle'],[1,'Singe'],[8,'Flame Burst'],[13,'Pounce']], blurb:'the ember newt' },
-  drippet:  { name:'Drippet',  type:'Tide',  base:{hp:48,atk:48,def:50,spd:44}, catch:.45, learn:[[1,'Tackle'],[1,'Splash Jet'],[8,'Tide Surge'],[13,'Pounce']], blurb:'the tide axolotl' },
-  thornbud: { name:'Thornbud', type:'Flora', base:{hp:46,atk:50,def:48,spd:46}, catch:.45, learn:[[1,'Tackle'],[1,'Leaf Flick'],[8,'Vine Snap'],[13,'Pounce']], blurb:'the flora sprout' },
-  puffowl:  { name:'Puffowl',  type:'Gale',  base:{hp:40,atk:45,def:38,spd:60}, catch:.7,  learn:[[1,'Tackle'],[3,'Wing Flick']] },
-  zapmite:  { name:'Zapmite',  type:'Spark', base:{hp:38,atk:50,def:36,spd:58}, catch:.7,  learn:[[1,'Tackle'],[3,'Static Zap']] },
-  rockit:   { name:'Rockit',   type:'Stone', base:{hp:50,atk:48,def:55,spd:30}, catch:.7,  learn:[[1,'Tackle'],[3,'Pebble Toss']] },
-  mossling: { name:'Mossling', type:'Flora', base:{hp:44,atk:42,def:46,spd:35}, catch:.75, learn:[[1,'Moss Wrap'],[4,'Leaf Flick']] },
-  bubbet:   { name:'Bubbet',   type:'Tide',  base:{hp:42,atk:44,def:40,spd:48}, catch:.75, learn:[[1,'Bubble Pop'],[4,'Splash Jet']] }
+  /* starter lines — evolve at 13 and 25 */
+  cindret:    { name:'Cindret',    type:'Ember', base:{hp:44,atk:54,def:42,spd:55}, catch:.45, evolve:{at:13,to:'cinderox'},
+                learn:[[1,'Tackle'],[1,'Singe'],[8,'Flame Burst'],[13,'Pounce']], blurb:'the ember newt' },
+  cinderox:   { name:'Cinderox',   type:'Ember', base:{hp:58,atk:70,def:54,spd:70}, catch:.2, evolve:{at:25,to:'pyrelisk'},
+                learn:[[1,'Tackle'],[1,'Singe'],[8,'Flame Burst'],[13,'Pounce'],[18,'Slam']], blurb:'the blaze drake' },
+  pyrelisk:   { name:'Pyrelisk',   type:'Ember', base:{hp:74,atk:88,def:66,spd:86}, catch:.1,
+                learn:[[1,'Tackle'],[1,'Singe'],[8,'Flame Burst'],[13,'Pounce'],[18,'Slam'],[26,'Inferno']], blurb:'the flame serpent' },
+  drippet:    { name:'Drippet',    type:'Tide',  base:{hp:48,atk:48,def:50,spd:44}, catch:.45, evolve:{at:13,to:'drizzol'},
+                learn:[[1,'Tackle'],[1,'Splash Jet'],[8,'Tide Surge'],[13,'Pounce']], blurb:'the tide axolotl' },
+  drizzol:    { name:'Drizzol',    type:'Tide',  base:{hp:62,atk:62,def:64,spd:58}, catch:.2, evolve:{at:25,to:'torrentide'},
+                learn:[[1,'Tackle'],[1,'Splash Jet'],[8,'Tide Surge'],[13,'Pounce'],[18,'Slam']], blurb:'the rain dancer' },
+  torrentide: { name:'Torrentide', type:'Tide',  base:{hp:80,atk:78,def:80,spd:70}, catch:.1,
+                learn:[[1,'Tackle'],[1,'Splash Jet'],[8,'Tide Surge'],[13,'Pounce'],[18,'Slam'],[26,'Riptide']], blurb:'the wave lord' },
+  thornbud:   { name:'Thornbud',   type:'Flora', base:{hp:46,atk:50,def:48,spd:46}, catch:.45, evolve:{at:13,to:'thornvine'},
+                learn:[[1,'Tackle'],[1,'Leaf Flick'],[8,'Vine Snap'],[13,'Pounce']], blurb:'the flora sprout' },
+  thornvine:  { name:'Thornvine',  type:'Flora', base:{hp:60,atk:64,def:62,spd:60}, catch:.2, evolve:{at:25,to:'bramblore'},
+                learn:[[1,'Tackle'],[1,'Leaf Flick'],[8,'Vine Snap'],[13,'Pounce'],[18,'Slam']], blurb:'the tangle creeper' },
+  bramblore:  { name:'Bramblore',  type:'Flora', base:{hp:78,atk:80,def:76,spd:72}, catch:.1,
+                learn:[[1,'Tackle'],[1,'Leaf Flick'],[8,'Vine Snap'],[13,'Pounce'],[18,'Slam'],[26,'Thorn Storm']], blurb:'the great bloom' },
+  /* wild lines — evolve at 12 and 24 */
+  puffowl:    { name:'Puffowl',    type:'Gale',  base:{hp:40,atk:45,def:38,spd:60}, catch:.7, evolve:{at:12,to:'galehoot'},
+                learn:[[1,'Tackle'],[3,'Wing Flick']], blurb:'the puffball owl' },
+  galehoot:   { name:'Galehoot',   type:'Gale',  base:{hp:52,atk:58,def:50,spd:76}, catch:.3, evolve:{at:24,to:'stratowl'},
+                learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force']], blurb:'the storm owl' },
+  stratowl:   { name:'Stratowl',   type:'Gale',  base:{hp:66,atk:72,def:62,spd:92}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force'],[24,'Slam']], blurb:'the sky sovereign' },
+  zapmite:    { name:'Zapmite',    type:'Spark', base:{hp:38,atk:50,def:36,spd:58}, catch:.7, evolve:{at:12,to:'voltmite'},
+                learn:[[1,'Tackle'],[3,'Static Zap']], blurb:'the spark mite' },
+  voltmite:   { name:'Voltmite',   type:'Spark', base:{hp:50,atk:64,def:48,spd:74}, catch:.3, evolve:{at:24,to:'fulmite'},
+                learn:[[1,'Tackle'],[3,'Static Zap'],[14,'Pounce'],[18,'Volt Storm']], blurb:'the charge beetle' },
+  fulmite:    { name:'Fulmite',    type:'Spark', base:{hp:62,atk:80,def:58,spd:90}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Static Zap'],[14,'Pounce'],[18,'Volt Storm'],[24,'Slam']], blurb:'the living bolt' },
+  rockit:     { name:'Rockit',     type:'Stone', base:{hp:50,atk:48,def:55,spd:30}, catch:.7, evolve:{at:12,to:'boulderit'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the pebble hare' },
+  boulderit:  { name:'Boulderit',  type:'Stone', base:{hp:66,atk:62,def:72,spd:38}, catch:.3, evolve:{at:24,to:'cragolith'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[14,'Pounce'],[18,'Rock Slide']], blurb:'the boulder hare' },
+  cragolith:  { name:'Cragolith',  type:'Stone', base:{hp:84,atk:76,def:90,spd:44}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[14,'Pounce'],[18,'Rock Slide'],[24,'Slam']], blurb:'the mountain heart' },
+  mossling:   { name:'Mossling',   type:'Flora', base:{hp:44,atk:42,def:46,spd:35}, catch:.75, evolve:{at:12,to:'mossoak'},
+                learn:[[1,'Moss Wrap'],[4,'Leaf Flick']], blurb:'the moss tuft' },
+  mossoak:    { name:'Mossoak',    type:'Flora', base:{hp:58,atk:54,def:60,spd:44}, catch:.3, evolve:{at:24,to:'eldermoss'},
+                learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap']], blurb:'the sapling guard' },
+  eldermoss:  { name:'Eldermoss',  type:'Flora', base:{hp:74,atk:68,def:76,spd:52}, catch:.12,
+                learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap'],[24,'Thorn Storm']], blurb:'the ancient grove' },
+  bubbet:     { name:'Bubbet',     type:'Tide',  base:{hp:42,atk:44,def:40,spd:48}, catch:.75, evolve:{at:12,to:'bubblun'},
+                learn:[[1,'Bubble Pop'],[4,'Splash Jet']], blurb:'the bubble sprite' },
+  bubblun:    { name:'Bubblun',    type:'Tide',  base:{hp:55,atk:56,def:52,spd:60}, catch:.3, evolve:{at:24,to:'geyserun'},
+                learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge']], blurb:'the twin bubble' },
+  geyserun:   { name:'Geyserun',   type:'Tide',  base:{hp:70,atk:70,def:64,spd:74}, catch:.12,
+                learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge'],[24,'Riptide']], blurb:'the geyser spirit' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
-const WILDS = ['puffowl', 'zapmite', 'rockit', 'mossling', 'bubbet'];
 
 function maxHp(m) { return Math.floor(SPECIES[m.sp].base.hp * m.level / 18) + m.level + 8; }
 function stat(m, k) { return Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4; }
@@ -359,37 +647,170 @@ function makeMon(sp, lvl) {
 }
 const nameOf = m => SPECIES[m.sp].name;
 const xpNeed = l => l * l * 5;
+const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
+const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
 
-/* ---------- map ---------- */
-const RAW = [
-  'TTTTTTTTTTTTTTTTTTTTTTTTTTTT',
-  'T,,,,,,....T.......~~~~~~~.T',
-  'T,,,,,,....T......~~~~~~~~.T',
-  'T,,,,,,.............~~~~~~.T',
-  'T,,,,........,,,,....~~~...T',
-  'T.....T......,,,,..........T',
-  'T............,,,,......T...T',
-  'T..........................T',
-  'T......==============......T',
-  'T......=...................T',
-  'T......=..,,,,,........T...T',
-  'T..T...=..,,,,,............T',
-  'T......=..,,,,,............T',
-  'T......=...................T',
-  'T......====................T',
-  'T.......HH=....F..F........T',
-  'T.......HH=..F.F.F.........T',
-  'T.....S...=................T',
-  'T..........................T',
-  'T,,,,,.........,,,,,,......T',
-  'T,,,,,.........,,,,,,......T',
-  'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
-];
-const MW = 28, MH = RAW.length;
-const MAP = RAW.map(r => r.padEnd(MW, 'T').slice(0, MW));
-const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= MH) ? 'T' : MAP[y][x];
-const SOLID = 'T~HS';
-const DOOR = { x: 9, y: 16 };
+/* ---------- areas ---------- */
+const MW = 28;
+const AREAS = {
+  meadow: {
+    label: 'VERDANT MEADOW',
+    ground:'#94c66b', dot:'#7cb457', enc:'#6fae52', blade:'#3e8a3d', blade2:'#2e6e3a',
+    door:{ x:9, y:16 },
+    raw: [
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+      'T,,,,,,....T.......~~~~~~~.T',
+      'T,,,,,,....T......~~~~~~~~.T',
+      'T,,,,,,.............~~~~~~.T',
+      'T,,,,........,,,,....~~~...T',
+      'T.....T......,,,,..........T',
+      'T............,,,,......T...T',
+      'T.........................=1',
+      'T......==============......T',
+      'T......=...................T',
+      'T......=..,,,,,........T...T',
+      'T..T...=..,,,,,............T',
+      'T......=..,,,,,............T',
+      'T......=...................T',
+      'T......====................T',
+      'T.......HH=....F..F........T',
+      'T.......HH=..F.F.F.........T',
+      'T.....S...=................T',
+      'T..........................T',
+      'T,,,,,.........,,,,,,......T',
+      'T,,,,,.........,,,,,,......T',
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+    ],
+    wilds: ['puffowl','zapmite','rockit','mossling','bubbet'], lvl: [2, 7],
+    exits: { '1': { to:'cavern', x:1, y:10 } },
+    gate: {
+      x:26, y:7, flag:'gate1',
+      intro: [
+        'BRIAR: Well well, the new field assistant!',
+        "I'm Briar - Doc's OTHER assistant. The better one.",
+        'Beyond me lie the Bramble Caverns.',
+        'Beat me and you can pass. Battle time!'
+      ],
+      win: [
+        'BRIAR: Ugh! Fine, you win.',
+        "The caverns are open. Don't trip in the dark!",
+        '(Briar stomps off in a huff.)'
+      ],
+      party: () => [makeMon(rivalSp(), 12), makeMon('puffowl', 10)]
+    },
+    sign: [
+      'NOTICE: Tall grass rustles with wild Wildlings.',
+      'Doc Bramble heals tired teams at the cabin.',
+      'EAST: Bramble Caverns. Gate keeper on duty.'
+    ]
+  },
+  cavern: {
+    label: 'BRAMBLE CAVERNS',
+    ground:'#8f8a7c', dot:'#7c776a', enc:'#6e6a5e', blade:'#4e4a40', blade2:'#3a372f',
+    raw: [
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRR',
+      'R,,,,....RR..........,,,,,,R',
+      'R,,,,....RR...RRRR...,,,,,,R',
+      'R,,,,..........RRRR........R',
+      'R....RRR..............RRR..R',
+      'R....RRR....,,,,,.....RRR..R',
+      'R...........,,,,,..........R',
+      'R..RRRR.....,,,,,....RRRR..R',
+      'R..RRRR..............RRRR..R',
+      'R..........................R',
+      '1..........================2',
+      'R..........................R',
+      'R...RRR.........RR.........R',
+      'R...RRR..,,,,...RR...,,,,..R',
+      'R........,,,,........,,,,..R',
+      'R..cS....,,,,........,,,,..R',
+      'R..........................R',
+      'R,,,,,......RRRR......,,,,,R',
+      'R,,,,,......RRRR......,,,,,R',
+      'R,,,,,................,,,,,R',
+      'R..........................R',
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRR'
+    ],
+    wilds: ['zapmite','zapmite','rockit','rockit','mossling','bubbet','voltmite','boulderit'], lvl: [8, 14],
+    exits: { '1': { to:'meadow', x:25, y:7 }, '2': { to:'shore', x:1, y:18 } },
+    gate: {
+      x:26, y:10, flag:'gate2',
+      intro: [
+        "BRIAR: You again?! I've been training nonstop.",
+        'The Tempest Shore lies past this tunnel.',
+        "This time you won't get through!"
+      ],
+      win: [
+        'BRIAR: No way... I trained SO hard!',
+        'Whatever. Enjoy the shore, hotshot.'
+      ],
+      party: () => [makeMon(evoTo(rivalSp()), 18), makeMon('voltmite', 16), makeMon('boulderit', 16)]
+    },
+    sign: [
+      'DANGER: Falling rocks. Watch your head.',
+      'Rest your team at the campfire.',
+      'EAST: Tempest Shore.'
+    ]
+  },
+  shore: {
+    label: 'TEMPEST SHORE',
+    ground:'#e2cf96', dot:'#cdb87a', enc:'#c9be7a', blade:'#8a9a4e', blade2:'#6e7c3e',
+    raw: [
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+      'T~~~~~~~~~~~~~~~~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~=~~~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~=~~~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~=~~~~~~~~~~~~~T',
+      'T~~~~,,......=......,,~~~~~T',
+      'T....,,......=......,,.....T',
+      'T............=.............T',
+      'T..T.......=====......T....T',
+      'T..........................T',
+      'T...,,,,........,,,,.......T',
+      'T...,,,,........,,,,....T..T',
+      'T...,,,,........,,,,.......T',
+      'T..........................T',
+      'T....cS....................T',
+      'T..........,,,,,...........T',
+      'T..T.......,,,,,......T....T',
+      'T..........,,,,,...........T',
+      '1..........................T',
+      'T.....,,,......,,,.........T',
+      'T,,,,,,........,,,,........T',
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+    ],
+    wilds: ['puffowl','puffowl','bubbet','bubbet','rockit','galehoot','bubblun','mossoak'], lvl: [13, 19],
+    exits: { '1': { to:'cavern', x:25, y:10 } },
+    gate: {
+      x:13, y:2, flag:'champion',
+      intro: [
+        'BRIAR: So you made it to the end of the pier.',
+        "Everything I've got. Every ounce of training.",
+        'The winner is the strongest on Wildling Isle.',
+        'No holding back. READY?!'
+      ],
+      win: [
+        'BRIAR: ...I lost? I actually lost.',
+        "Heh. You've earned it, champ.",
+        'YOU are the CHAMPION of Wildling Isle!',
+        'Doc Bramble will want to hear about this.',
+        '(Keep exploring and perfecting your team!)'
+      ],
+      party: () => [makeMon('fulmite', 23), makeMon('cragolith', 23), makeMon(evoTo(evoTo(rivalSp())), 26)]
+    },
+    sign: [
+      'TEMPEST SHORE. Mind the riptides.',
+      "They say the isle's strongest trainer",
+      'waits at the end of the pier.'
+    ]
+  }
+};
+for (const k in AREAS) {
+  const a = AREAS[k];
+  a.map = a.raw.map(r => r.padEnd(MW, r[0]).slice(0, MW));
+  a.mh = a.raw.length;
+}
+const SOLID = 'T~HSRc';
 const START = { x: 9, y: 18 };
 
 /* ---------- state ---------- */
@@ -402,21 +823,29 @@ let battle = null;
 let starterIdx = 1;
 let teamIdx = 0;
 let titleIdx = 0;
-let introLines = [];
+let area = 'meadow';
+let A = AREAS.meadow;
+let flags = {};
+let chosen = 'cindret';
+let banner = null;            // { text, until }
 const P = { tx: START.x, ty: START.y, px: START.x * 16, py: START.y * 16, dir: 'down', moving: false, gx: 0, gy: 0 };
 
 const held = new Set();
 let taps = [];
 
+const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= A.mh) ? A.map[0][0] : A.map[y][x];
+
 /* ---------- save ---------- */
 const SAVE_KEY = 'wildling-isle-save';
+let championSeen = false;
 function save() {
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      v: 1, orbs, tx: P.tx, ty: P.ty,
+      v: 2, area, orbs, tx: P.tx, ty: P.ty, chosen, flags,
       party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves }))
     }));
   } catch (e) {}
+  if (flags.champion) championSeen = true;
 }
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
 function load() {
@@ -425,10 +854,19 @@ function load() {
     if (!d || !d.party || !d.party.length) return false;
     party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level) }));
     orbs = d.orbs != null ? d.orbs : 5;
+    area = (d.v === 2 && AREAS[d.area]) ? d.area : 'meadow';
+    A = AREAS[area];
+    flags = (d.v === 2 && d.flags) ? d.flags : {};
+    chosen = (d.v === 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
     P.tx = d.tx; P.ty = d.ty; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
+    if (flags.champion) championSeen = true;
     return true;
   } catch (e) { return false; }
 }
+try {
+  const d = JSON.parse(localStorage.getItem(SAVE_KEY));
+  if (d && d.flags && d.flags.champion) championSeen = true;
+} catch (e) {}
 
 /* ---------- dialog ---------- */
 function say(lines, onDone) { dlg = { lines: lines.slice(), i: 0, onDone: onDone || null }; }
@@ -453,10 +891,22 @@ function startBattle(enemy) {
   if (ai < 0) return;
   mode = 'battle';
   battle = {
-    enemy, ai, phase: 'text', after: 'menu', endKind: null,
+    enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
     q: [`A wild ${nameOf(enemy)} appeared!`, `Go, ${nameOf(party[ai])}!`],
     cur: null, mi: 0, vi: 0, ti: 0, forced: false,
     dispMe: party[ai].hp, dispEn: enemy.hp
+  };
+  nextText();
+}
+function startTrainerBattle(tr) {
+  const ai = pickAlive();
+  if (ai < 0) return;
+  mode = 'battle';
+  battle = {
+    enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
+    q: [`${tr.name} wants to battle!`, `${tr.name} sent out ${nameOf(tr.party[0])}!`, `Go, ${nameOf(party[ai])}!`],
+    cur: null, mi: 0, vi: 0, ti: 0, forced: false,
+    dispMe: party[ai].hp, dispEn: tr.party[0].hp
   };
   nextText();
 }
@@ -485,7 +935,7 @@ function checkOutcome(q) {
   const me = curMon(), en = battle.enemy;
   if (en.hp <= 0) {
     sFaint();
-    q.push(`The wild ${nameOf(en)} fainted!`);
+    q.push(battle.trainer ? `The foe's ${nameOf(en)} fainted!` : `The wild ${nameOf(en)} fainted!`);
     victory(q);
   } else if (me.hp <= 0) {
     sFaint();
@@ -516,7 +966,7 @@ function doRound(myMoveName) {
 }
 function victory(q) {
   const me = curMon(), en = battle.enemy;
-  const gain = en.level * 18;
+  const gain = en.level * (battle.trainer ? 26 : 18);
   me.xp += gain;
   q.push(`${nameOf(me)} gained ${gain} XP!`);
   while (me.xp >= xpNeed(me.level)) {
@@ -525,6 +975,14 @@ function victory(q) {
     me.level++;
     me.hp += maxHp(me) - oldMax;
     q.push(`${nameOf(me)} grew to level ${me.level}!`);
+    const ev = SPECIES[me.sp].evolve;
+    if (ev && me.level >= ev.at) {
+      const oldName = nameOf(me), preMax = maxHp(me);
+      me.sp = ev.to;
+      me.hp += maxHp(me) - preMax;
+      sEvolve();
+      q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${nameOf(me)}, ${SPECIES[me.sp].blurb}!`);
+    }
     for (const [lv, mv] of SPECIES[me.sp].learn) {
       if (lv === me.level && !me.moves.includes(mv)) {
         if (me.moves.length < 4) { me.moves.push(mv); q.push(`${nameOf(me)} learned ${mv}!`); }
@@ -532,14 +990,30 @@ function victory(q) {
       }
     }
   }
-  battle.endKind = battle.endKind || 'win';
-  battle.after = 'end';
+  const tr = battle.trainer;
+  if (tr && tr.i < tr.party.length - 1) {
+    tr.i++;
+    const nx = tr.party[tr.i];
+    battle.enemy = nx;
+    battle.dispEn = nx.hp;
+    q.push(`${tr.name} sends out ${nameOf(nx)}!`);
+    battle.after = 'menu';
+  } else {
+    battle.endKind = battle.endKind || 'win';
+    battle.after = 'end';
+  }
 }
 function tryCatch() {
-  const en = battle.enemy;
   const q = [];
+  if (battle.trainer) {
+    q.push("You can't catch another trainer's Wildling!");
+    battle.after = 'menu';
+    battle.q = q; battle.phase = 'text'; nextText();
+    return;
+  }
+  const en = battle.enemy;
   if (orbs <= 0) {
-    q.push('You are out of Charm Orbs!', 'Rest at the cabin to restock.');
+    q.push('You are out of Charm Orbs!', 'Rest at the cabin or a campfire to restock.');
     battle.after = 'menu';
     battle.q = q; battle.phase = 'text'; nextText();
     return;
@@ -567,6 +1041,12 @@ function tryCatch() {
 }
 function tryRun() {
   const q = [];
+  if (battle.trainer) {
+    q.push("You can't run from a trainer battle!");
+    battle.after = 'menu';
+    battle.q = q; battle.phase = 'text'; nextText();
+    return;
+  }
   if (Math.random() < 0.75) {
     q.push('Got away safely!');
     battle.endKind = 'ran';
@@ -596,13 +1076,18 @@ function switchTo(idx, forced) {
 }
 function endBattle() {
   const kind = battle.endKind;
+  const tr = battle.trainer;
   battle = null;
   mode = 'world';
   if (kind === 'blackout') {
+    area = 'meadow'; A = AREAS.meadow;
     P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
     party.forEach(m => { m.hp = maxHp(m); });
     orbs = Math.max(orbs, 5);
     say(['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']);
+  } else if (kind === 'win' && tr) {
+    flags[tr.flag] = true;
+    say(tr.win);
   }
   save();
 }
@@ -642,9 +1127,26 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   }
 });
 
-/* ---------- update ---------- */
+/* ---------- world helpers ---------- */
 function walkable(x, y) { return !SOLID.includes(tileAt(x, y)); }
+function warp(toArea, tx, ty) {
+  area = toArea; A = AREAS[area];
+  P.tx = tx; P.ty = ty; P.px = tx * 16; P.py = ty * 16; P.moving = false;
+  banner = { text: A.label, until: frame + 150 };
+  save();
+}
+function gateChallenge() {
+  const g = A.gate;
+  say(g.intro, () => startTrainerBattle({ name: 'BRIAR', party: g.party(), i: 0, flag: g.flag, win: g.win }));
+}
+function healParty(lines) {
+  party.forEach(m => { m.hp = maxHp(m); });
+  orbs = Math.max(orbs, 5);
+  sCatch();
+  say(lines, save);
+}
 
+/* ---------- update ---------- */
 function update() {
   const tapped = taps; taps = [];
   const tap = k => tapped.includes(k);
@@ -675,13 +1177,18 @@ function update() {
     if (tap('A')) {
       sOk();
       const sp = STARTERS[starterIdx];
+      chosen = sp;
       party = [makeMon(sp, 5)];
       orbs = 5;
+      flags = {};
+      area = 'meadow'; A = AREAS.meadow;
+      P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
       say([
         `You chose ${SPECIES[sp].name}, ${SPECIES[sp].blurb}!`,
         'Doc Bramble hands you 5 Charm Orbs.',
         '"Weaken a wild Wildling, then toss an orb to befriend it."',
-        '"Come rest at my cabin whenever your team is tired. Off you go!"'
+        '"Rest at my cabin whenever your team is tired."',
+        '"And when you feel strong, challenge Briar at the east gate!"'
       ], () => { mode = 'world'; save(); });
     }
     return;
@@ -703,16 +1210,20 @@ function update() {
     if (tap('A')) {
       const dx = P.dir === 'left' ? -1 : P.dir === 'right' ? 1 : 0;
       const dy = P.dir === 'up' ? -1 : P.dir === 'down' ? 1 : 0;
-      const t = tileAt(P.tx + dx, P.ty + dy);
+      const fx = P.tx + dx, fy = P.ty + dy;
+      const g = A.gate;
+      if (g && !flags[g.flag] && fx === g.x && fy === g.y) { gateChallenge(); return; }
+      const t = tileAt(fx, fy);
       if (t === 'H') {
-        party.forEach(m => { m.hp = maxHp(m); });
-        orbs = Math.max(orbs, 5);
-        sCatch();
-        say(['Doc Bramble welcomes you in.', 'Your team is fully rested!', 'Charm Orbs restocked to 5.'], save);
+        healParty(['Doc Bramble welcomes you in.', 'Your team is fully rested!', 'Charm Orbs restocked to 5.']);
+        return;
+      }
+      if (t === 'c') {
+        healParty(['You rest by the crackling campfire...', 'Your team is fully rested!', 'Charm Orbs restocked to 5.']);
         return;
       }
       if (t === 'S') {
-        say(['NOTICE: Tall grass rustles with wild Wildlings.', 'Doc Bramble heals tired teams at the cabin.', 'Press C to check your team.']);
+        say(A.sign);
         return;
       }
     }
@@ -726,9 +1237,12 @@ function update() {
         P.dir = dir;
         const dx = dir === 'left' ? -1 : dir === 'right' ? 1 : 0;
         const dy = dir === 'up' ? -1 : dir === 'down' ? 1 : 0;
-        if (walkable(P.tx + dx, P.ty + dy)) {
+        const nx = P.tx + dx, ny = P.ty + dy;
+        const g = A.gate;
+        if (g && !flags[g.flag] && nx === g.x && ny === g.y) { gateChallenge(); return; }
+        if (walkable(nx, ny)) {
           P.moving = true;
-          P.gx = P.tx + dx; P.gy = P.ty + dy;
+          P.gx = nx; P.gy = ny;
         }
       }
     } else {
@@ -737,10 +1251,15 @@ function update() {
       P.py += Math.sign(typ - P.py) * 2;
       if (P.px === txp && P.py === typ) {
         P.tx = P.gx; P.ty = P.gy; P.moving = false;
-        if (tileAt(P.tx, P.ty) === ',' && Math.random() < 0.14) {
-          const sp = WILDS[ri(WILDS.length)];
-          const lead = party[0] ? party[0].level : 5;
-          const lvl = clamp(2 + ri(3) + Math.floor(lead / 4), 2, 12);
+        const ch = tileAt(P.tx, P.ty);
+        if (A.exits && A.exits[ch]) {
+          const ex = A.exits[ch];
+          warp(ex.to, ex.x, ex.y);
+          return;
+        }
+        if (ch === ',' && Math.random() < 0.14) {
+          const sp = A.wilds[ri(A.wilds.length)];
+          const lvl = A.lvl[0] + ri(A.lvl[1] - A.lvl[0] + 1);
           startBattle(makeMon(sp, lvl));
         }
       }
@@ -799,6 +1318,7 @@ function startIntro() {
     'Welcome to Wildling Isle, my new field assistant!',
     'The isle brims with wild creatures we call Wildlings.',
     'Ember, Tide, Flora... each kind has its own knack.',
+    'And they EVOLVE as they grow. Marvelous things!',
     'You will need a partner of your own. Pick one of these three!'
   ], () => { mode = 'starter'; });
 }
@@ -809,14 +1329,14 @@ function hash(x, y) { return ((x * 73856093) ^ (y * 19349663)) >>> 0; }
 
 function drawTile(t, x, y, sx, sy) {
   const h = hash(x, y);
-  px(sx, sy, 16, 16, '#94c66b');
-  if (h % 5 === 0) px(sx + (h % 12), sy + (h >> 3) % 12, 2, 2, '#7cb457');
+  px(sx, sy, 16, 16, A.ground);
+  if (h % 5 === 0) px(sx + (h % 12), sy + (h >> 3) % 12, 2, 2, A.dot);
   if (t === ',') {
-    px(sx, sy, 16, 16, '#6fae52');
+    px(sx, sy, 16, 16, A.enc);
     for (let i = 0; i < 3; i++) {
       const bx = sx + 2 + i * 5 + (h >> i) % 2;
-      px(bx, sy + 6, 2, 8, '#3e8a3d');
-      px(bx + 1, sy + 3, 1, 5, '#2e6e3a');
+      px(bx, sy + 6, 2, 8, A.blade);
+      px(bx + 1, sy + 3, 1, 5, A.blade2);
     }
   } else if (t === '=') {
     px(sx, sy, 16, 16, '#e0cb95');
@@ -832,6 +1352,11 @@ function drawTile(t, x, y, sx, sy) {
     px(sx + 4, sy, 8, 4, '#3d8a48');
     px(sx + 3, sy + 3, 4, 3, '#57b04c');
     px(sx + 9, sy + 5, 4, 3, '#57b04c');
+  } else if (t === 'R') {
+    px(sx, sy, 16, 16, '#565048');
+    px(sx + 1, sy + 1, 14, 3, '#6b655a');
+    px(sx + h % 10, sy + 5 + (h >> 2) % 8, 3, 2, '#413c35');
+    px(sx + (h >> 5) % 12, sy + 12, 2, 2, '#413c35');
   } else if (t === 'F') {
     const col = h % 2 ? '#e86a5f' : '#f5d67b';
     px(sx + 3, sy + 3, 3, 3, col);
@@ -846,7 +1371,7 @@ function drawTile(t, x, y, sx, sy) {
     } else {
       px(sx, sy, 16, 16, '#e0c193');
       px(sx, sy, 16, 2, '#8f3a2e');
-      if (x === DOOR.x && y === DOOR.y) { px(sx + 4, sy + 5, 8, 11, '#5a3a26'); px(sx + 10, sy + 10, 2, 2, '#e8b84b'); }
+      if (A.door && x === A.door.x && y === A.door.y) { px(sx + 4, sy + 5, 8, 11, '#5a3a26'); px(sx + 10, sy + 10, 2, 2, '#e8b84b'); }
       else { px(sx + 4, sy + 5, 8, 6, '#7ac0e8'); px(sx + 4, sy + 5, 8, 1, '#4a7fa8'); }
     }
   } else if (t === 'S') {
@@ -854,6 +1379,16 @@ function drawTile(t, x, y, sx, sy) {
     px(sx + 2, sy + 2, 12, 7, '#c49a68');
     px(sx + 4, sy + 4, 8, 1, '#6b4a2f');
     px(sx + 4, sy + 6, 6, 1, '#6b4a2f');
+  } else if (t === 'c') {
+    px(sx + 2, sy + 5, 9, 8, '#b8543f');
+    px(sx + 4, sy + 3, 5, 2, '#b8543f');
+    px(sx + 5, sy + 8, 3, 5, '#5a2a20');
+    const f = Math.floor(frame / 12) % 2;
+    px(sx + 12, sy + 10, 3, 3, f ? '#e8b84b' : '#e2573d');
+    px(sx + 12, sy + 13, 3, 1, '#3a3f36');
+  } else if (t === '1' || t === '2') {
+    px(sx + 2, sy + 2, 12, 12, '#2a2e28');
+    px(sx + 4, sy + 4, 8, 10, '#111511');
   }
 }
 
@@ -887,11 +1422,13 @@ function drawDialog(lines, i) {
 
 function drawWorld() {
   const camx = clamp(P.px - 112, 0, MW * 16 - 240);
-  const camy = clamp(P.py - 72, 0, MH * 16 - 160);
+  const camy = clamp(P.py - 72, 0, A.mh * 16 - 160);
   const x0 = Math.floor(camx / 16), y0 = Math.floor(camy / 16);
-  for (let y = y0; y <= y0 + 10 && y < MH; y++)
+  for (let y = y0; y <= y0 + 10 && y < A.mh; y++)
     for (let x = x0; x <= x0 + 15 && x < MW; x++)
       drawTile(tileAt(x, y), x, y, x * 16 - camx, y * 16 - camy);
+  const g = A.gate;
+  if (g && !flags[g.flag]) drawArt('rival', g.x * 16 - camx + 2, g.y * 16 - camy + 2, 1);
   const bob = P.moving && Math.floor(frame / 8) % 2 ? -1 : 0;
   drawArt('hero', P.px - camx + 2, P.py - camy + 2 + bob, 1);
 
@@ -902,6 +1439,13 @@ function drawWorld() {
     drawBar(7, 17, 62, lead.hp / maxHp(lead));
     text(lead.hp + '/' + maxHp(lead), 74, 14, '#cfe3d2', 7);
     text('Orbs x' + orbs, 74, 21, '#e8b84b', 7);
+  }
+  if (banner) {
+    if (frame < banner.until) {
+      const bw = banner.text.length * 5 + 20;
+      px(120 - bw / 2, 34, bw, 14, 'rgba(16,22,18,.85)');
+      text(banner.text, 120 - bw / 2 + 10, 38, '#e8b84b', 7);
+    } else banner = null;
   }
 }
 
@@ -930,6 +1474,7 @@ function drawBattle() {
 
   drawMonPlate(6, 6, b.enemy, b.dispEn, false);
   drawMonPlate(130, 74, curMon(), b.dispMe, true);
+  if (b.trainer) text(b.trainer.name + ' ' + (b.trainer.i + 1) + '/' + b.trainer.party.length, 8, 36, '#4c5c50', 7);
 
   if (b.phase === 'text' && b.cur != null) {
     drawDialog([b.cur], 0);
@@ -985,6 +1530,7 @@ function drawTitle() {
   ctx.font = 'bold 21px monospace';
   ctx.fillStyle = '#0e1a14'; ctx.fillText('WILDLING ISLE', 29, 47);
   ctx.fillStyle = '#e8b84b'; ctx.fillText('WILDLING ISLE', 27, 45);
+  if (championSeen) text('* CHAMPION *', 84, 68, '#e8b84b', 7);
   drawArt('cindret', 48, 78, 2);
   drawArt('drippet', 104, 78, 2);
   drawArt('thornbud', 160, 78, 2);
@@ -1041,8 +1587,23 @@ requestAnimationFrame(loop);
 /* debug hooks for automated testing */
 window.DBG = {
   tap: k => taps.push(k),
-  state: () => ({ mode, party: JSON.parse(JSON.stringify(party)), orbs, pos: [P.tx, P.ty], battlePhase: battle && battle.phase, battleText: battle && battle.cur }),
-  forceBattle: sp => startBattle(makeMon(sp || WILDS[ri(WILDS.length)], 3))
+  press: k => { if (!held.has(k)) taps.push(k); held.add(k); },
+  release: k => held.delete(k),
+  step: n => { n = n || 1; for (let i = 0; i < n; i++) { frame++; update(); } },
+  draw: () => draw(),
+  state: () => ({
+    mode, area, orbs, pos: [P.tx, P.ty],
+    party: JSON.parse(JSON.stringify(party)),
+    flags: JSON.parse(JSON.stringify(flags)),
+    dlg: dlg ? dlg.lines[dlg.i] : null,
+    battlePhase: battle && battle.phase,
+    battleText: battle && battle.cur,
+    trainer: battle && battle.trainer && battle.trainer.name
+  }),
+  party: () => party,
+  flags: () => flags,
+  warp: (a, x, y) => warp(a, x, y),
+  forceBattle: sp => startBattle(makeMon(sp || A.wilds[ri(A.wilds.length)], 3))
 };
 })();
 </script>
