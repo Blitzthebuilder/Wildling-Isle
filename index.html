@@ -145,7 +145,8 @@
   <details class="help">
     <summary>HOW&nbsp;TO&nbsp;PLAY</summary>
     <p>
-      <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team, twice = Wildling-dex.<br>
+      <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> cycles team &rarr; Wildling-dex &rarr; Ranch.<br>
+      Your team holds 6 Wildlings &mdash; extra catches go to <b>Doc Bramble's Ranch</b>, where you can deposit and withdraw team members anytime.<br>
       Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
       Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!<br>
@@ -1204,6 +1205,10 @@ let chosen = 'cindret';
 let banner = null;            // { text, until }
 let dex = {};                 // sp -> 1 seen, 2 caught
 let dexIdx = 0;
+let ranch = [];               // stored Wildlings beyond the 6-mon team
+const RANCH_MAX = 30;
+let rnCol = 0, rnIdx = 0;     // ranch screen cursor: column (0 team, 1 ranch) + row
+let rmsg = null;              // ranch screen notice { t, until }
 const markSeen = sp => { if (!dex[sp]) dex[sp] = 1; };
 const markCaught = sp => { dex[sp] = 2; };
 function askNick(promptText, current) {
@@ -1226,19 +1231,23 @@ const SAVE_KEY = (typeof location !== 'undefined' && location.pathname.indexOf('
 let championSeen = false;
 function saveData() {
   return {
-    v: 3, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex,
-    party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null }))
+    v: 4, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex,
+    party: party.map(packMon),
+    ranch: ranch.map(packMon)
   };
 }
 function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveData())); } catch (e) {}
   if (flags.champion) championSeen = true;
 }
+const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null });
+const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null });
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
 function applyData(d) {
   if (!d || !d.party || !d.party.length) return false;
   if (!d.party.every(m => m && SPECIES[m.sp])) return false;
-  party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null }));
+  party = d.party.map(unpackMon);
+  ranch = (d.v >= 4 && Array.isArray(d.ranch)) ? d.ranch.filter(m => m && SPECIES[m.sp]).map(unpackMon) : [];
   orbs = d.orbs != null ? d.orbs : 5;
   area = (d.v >= 2 && AREAS[d.area]) ? d.area : 'meadow';
   A = AREAS[area];
@@ -1448,8 +1457,14 @@ function tryCatch() {
       const nick = askNick('Caught ' + SPECIES[en.sp].name + '! Give it a nickname? (blank = no)');
       if (nick !== undefined) en.nick = nick;
       q.push(`Gotcha! ${nameOf(en)} joined your team!`);
+    } else if (ranch.length < RANCH_MAX) {
+      ranch.push(en);
+      markCaught(en.sp);
+      const nick = askNick('Caught ' + SPECIES[en.sp].name + '! Give it a nickname? (blank = no)');
+      if (nick !== undefined) en.nick = nick;
+      q.push(`Gotcha! Your team is full, so ${nameOf(en)}`, "was sent to Doc Bramble's Ranch!");
     } else {
-      q.push(`Caught... but your team is full!`, `${nameOf(en)} scampered off, orb and all.`);
+      q.push('Caught... but your team AND the Ranch are full!', `${nameOf(en)} scampered off, orb and all.`);
     }
     battle.endKind = 'caught';
     battle.after = 'end';
@@ -1616,6 +1631,7 @@ function update() {
       orbs = 5;
       flags = {};
       dex = {};
+      ranch = [];
       markCaught(sp);
       area = 'meadow'; A = AREAS.meadow;
       P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
@@ -1652,6 +1668,39 @@ function update() {
     if (tap('right')) { dexIdx = (dexIdx + 1) % DEX_ORDER.length; sMove(); }
     if (tap('up')) { dexIdx = (dexIdx + DEX_ORDER.length - 8) % DEX_ORDER.length; sMove(); }
     if (tap('down')) { dexIdx = (dexIdx + 8) % DEX_ORDER.length; sMove(); }
+    if (tap('C')) { rnCol = 0; rnIdx = 0; rmsg = null; mode = 'ranch'; sOk(); }
+    else if (tap('B')) { sBack(); mode = 'world'; }
+    return;
+  }
+
+  if (mode === 'ranch') {
+    const lists = [party, ranch];
+    const cur = lists[rnCol];
+    if (tap('left') || tap('right')) {
+      const other = 1 - rnCol;
+      if (lists[other].length) { rnCol = other; rnIdx = Math.min(rnIdx, lists[other].length - 1); sMove(); }
+    }
+    if (tap('up') && cur.length) { rnIdx = (rnIdx + cur.length - 1) % cur.length; sMove(); }
+    if (tap('down') && cur.length) { rnIdx = (rnIdx + 1) % cur.length; sMove(); }
+    if (tap('A') && cur.length) {
+      if (rnCol === 0) {
+        if (party.length <= 1) rmsg = { t: 'You need at least one partner!', until: frame + 150 };
+        else if (ranch.length >= RANCH_MAX) rmsg = { t: 'The Ranch is full!', until: frame + 150 };
+        else {
+          ranch.push(party.splice(rnIdx, 1)[0]);
+          rnIdx = Math.min(rnIdx, party.length - 1);
+          sOk(); save();
+        }
+      } else {
+        if (party.length >= 6) rmsg = { t: 'Team full! Deposit someone first.', until: frame + 150 };
+        else {
+          party.push(ranch.splice(rnIdx, 1)[0]);
+          rnIdx = Math.min(rnIdx, Math.max(0, ranch.length - 1));
+          if (!ranch.length) rnCol = 0;
+          sOk(); save();
+        }
+      }
+    }
     if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
     return;
   }
@@ -2006,6 +2055,36 @@ function drawDex(idx) {
   else text('#' + (idx + 1) + ' - - -', 12, 141, '#8a8570', 7);
 }
 
+function drawRanch() {
+  px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
+  text("DOC BRAMBLE'S RANCH", 12, 6, '#e8b84b');
+  text('A:move B:back', 164, 6, '#8fa396', 7);
+  const cols = [
+    { list: party, x: 4, label: 'TEAM ' + party.length + '/6' },
+    { list: ranch, x: 122, label: 'RANCH ' + ranch.length + '/' + RANCH_MAX }
+  ];
+  cols.forEach((c, ci) => {
+    text(c.label, c.x + 4, 18, ci === rnCol ? '#e8b84b' : '#8fa396', 7);
+    const scroll = (ci === rnCol) ? clamp(rnIdx - 4, 0, Math.max(0, c.list.length - 5)) : 0;
+    if (c.list.length > 5) text('...' + (scroll + 1) + '+', c.x + 84, 18, '#4c5c50', 7);
+    for (let r = 0; r < 5; r++) {
+      const i = r + scroll;
+      if (i >= c.list.length) break;
+      const m = c.list[i], y = 30 + r * 24;
+      if (ci === rnCol && i === rnIdx) { px(c.x, y - 2, 114, 22, 'rgba(232,184,75,.2)'); text('>', c.x + 2, y + 5, '#e8b84b', 7); }
+      drawArt(m.sp, c.x + 8, y - 1, 1.5);
+      text(nameOf(m), c.x + 30, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66', 7);
+      text('L' + m.level, c.x + 30, y + 9, '#8fb69c', 7);
+      drawBar(c.x + 60, y + 11, 46, m.hp / maxHp(m));
+    }
+    if (!c.list.length) text('(empty)', c.x + 34, 60, '#4c5c50', 7);
+  });
+  if (rmsg) {
+    if (frame < rmsg.until) { drawBox(4, 142, 232, 16); text(rmsg.t, 12, 146, '#a34537', 7); }
+    else rmsg = null;
+  }
+}
+
 function drawTitle() {
   px(0, 0, 240, 160, '#1c3a2c');
   px(0, 118, 240, 42, '#14291f');
@@ -2060,6 +2139,7 @@ function draw() {
   else if (mode === 'world') drawWorld();
   else if (mode === 'team') drawTeamList(teamIdx, false);
   else if (mode === 'dex') drawDex(dexIdx);
+  else if (mode === 'ranch') drawRanch();
   else if (mode === 'battle') drawBattle();
   if (dlg) drawDialog(dlg.lines, dlg.i);
 }
@@ -2091,6 +2171,7 @@ window.DBG = {
     trainer: battle && battle.trainer && battle.trainer.name
   }),
   party: () => party,
+  ranch: () => ranch,
   flags: () => flags,
   dex: () => dex,
   speciesKeys: () => Object.keys(SPECIES),
