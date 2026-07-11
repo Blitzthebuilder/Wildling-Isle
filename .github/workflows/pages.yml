@@ -1,8 +1,14 @@
 name: Deploy to GitHub Pages
 
+# Deploys two channels to one Pages site:
+#   /       (production) — always built from main
+#   /beta/  (staging)    — built from the branch that triggered this run,
+#                          so an open PR branch is playable before merging
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'claude/**'
   workflow_dispatch:
 
 permissions:
@@ -21,12 +27,22 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout main (production channel)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site
+      - name: Checkout triggering branch (beta channel)
+        uses: actions/checkout@v4
+        with:
+          path: site/beta
+      - name: Strip git metadata from the artifact
+        run: rm -rf site/.git site/beta/.git site/.github site/beta/.github
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
       - id: deployment
         uses: actions/deploy-pages@v4
