@@ -1,0 +1,1048 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Wildling Isle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+  :root{
+    --ground:#dfe6df;
+    --ground-2:#d2dcd2;
+    --ink:#1c261f;
+    --ink-soft:#4c5c50;
+    --shell-a:#3f7a58;
+    --shell-b:#2c5a41;
+    --shell-edge:#1f4230;
+    --bezel:#1b2320;
+    --led:#e8b84b;
+    --btn-face:#c05a4a;
+    --btn-face-2:#a34537;
+    --dpad:#24473a;
+    --dpad-2:#193226;
+    --pill:#264a39;
+    --label:#bfd9c6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --ground:#12181a; --ground-2:#0d1214; --ink:#dbe6dd; --ink-soft:#8fa396; }
+  }
+  :root[data-theme="dark"]{ --ground:#12181a; --ground-2:#0d1214; --ink:#dbe6dd; --ink-soft:#8fa396; }
+  :root[data-theme="light"]{ --ground:#dfe6df; --ground-2:#d2dcd2; --ink:#1c261f; --ink-soft:#4c5c50; }
+
+  body{
+    background: radial-gradient(120% 90% at 50% 0%, var(--ground) 0%, var(--ground-2) 100%);
+    color:var(--ink);
+    font-family:"Segoe UI", system-ui, sans-serif;
+  }
+  .page{ min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:28px 12px 48px; gap:18px; }
+  .shell{
+    width:min(780px, 97vw);
+    background:linear-gradient(160deg, var(--shell-a) 0%, var(--shell-b) 62%, var(--shell-edge) 100%);
+    border-radius:26px 26px 44px 44px;
+    padding:20px 20px 28px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.28), inset 0 -3px 0 rgba(0,0,0,.35), 0 22px 44px rgba(10,20,14,.38);
+    position:relative;
+  }
+  .shell-top{ display:flex; align-items:center; justify-content:space-between; margin:2px 4px 12px; }
+  .wordmark{ font-family:Consolas, ui-monospace, monospace; font-weight:700; font-size:15px; letter-spacing:.32em; color:var(--label); text-shadow:0 -1px 0 rgba(0,0,0,.45); }
+  .wordmark small{ display:block; font-size:9px; letter-spacing:.42em; color:#8fb69c; font-weight:400; margin-top:2px; }
+  .led{ display:flex; align-items:center; gap:7px; font-family:Consolas, ui-monospace, monospace; font-size:9px; letter-spacing:.3em; color:#8fb69c; }
+  .led i{ width:9px; height:9px; border-radius:50%; background:var(--led); box-shadow:0 0 8px var(--led), inset 0 -1px 1px rgba(0,0,0,.4); }
+  .bezel{ background:var(--bezel); border-radius:14px; padding:14px 14px 16px; box-shadow: inset 0 3px 8px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.16); }
+  canvas#screen{ display:block; width:100%; aspect-ratio:3/2; image-rendering:pixelated; background:#0e1410; border-radius:4px; }
+  .controls{ display:flex; justify-content:space-between; align-items:center; margin-top:20px; padding:0 8px; }
+  .dpad{ display:grid; grid-template-columns:repeat(3, 44px); grid-template-rows:repeat(3, 44px); }
+  .dpad button{
+    background:linear-gradient(180deg, var(--dpad), var(--dpad-2));
+    border:none; color:#a9c9b4; font-size:15px; cursor:pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 3px 0 rgba(0,0,0,.4);
+    touch-action:none; user-select:none; -webkit-user-select:none;
+  }
+  .dpad button:active{ transform:translateY(2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(0,0,0,.4); }
+  .dpad .u{ grid-area:1/2; border-radius:8px 8px 0 0; }
+  .dpad .l{ grid-area:2/1; border-radius:8px 0 0 8px; }
+  .dpad .c{ grid-area:2/2; pointer-events:none; }
+  .dpad .r{ grid-area:2/3; border-radius:0 8px 8px 0; }
+  .dpad .d{ grid-area:3/2; border-radius:0 0 8px 8px; }
+  .pills{ display:flex; flex-direction:column; gap:10px; align-items:center; }
+  .pills button{
+    background:var(--pill); border:none; color:var(--label); cursor:pointer;
+    font-family:Consolas, ui-monospace, monospace; font-size:9px; letter-spacing:.28em;
+    padding:7px 18px; border-radius:999px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 2px 0 rgba(0,0,0,.4);
+  }
+  .pills button:active{ transform:translateY(1px); }
+  .ab{ display:flex; gap:16px; align-items:flex-start; }
+  .ab button{
+    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
+    background:radial-gradient(circle at 35% 30%, var(--btn-face), var(--btn-face-2) 75%);
+    color:#f6ddd0; font-weight:700; font-size:17px; font-family:Consolas, ui-monospace, monospace;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.25), 0 4px 0 rgba(0,0,0,.4);
+    touch-action:none; user-select:none; -webkit-user-select:none;
+  }
+  .ab button:active{ transform:translateY(2px); box-shadow: inset 0 2px 0 rgba(255,255,255,.15), 0 2px 0 rgba(0,0,0,.4); }
+  .ab .b-btn{ margin-top:24px; }
+  .dpad button:focus-visible, .ab button:focus-visible, .pills button:focus-visible{ outline:2px solid var(--led); outline-offset:2px; }
+  .grille{
+    position:absolute; right:34px; bottom:20px; width:74px; height:26px;
+    background:radial-gradient(circle 2px, rgba(0,0,0,.45) 45%, transparent 55%) 0 0/9px 9px;
+    transform:rotate(-14deg); opacity:.8; pointer-events:none;
+  }
+  .help{ max-width:640px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:1.6; }
+  .help b{ color:var(--ink); font-weight:600; }
+  @media (max-width:560px){
+    .page{ padding:10px 4px 32px; }
+    .shell{ padding:12px 10px 20px; border-radius:20px 20px 32px 32px; }
+    .bezel{ padding:8px 8px 10px; }
+    .controls{ padding:0; margin-top:14px; }
+    .dpad{ grid-template-columns:repeat(3,44px); grid-template-rows:repeat(3,44px); }
+    .ab{ gap:10px; }
+    .ab button{ width:50px; height:50px; }
+    .pills button{ padding:6px 10px; letter-spacing:.18em; }
+    .grille{ display:none; }
+    .help{ font-size:11px; }
+  }
+</style>
+
+<div class="page">
+  <div class="shell">
+    <div class="shell-top">
+      <div class="wordmark">WILDLING&nbsp;ISLE<small>BRAMBLE FIELD UNIT</small></div>
+      <div class="led"><i></i>POWER</div>
+    </div>
+    <div class="bezel"><canvas id="screen" width="240" height="160"></canvas></div>
+    <div class="controls">
+      <div class="dpad" aria-label="Directional pad">
+        <button class="u" data-k="up" aria-label="Up">&#9650;</button>
+        <button class="l" data-k="left" aria-label="Left">&#9664;</button>
+        <button class="c" tabindex="-1" aria-hidden="true"></button>
+        <button class="r" data-k="right" aria-label="Right">&#9654;</button>
+        <button class="d" data-k="down" aria-label="Down">&#9660;</button>
+      </div>
+      <div class="pills">
+        <button id="teamBtn">TEAM</button>
+        <button id="resetBtn">NEW&nbsp;GAME</button>
+      </div>
+      <div class="ab">
+        <button class="b-btn" data-k="B" aria-label="B button">B</button>
+        <button class="a-btn" data-k="A" aria-label="A button">A</button>
+      </div>
+    </div>
+    <div class="grille"></div>
+  </div>
+  <p class="help">
+    <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> = team.<br>
+    Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin to heal. Progress auto-saves.
+  </p>
+</div>
+
+<script>
+(() => {
+'use strict';
+const cvs = document.getElementById('screen');
+const ctx = cvs.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+ctx.textBaseline = 'top';
+
+const ri = n => Math.floor(Math.random() * n);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+
+/* ---------- audio ---------- */
+let AC = null;
+function blip(f, d, type, v) {
+  d = d || 0.06; type = type || 'square'; v = v || 0.035;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.value = f; g.gain.value = v;
+    o.connect(g); g.connect(AC.destination);
+    o.start(); g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + d);
+    o.stop(AC.currentTime + d);
+  } catch (e) {}
+}
+const sMove = () => blip(620, .04);
+const sOk = () => blip(880, .07);
+const sBack = () => blip(340, .05);
+const sHit = () => blip(180, .1, 'sawtooth', .05);
+const sCatch = () => { blip(660, .08); setTimeout(() => blip(880, .08), 90); setTimeout(() => blip(1100, .14), 180); };
+const sFaint = () => { blip(300, .1, 'triangle'); setTimeout(() => blip(180, .16, 'triangle'), 100); };
+
+/* ---------- pixel art ---------- */
+const PAL = {
+  h:'#6b4a2f', f:'#f2c9a0', t:'#2e8f8a', j:'#3f4f8f', k:'#20242c', w:'#f8f8f8',
+  r:'#e2573d', R:'#f2855f', y:'#f5d67b', c:'#5cb8e6', C:'#a8dcf5', p:'#f093b1',
+  g:'#57b04c', G:'#8fd07a', d:'#2e6e3a', m:'#7aa03c', n:'#9a6b42', N:'#c49a68',
+  s:'#aab2b8', S:'#d5dade', e:'#ffd94a', o:'#3a3f36'
+};
+const ART = {
+  hero: [
+    '....hhhh....',
+    '...hhhhhh...',
+    '...hffffh...',
+    '...hfkfkh...',
+    '....ffff....',
+    '...tttttt...',
+    '..fttttttf..',
+    '...tttttt...',
+    '...jjjjjj...',
+    '...jj..jj...',
+    '...kk..kk...'
+  ],
+  cindret: [
+    '............',
+    '..rrr.......',
+    '.rrrrr..ee..',
+    '.rkrrr..eR..',
+    '.rrrrr..RR..',
+    '..rrrrrrRR..',
+    '.rryyrrrrr..',
+    '.rryyrrrr...',
+    '.rryyrrr....',
+    '..rrrrr.....',
+    '..rr..rr....',
+    '............'
+  ],
+  drippet: [
+    '............',
+    '.p..cccc..p.',
+    '.pp.cccc.pp.',
+    '..pccccccp..',
+    '..ckccckcc..',
+    '..cccccccc..',
+    '..cccccccc..',
+    '...cyyyyc...',
+    '..ccyyyycc..',
+    '...cccccc...',
+    '...cc..cc...',
+    '............'
+  ],
+  thornbud: [
+    '.....dd.....',
+    '..d.dddd.d..',
+    '..dddddddd..',
+    '...dddddd...',
+    '....GGGG....',
+    '...GGGGGG...',
+    '..GgkGGkgG..',
+    '..GGGGGGGG..',
+    '..GGyyyyGG..',
+    '...GGGGGG...',
+    '...GG..GG...',
+    '............'
+  ],
+  puffowl: [
+    '...S....S...',
+    '...SSSSSS...',
+    '..SSSSSSSS..',
+    '.SSwkSSwkSS.',
+    '.SSwwSSwwSS.',
+    '.SSSSeeSSSS.',
+    '.sSSSeeSSSs.',
+    '.sSSSSSSSSs.',
+    '..sSSSSSSs..',
+    '...ssssss...',
+    '....e..e....',
+    '............'
+  ],
+  rockit: [
+    '..N....N....',
+    '..NN..NN....',
+    '..NN..NN....',
+    '..NNNNNN....',
+    '..NkNNkN....',
+    '..NNNNNN.s..',
+    '..NNNNNNsss.',
+    '.NNNNNNNsss.',
+    '.NNNNNNN.s..',
+    '..NNNNNN....',
+    '..NN..NN....',
+    '............'
+  ],
+  zapmite: [
+    '..k......k..',
+    '...k....k...',
+    '...eeeeee...',
+    '..eekeekee..',
+    '..eeeeeeee..',
+    '..kkeeeekk..',
+    '..eeeeeeee..',
+    '..eekkkkee..',
+    '...eeeeee...',
+    '..k.e..e.k..',
+    '............',
+    '............'
+  ],
+  mossling: [
+    '............',
+    '....mmmm....',
+    '..mmmmmmmm..',
+    '.mmdmmmmdmm.',
+    '.mmmmmmmmmm.',
+    '.mwkmmmmwkm.',
+    '.mmmmmmmmmm.',
+    '.mmdmmmdmmm.',
+    '..mmmmmmmm..',
+    '...mmmmmm...',
+    '....m..m....',
+    '............'
+  ],
+  bubbet: [
+    '............',
+    '....cccc....',
+    '...cccccc...',
+    '..cckccckc..',
+    '..cccccccc..',
+    '..ccCCCCcc..',
+    '...cCCCCc...',
+    '...cccccc...',
+    '....cccc.c..',
+    '......ccc...',
+    '.......c....',
+    '............'
+  ]
+};
+function drawArt(key, x, y, sc) {
+  const a = ART[key]; if (!a) return;
+  for (let r = 0; r < a.length; r++) {
+    const row = a[r];
+    for (let c = 0; c < row.length; c++) {
+      const col = PAL[row[c]];
+      if (col) { ctx.fillStyle = col; ctx.fillRect(x + c * sc, y + r * sc, sc, sc); }
+    }
+  }
+}
+
+/* ---------- creature data (all original) ---------- */
+const TYPE_COL = { Ember:'#e2573d', Tide:'#4a90d8', Flora:'#57b04c', Spark:'#d8b23c', Gale:'#8fb0c0', Stone:'#a08858', Wild:'#96968a' };
+const CHART = {
+  Ember:{ Flora:2, Tide:.5, Stone:.5, Ember:.5 },
+  Tide:{ Ember:2, Stone:2, Flora:.5, Tide:.5 },
+  Flora:{ Tide:2, Stone:2, Ember:.5, Gale:.5, Flora:.5 },
+  Spark:{ Tide:2, Gale:2, Stone:.5 },
+  Gale:{ Flora:2, Spark:.5, Stone:.5 },
+  Stone:{ Ember:2, Spark:2, Gale:2, Tide:.5, Flora:.5 },
+  Wild:{}
+};
+const MOVES = {
+  'Tackle':      { type:'Wild',  pow:35, acc:100 },
+  'Pounce':      { type:'Wild',  pow:50, acc:95 },
+  'Singe':       { type:'Ember', pow:40, acc:100 },
+  'Flame Burst': { type:'Ember', pow:65, acc:90 },
+  'Splash Jet':  { type:'Tide',  pow:40, acc:100 },
+  'Tide Surge':  { type:'Tide',  pow:65, acc:90 },
+  'Leaf Flick':  { type:'Flora', pow:40, acc:100 },
+  'Vine Snap':   { type:'Flora', pow:65, acc:90 },
+  'Static Zap':  { type:'Spark', pow:45, acc:100 },
+  'Wing Flick':  { type:'Gale',  pow:45, acc:100 },
+  'Pebble Toss': { type:'Stone', pow:45, acc:100 },
+  'Moss Wrap':   { type:'Flora', pow:30, acc:100 },
+  'Bubble Pop':  { type:'Tide',  pow:30, acc:100 }
+};
+const SPECIES = {
+  cindret:  { name:'Cindret',  type:'Ember', base:{hp:44,atk:54,def:42,spd:55}, catch:.45, learn:[[1,'Tackle'],[1,'Singe'],[8,'Flame Burst'],[13,'Pounce']], blurb:'the ember newt' },
+  drippet:  { name:'Drippet',  type:'Tide',  base:{hp:48,atk:48,def:50,spd:44}, catch:.45, learn:[[1,'Tackle'],[1,'Splash Jet'],[8,'Tide Surge'],[13,'Pounce']], blurb:'the tide axolotl' },
+  thornbud: { name:'Thornbud', type:'Flora', base:{hp:46,atk:50,def:48,spd:46}, catch:.45, learn:[[1,'Tackle'],[1,'Leaf Flick'],[8,'Vine Snap'],[13,'Pounce']], blurb:'the flora sprout' },
+  puffowl:  { name:'Puffowl',  type:'Gale',  base:{hp:40,atk:45,def:38,spd:60}, catch:.7,  learn:[[1,'Tackle'],[3,'Wing Flick']] },
+  zapmite:  { name:'Zapmite',  type:'Spark', base:{hp:38,atk:50,def:36,spd:58}, catch:.7,  learn:[[1,'Tackle'],[3,'Static Zap']] },
+  rockit:   { name:'Rockit',   type:'Stone', base:{hp:50,atk:48,def:55,spd:30}, catch:.7,  learn:[[1,'Tackle'],[3,'Pebble Toss']] },
+  mossling: { name:'Mossling', type:'Flora', base:{hp:44,atk:42,def:46,spd:35}, catch:.75, learn:[[1,'Moss Wrap'],[4,'Leaf Flick']] },
+  bubbet:   { name:'Bubbet',   type:'Tide',  base:{hp:42,atk:44,def:40,spd:48}, catch:.75, learn:[[1,'Bubble Pop'],[4,'Splash Jet']] }
+};
+const STARTERS = ['cindret', 'drippet', 'thornbud'];
+const WILDS = ['puffowl', 'zapmite', 'rockit', 'mossling', 'bubbet'];
+
+function maxHp(m) { return Math.floor(SPECIES[m.sp].base.hp * m.level / 18) + m.level + 8; }
+function stat(m, k) { return Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4; }
+function movesFor(sp, lvl) { return SPECIES[sp].learn.filter(l => l[0] <= lvl).map(l => l[1]).slice(-4); }
+function makeMon(sp, lvl) {
+  const m = { sp, level: lvl, xp: 0 };
+  m.hp = maxHp(m);
+  m.moves = movesFor(sp, lvl);
+  return m;
+}
+const nameOf = m => SPECIES[m.sp].name;
+const xpNeed = l => l * l * 5;
+
+/* ---------- map ---------- */
+const RAW = [
+  'TTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+  'T,,,,,,....T.......~~~~~~~.T',
+  'T,,,,,,....T......~~~~~~~~.T',
+  'T,,,,,,.............~~~~~~.T',
+  'T,,,,........,,,,....~~~...T',
+  'T.....T......,,,,..........T',
+  'T............,,,,......T...T',
+  'T..........................T',
+  'T......==============......T',
+  'T......=...................T',
+  'T......=..,,,,,........T...T',
+  'T..T...=..,,,,,............T',
+  'T......=..,,,,,............T',
+  'T......=...................T',
+  'T......====................T',
+  'T.......HH=....F..F........T',
+  'T.......HH=..F.F.F.........T',
+  'T.....S...=................T',
+  'T..........................T',
+  'T,,,,,.........,,,,,,......T',
+  'T,,,,,.........,,,,,,......T',
+  'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+];
+const MW = 28, MH = RAW.length;
+const MAP = RAW.map(r => r.padEnd(MW, 'T').slice(0, MW));
+const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= MH) ? 'T' : MAP[y][x];
+const SOLID = 'T~HS';
+const DOOR = { x: 9, y: 16 };
+const START = { x: 9, y: 18 };
+
+/* ---------- state ---------- */
+let mode = 'title';           // title | intro | starter | world | team | battle
+let frame = 0;
+let party = [];
+let orbs = 5;
+let dlg = null;               // { lines:[], i, onDone }
+let battle = null;
+let starterIdx = 1;
+let teamIdx = 0;
+let titleIdx = 0;
+let introLines = [];
+const P = { tx: START.x, ty: START.y, px: START.x * 16, py: START.y * 16, dir: 'down', moving: false, gx: 0, gy: 0 };
+
+const held = new Set();
+let taps = [];
+
+/* ---------- save ---------- */
+const SAVE_KEY = 'wildling-isle-save';
+function save() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v: 1, orbs, tx: P.tx, ty: P.ty,
+      party: party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves }))
+    }));
+  } catch (e) {}
+}
+function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (!d || !d.party || !d.party.length) return false;
+    party = d.party.map(m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level) }));
+    orbs = d.orbs != null ? d.orbs : 5;
+    P.tx = d.tx; P.ty = d.ty; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
+    return true;
+  } catch (e) { return false; }
+}
+
+/* ---------- dialog ---------- */
+function say(lines, onDone) { dlg = { lines: lines.slice(), i: 0, onDone: onDone || null }; }
+function wrap(text, max) {
+  const words = String(text).split(' ');
+  const out = [];
+  let line = '';
+  for (const w of words) {
+    if ((line + ' ' + w).trim().length > max) { out.push(line.trim()); line = w; }
+    else line += ' ' + w;
+  }
+  if (line.trim()) out.push(line.trim());
+  return out;
+}
+
+/* ---------- battle ---------- */
+function curMon() { return party[battle.ai]; }
+function pickAlive() { return party.findIndex(m => m.hp > 0); }
+
+function startBattle(enemy) {
+  const ai = pickAlive();
+  if (ai < 0) return;
+  mode = 'battle';
+  battle = {
+    enemy, ai, phase: 'text', after: 'menu', endKind: null,
+    q: [`A wild ${nameOf(enemy)} appeared!`, `Go, ${nameOf(party[ai])}!`],
+    cur: null, mi: 0, vi: 0, ti: 0, forced: false,
+    dispMe: party[ai].hp, dispEn: enemy.hp
+  };
+  nextText();
+}
+function nextText() {
+  if (battle.q.length) { battle.cur = battle.q.shift(); return; }
+  battle.cur = null;
+  const a = battle.after;
+  if (a === 'end') { endBattle(); return; }
+  if (a === 'forceTeam') { battle.phase = 'team'; battle.forced = true; battle.ti = 0; return; }
+  battle.phase = a;
+}
+function atkStep(a, d, mvName, q) {
+  const mv = MOVES[mvName];
+  q.push(`${nameOf(a)} used ${mvName}!`);
+  if (ri(100) >= mv.acc) { q.push('The attack missed!'); return; }
+  const eff = (CHART[mv.type] || {})[SPECIES[d.sp].type];
+  const mult = eff == null ? 1 : eff;
+  let dmg = ((2 * a.level / 5 + 2) * mv.pow * stat(a, 'atk') / Math.max(1, stat(d, 'def'))) / 20 + 2;
+  dmg = Math.max(1, Math.floor(dmg * mult * (0.85 + Math.random() * 0.15)));
+  d.hp = Math.max(0, d.hp - dmg);
+  sHit();
+  if (mult > 1) q.push("It's super effective!");
+  if (mult < 1) q.push("It's not very effective...");
+}
+function checkOutcome(q) {
+  const me = curMon(), en = battle.enemy;
+  if (en.hp <= 0) {
+    sFaint();
+    q.push(`The wild ${nameOf(en)} fainted!`);
+    victory(q);
+  } else if (me.hp <= 0) {
+    sFaint();
+    q.push(`${nameOf(me)} fainted!`);
+    if (party.some(m => m.hp > 0)) {
+      battle.after = 'forceTeam';
+    } else {
+      q.push('You are out of able Wildlings...', 'You hurry back to the cabin.');
+      battle.endKind = 'blackout';
+      battle.after = 'end';
+    }
+  } else {
+    battle.after = 'menu';
+  }
+  battle.q = q; battle.phase = 'text';
+  nextText();
+}
+function doRound(myMoveName) {
+  const me = curMon(), en = battle.enemy;
+  const enMv = en.moves[ri(en.moves.length)];
+  const meFirst = stat(me, 'spd') >= stat(en, 'spd');
+  const order = meFirst ? [[me, en, myMoveName], [en, me, enMv]] : [[en, me, enMv], [me, en, myMoveName]];
+  const q = [];
+  for (const [a, d, mv] of order) {
+    if (a.hp > 0 && d.hp > 0) atkStep(a, d, mv, q);
+  }
+  checkOutcome(q);
+}
+function victory(q) {
+  const me = curMon(), en = battle.enemy;
+  const gain = en.level * 18;
+  me.xp += gain;
+  q.push(`${nameOf(me)} gained ${gain} XP!`);
+  while (me.xp >= xpNeed(me.level)) {
+    me.xp -= xpNeed(me.level);
+    const oldMax = maxHp(me);
+    me.level++;
+    me.hp += maxHp(me) - oldMax;
+    q.push(`${nameOf(me)} grew to level ${me.level}!`);
+    for (const [lv, mv] of SPECIES[me.sp].learn) {
+      if (lv === me.level && !me.moves.includes(mv)) {
+        if (me.moves.length < 4) { me.moves.push(mv); q.push(`${nameOf(me)} learned ${mv}!`); }
+        else { const old = me.moves.shift(); me.moves.push(mv); q.push(`${nameOf(me)} forgot ${old} and learned ${mv}!`); }
+      }
+    }
+  }
+  battle.endKind = battle.endKind || 'win';
+  battle.after = 'end';
+}
+function tryCatch() {
+  const en = battle.enemy;
+  const q = [];
+  if (orbs <= 0) {
+    q.push('You are out of Charm Orbs!', 'Rest at the cabin to restock.');
+    battle.after = 'menu';
+    battle.q = q; battle.phase = 'text'; nextText();
+    return;
+  }
+  orbs--;
+  q.push('You toss a Charm Orb...');
+  const chance = SPECIES[en.sp].catch * (1 - 0.7 * en.hp / maxHp(en)) + 0.05;
+  if (Math.random() < chance) {
+    sCatch();
+    if (party.length < 6) {
+      party.push(en);
+      q.push(`Gotcha! ${nameOf(en)} joined your team!`);
+    } else {
+      q.push(`Caught... but your team is full!`, `${nameOf(en)} scampered off, orb and all.`);
+    }
+    battle.endKind = 'caught';
+    battle.after = 'end';
+    battle.q = q; battle.phase = 'text'; nextText();
+  } else {
+    q.push(`Oh no! ${nameOf(en)} broke free!`);
+    const me = curMon();
+    atkStep(en, me, en.moves[ri(en.moves.length)], q);
+    checkOutcome(q);
+  }
+}
+function tryRun() {
+  const q = [];
+  if (Math.random() < 0.75) {
+    q.push('Got away safely!');
+    battle.endKind = 'ran';
+    battle.after = 'end';
+    battle.q = q; battle.phase = 'text'; nextText();
+  } else {
+    q.push("Can't escape!");
+    const me = curMon(), en = battle.enemy;
+    atkStep(en, me, en.moves[ri(en.moves.length)], q);
+    checkOutcome(q);
+  }
+}
+function switchTo(idx, forced) {
+  const q = [];
+  if (!forced) q.push(`Enough, ${nameOf(curMon())}!`);
+  battle.ai = idx;
+  battle.dispMe = party[idx].hp;
+  q.push(`Go, ${nameOf(party[idx])}!`);
+  if (!forced) {
+    const me = curMon(), en = battle.enemy;
+    atkStep(en, me, en.moves[ri(en.moves.length)], q);
+    checkOutcome(q);
+  } else {
+    battle.after = 'menu';
+    battle.q = q; battle.phase = 'text'; nextText();
+  }
+}
+function endBattle() {
+  const kind = battle.endKind;
+  battle = null;
+  mode = 'world';
+  if (kind === 'blackout') {
+    P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
+    party.forEach(m => { m.hp = maxHp(m); });
+    orbs = Math.max(orbs, 5);
+    say(['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']);
+  }
+  save();
+}
+
+/* ---------- input ---------- */
+const KEYMAP = {
+  arrowup:'up', w:'up', arrowdown:'down', s:'down',
+  arrowleft:'left', a:'left', arrowright:'right', d:'right',
+  z:'A', enter:'A', ' ':'A',
+  x:'B', escape:'B', backspace:'B',
+  c:'C'
+};
+addEventListener('keydown', e => {
+  const k = KEYMAP[e.key.toLowerCase()];
+  if (!k) return;
+  e.preventDefault();
+  if (!held.has(k)) taps.push(k);
+  held.add(k);
+});
+addEventListener('keyup', e => {
+  const k = KEYMAP[e.key.toLowerCase()];
+  if (k) held.delete(k);
+});
+document.querySelectorAll('[data-k]').forEach(btn => {
+  const k = btn.dataset.k;
+  const down = e => { e.preventDefault(); if (!held.has(k)) taps.push(k); held.add(k); };
+  const up = e => { e.preventDefault(); held.delete(k); };
+  btn.addEventListener('pointerdown', down);
+  btn.addEventListener('pointerup', up);
+  btn.addEventListener('pointerleave', up);
+});
+document.getElementById('teamBtn').addEventListener('click', () => taps.push('C'));
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('Start a brand new adventure? Your save will be erased.')) {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    location.reload();
+  }
+});
+
+/* ---------- update ---------- */
+function walkable(x, y) { return !SOLID.includes(tileAt(x, y)); }
+
+function update() {
+  const tapped = taps; taps = [];
+  const tap = k => tapped.includes(k);
+
+  if (dlg) {
+    if (tap('A') || tap('B')) {
+      sOk();
+      dlg.i++;
+      if (dlg.i >= dlg.lines.length) { const cb = dlg.onDone; dlg = null; if (cb) cb(); }
+    }
+    return;
+  }
+
+  if (mode === 'title') {
+    const options = hasSave() ? 2 : 1;
+    if (options === 2 && (tap('up') || tap('down'))) { titleIdx = 1 - titleIdx; sMove(); }
+    if (tap('A')) {
+      sOk();
+      if (options === 2 && titleIdx === 0) { load(); mode = 'world'; }
+      else startIntro();
+    }
+    return;
+  }
+
+  if (mode === 'starter') {
+    if (tap('left')) { starterIdx = (starterIdx + 2) % 3; sMove(); }
+    if (tap('right')) { starterIdx = (starterIdx + 1) % 3; sMove(); }
+    if (tap('A')) {
+      sOk();
+      const sp = STARTERS[starterIdx];
+      party = [makeMon(sp, 5)];
+      orbs = 5;
+      say([
+        `You chose ${SPECIES[sp].name}, ${SPECIES[sp].blurb}!`,
+        'Doc Bramble hands you 5 Charm Orbs.',
+        '"Weaken a wild Wildling, then toss an orb to befriend it."',
+        '"Come rest at my cabin whenever your team is tired. Off you go!"'
+      ], () => { mode = 'world'; save(); });
+    }
+    return;
+  }
+
+  if (mode === 'team') {
+    if (tap('up')) { teamIdx = (teamIdx + party.length - 1) % party.length; sMove(); }
+    if (tap('down')) { teamIdx = (teamIdx + 1) % party.length; sMove(); }
+    if (tap('A') && teamIdx !== 0) {
+      const t = party[0]; party[0] = party[teamIdx]; party[teamIdx] = t;
+      teamIdx = 0; sOk();
+    }
+    if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
+    return;
+  }
+
+  if (mode === 'world') {
+    if (tap('C')) { teamIdx = 0; mode = 'team'; sOk(); return; }
+    if (tap('A')) {
+      const dx = P.dir === 'left' ? -1 : P.dir === 'right' ? 1 : 0;
+      const dy = P.dir === 'up' ? -1 : P.dir === 'down' ? 1 : 0;
+      const t = tileAt(P.tx + dx, P.ty + dy);
+      if (t === 'H') {
+        party.forEach(m => { m.hp = maxHp(m); });
+        orbs = Math.max(orbs, 5);
+        sCatch();
+        say(['Doc Bramble welcomes you in.', 'Your team is fully rested!', 'Charm Orbs restocked to 5.'], save);
+        return;
+      }
+      if (t === 'S') {
+        say(['NOTICE: Tall grass rustles with wild Wildlings.', 'Doc Bramble heals tired teams at the cabin.', 'Press C to check your team.']);
+        return;
+      }
+    }
+    if (!P.moving) {
+      let dir = null;
+      if (held.has('up')) dir = 'up';
+      else if (held.has('down')) dir = 'down';
+      else if (held.has('left')) dir = 'left';
+      else if (held.has('right')) dir = 'right';
+      if (dir) {
+        P.dir = dir;
+        const dx = dir === 'left' ? -1 : dir === 'right' ? 1 : 0;
+        const dy = dir === 'up' ? -1 : dir === 'down' ? 1 : 0;
+        if (walkable(P.tx + dx, P.ty + dy)) {
+          P.moving = true;
+          P.gx = P.tx + dx; P.gy = P.ty + dy;
+        }
+      }
+    } else {
+      const txp = P.gx * 16, typ = P.gy * 16;
+      P.px += Math.sign(txp - P.px) * 2;
+      P.py += Math.sign(typ - P.py) * 2;
+      if (P.px === txp && P.py === typ) {
+        P.tx = P.gx; P.ty = P.gy; P.moving = false;
+        if (tileAt(P.tx, P.ty) === ',' && Math.random() < 0.14) {
+          const sp = WILDS[ri(WILDS.length)];
+          const lead = party[0] ? party[0].level : 5;
+          const lvl = clamp(2 + ri(3) + Math.floor(lead / 4), 2, 12);
+          startBattle(makeMon(sp, lvl));
+        }
+      }
+    }
+    return;
+  }
+
+  if (mode === 'battle') {
+    const b = battle;
+    if (!b) return;
+    b.dispMe += (curMon().hp - b.dispMe) * 0.12;
+    b.dispEn += (b.enemy.hp - b.dispEn) * 0.12;
+
+    if (b.phase === 'text') {
+      if (tap('A') || tap('B')) { sOk(); nextText(); }
+      return;
+    }
+    if (b.phase === 'menu') {
+      if (tap('up') || tap('down')) { b.mi = (b.mi + 2) % 4; sMove(); }
+      if (tap('left') || tap('right')) { b.mi = (b.mi % 2 === 0) ? b.mi + 1 : b.mi - 1; sMove(); }
+      if (tap('A')) {
+        sOk();
+        if (b.mi === 0) { b.vi = 0; b.phase = 'moves'; }
+        else if (b.mi === 1) tryCatch();
+        else if (b.mi === 2) { b.ti = 0; b.phase = 'team'; b.forced = false; }
+        else tryRun();
+      }
+      return;
+    }
+    if (b.phase === 'moves') {
+      const mv = curMon().moves;
+      if (tap('up')) { b.vi = (b.vi + mv.length - 1) % mv.length; sMove(); }
+      if (tap('down')) { b.vi = (b.vi + 1) % mv.length; sMove(); }
+      if (tap('B')) { sBack(); b.phase = 'menu'; }
+      if (tap('A')) { sOk(); doRound(mv[b.vi]); }
+      return;
+    }
+    if (b.phase === 'team') {
+      if (tap('up')) { b.ti = (b.ti + party.length - 1) % party.length; sMove(); }
+      if (tap('down')) { b.ti = (b.ti + 1) % party.length; sMove(); }
+      if (tap('B') && !b.forced) { sBack(); b.phase = 'menu'; }
+      if (tap('A')) {
+        const m = party[b.ti];
+        if (m.hp > 0 && (b.forced || b.ti !== b.ai)) { sOk(); switchTo(b.ti, b.forced); b.forced = false; }
+        else sBack();
+      }
+      return;
+    }
+  }
+}
+
+function startIntro() {
+  mode = 'intro';
+  say([
+    'DOC BRAMBLE: Well hello there!',
+    'Welcome to Wildling Isle, my new field assistant!',
+    'The isle brims with wild creatures we call Wildlings.',
+    'Ember, Tide, Flora... each kind has its own knack.',
+    'You will need a partner of your own. Pick one of these three!'
+  ], () => { mode = 'starter'; });
+}
+
+/* ---------- drawing ---------- */
+function px(x, y, w, h, col) { ctx.fillStyle = col; ctx.fillRect(x, y, w, h); }
+function hash(x, y) { return ((x * 73856093) ^ (y * 19349663)) >>> 0; }
+
+function drawTile(t, x, y, sx, sy) {
+  const h = hash(x, y);
+  px(sx, sy, 16, 16, '#94c66b');
+  if (h % 5 === 0) px(sx + (h % 12), sy + (h >> 3) % 12, 2, 2, '#7cb457');
+  if (t === ',') {
+    px(sx, sy, 16, 16, '#6fae52');
+    for (let i = 0; i < 3; i++) {
+      const bx = sx + 2 + i * 5 + (h >> i) % 2;
+      px(bx, sy + 6, 2, 8, '#3e8a3d');
+      px(bx + 1, sy + 3, 1, 5, '#2e6e3a');
+    }
+  } else if (t === '=') {
+    px(sx, sy, 16, 16, '#e0cb95');
+    if (h % 3 === 0) px(sx + h % 11, sy + (h >> 4) % 11, 2, 2, '#c7ad72');
+  } else if (t === '~') {
+    px(sx, sy, 16, 16, '#4f8fd6');
+    const off = (Math.floor(frame / 20) + ((x + y) % 2)) % 2;
+    px(sx + 2 + off * 4, sy + 4, 6, 1, '#8ec4ee');
+    px(sx + 6 - off * 3, sy + 11, 6, 1, '#8ec4ee');
+  } else if (t === 'T') {
+    px(sx + 6, sy + 9, 4, 6, '#7a4f30');
+    px(sx + 2, sy + 1, 12, 10, '#2e6e3a');
+    px(sx + 4, sy, 8, 4, '#3d8a48');
+    px(sx + 3, sy + 3, 4, 3, '#57b04c');
+    px(sx + 9, sy + 5, 4, 3, '#57b04c');
+  } else if (t === 'F') {
+    const col = h % 2 ? '#e86a5f' : '#f5d67b';
+    px(sx + 3, sy + 3, 3, 3, col);
+    px(sx + 10, sy + 8, 3, 3, h % 3 ? '#f5d67b' : '#e86a5f');
+    px(sx + 4, sy + 10, 2, 2, '#f8f8f8');
+  } else if (t === 'H') {
+    const roof = tileAt(x, y - 1) !== 'H';
+    if (roof) {
+      px(sx, sy, 16, 16, '#c05a4a');
+      px(sx, sy, 16, 3, '#a34537');
+      px(sx, sy + 13, 16, 3, '#8f3a2e');
+    } else {
+      px(sx, sy, 16, 16, '#e0c193');
+      px(sx, sy, 16, 2, '#8f3a2e');
+      if (x === DOOR.x && y === DOOR.y) { px(sx + 4, sy + 5, 8, 11, '#5a3a26'); px(sx + 10, sy + 10, 2, 2, '#e8b84b'); }
+      else { px(sx + 4, sy + 5, 8, 6, '#7ac0e8'); px(sx + 4, sy + 5, 8, 1, '#4a7fa8'); }
+    }
+  } else if (t === 'S') {
+    px(sx + 7, sy + 8, 2, 7, '#7a4f30');
+    px(sx + 2, sy + 2, 12, 7, '#c49a68');
+    px(sx + 4, sy + 4, 8, 1, '#6b4a2f');
+    px(sx + 4, sy + 6, 6, 1, '#6b4a2f');
+  }
+}
+
+function drawBar(x, y, w, ratio, back) {
+  px(x - 1, y - 1, w + 2, 5, back || '#3a3f36');
+  px(x, y, w, 3, '#20242c');
+  const r = clamp(ratio, 0, 1);
+  const col = r > .5 ? '#57b04c' : r > .2 ? '#e8b84b' : '#e2573d';
+  if (r > 0) px(x, y, Math.max(1, Math.round(w * r)), 3, col);
+}
+
+function text(str, x, y, col, size) {
+  ctx.font = (size || 8) + 'px monospace';
+  ctx.fillStyle = col || '#20242c';
+  ctx.fillText(str, x, y);
+}
+
+function drawBox(x, y, w, h) {
+  px(x, y, w, h, '#f6f2e2');
+  px(x, y, w, 2, '#3a3f36'); px(x, y + h - 2, w, 2, '#3a3f36');
+  px(x, y, 2, h, '#3a3f36'); px(x + w - 2, y, 2, h, '#3a3f36');
+  px(x + 2, y + 2, w - 4, 1, '#c9c2a8');
+}
+
+function drawDialog(lines, i) {
+  drawBox(4, 112, 232, 44);
+  const rows = wrap(lines[i], 42).slice(0, 3);
+  rows.forEach((r, n) => text(r, 12, 120 + n * 11, '#20242c'));
+  if (Math.floor(frame / 25) % 2 === 0) text('v', 224, 146, '#a34537');
+}
+
+function drawWorld() {
+  const camx = clamp(P.px - 112, 0, MW * 16 - 240);
+  const camy = clamp(P.py - 72, 0, MH * 16 - 160);
+  const x0 = Math.floor(camx / 16), y0 = Math.floor(camy / 16);
+  for (let y = y0; y <= y0 + 10 && y < MH; y++)
+    for (let x = x0; x <= x0 + 15 && x < MW; x++)
+      drawTile(tileAt(x, y), x, y, x * 16 - camx, y * 16 - camy);
+  const bob = P.moving && Math.floor(frame / 8) % 2 ? -1 : 0;
+  drawArt('hero', P.px - camx + 2, P.py - camy + 2 + bob, 1);
+
+  if (party.length) {
+    const lead = party[0];
+    px(3, 3, 118, 24, 'rgba(20,28,22,.78)');
+    text(nameOf(lead) + ' L' + lead.level, 7, 6, '#f6f2e2');
+    drawBar(7, 17, 62, lead.hp / maxHp(lead));
+    text(lead.hp + '/' + maxHp(lead), 74, 14, '#cfe3d2', 7);
+    text('Orbs x' + orbs, 74, 21, '#e8b84b', 7);
+  }
+}
+
+function drawMonPlate(x, y, m, disp, showXp) {
+  drawBox(x, y, 104, showXp ? 34 : 28);
+  text(nameOf(m), x + 6, y + 5, '#20242c');
+  text('L' + m.level, x + 80, y + 5, '#4c5c50');
+  drawBar(x + 6, y + 17, 80, disp / maxHp(m));
+  if (showXp) {
+    px(x + 6, y + 25, 80, 2, '#c9c2a8');
+    px(x + 6, y + 25, Math.round(80 * clamp(m.xp / xpNeed(m.level), 0, 1)), 2, '#4a90d8');
+  }
+}
+
+function drawBattle() {
+  const b = battle;
+  px(0, 0, 240, 112, '#cfe8b8');
+  px(0, 0, 240, 40, '#b8dcf0');
+  px(0, 38, 240, 4, '#a8d0a0');
+  ctx.fillStyle = '#a8c888';
+  ctx.beginPath(); ctx.ellipse(178, 66, 44, 12, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(62, 104, 48, 13, 0, 0, 7); ctx.fill();
+
+  drawArt(b.enemy.sp, 160, 26, 3);
+  drawArt(curMon().sp, 38, 62, 3);
+
+  drawMonPlate(6, 6, b.enemy, b.dispEn, false);
+  drawMonPlate(130, 74, curMon(), b.dispMe, true);
+
+  if (b.phase === 'text' && b.cur != null) {
+    drawDialog([b.cur], 0);
+  } else if (b.phase === 'menu') {
+    drawBox(4, 112, 232, 44);
+    text('What will ' + nameOf(curMon()) + ' do?', 12, 118, '#4c5c50', 7);
+    const opts = ['FIGHT', 'CATCH', 'TEAM', 'RUN'];
+    opts.forEach((o, i) => {
+      const ox = 20 + (i % 2) * 110, oy = 128 + Math.floor(i / 2) * 13;
+      if (i === b.mi) text('>', ox - 9, oy, '#a34537');
+      text(o, ox, oy, '#20242c');
+    });
+  } else if (b.phase === 'moves') {
+    drawBox(4, 112, 232, 44);
+    const mv = curMon().moves;
+    mv.forEach((m, i) => {
+      const ox = 18 + (i % 2) * 112, oy = 118 + Math.floor(i / 2) * 13;
+      if (i === b.vi) text('>', ox - 9, oy, '#a34537');
+      text(m, ox, oy, '#20242c', 7);
+    });
+    const sel = MOVES[mv[b.vi]];
+    px(6, 144, 228, 10, '#e6e0cc');
+    text(sel.type + '  PWR ' + sel.pow + '  ACC ' + sel.acc, 14, 145, TYPE_COL[sel.type] || '#20242c', 7);
+  } else if (b.phase === 'team') {
+    drawTeamList(b.ti, true);
+  }
+}
+
+function drawTeamList(idx, inBattle) {
+  px(0, 0, 240, 160, 'rgba(16,22,18,.92)');
+  text(inBattle ? 'CHOOSE A WILDLING' : 'YOUR TEAM', 12, 8, '#e8b84b');
+  if (!inBattle) text('A: make leader  B: back', 110, 8, '#8fa396', 7);
+  party.forEach((m, i) => {
+    const y = 22 + i * 22;
+    if (i === idx) { px(4, y - 2, 232, 20, 'rgba(232,184,75,.18)'); text('>', 6, y + 4, '#e8b84b'); }
+    drawArt(m.sp, 14, y - 2, 1.5);
+    text(nameOf(m) + '  L' + m.level, 40, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66');
+    drawBar(40, y + 11, 60, m.hp / maxHp(m));
+    text(m.hp + '/' + maxHp(m), 106, y + 8, '#cfe3d2', 7);
+    if (i === 0 && !inBattle) text('LEADER', 176, y + 2, '#8fb69c', 7);
+    if (m.hp <= 0) text('FNT', 176, y + 2, '#e2573d', 7);
+  });
+}
+
+function drawTitle() {
+  px(0, 0, 240, 160, '#1c3a2c');
+  px(0, 118, 240, 42, '#14291f');
+  for (let i = 0; i < 14; i++) {
+    const h = hash(i, 7);
+    px((i * 19 + 6) % 240, 122 + h % 30, 2, 6, '#2e5a40');
+  }
+  text('~ an original creature tale ~', 48, 30, '#8fb69c', 7);
+  ctx.font = 'bold 21px monospace';
+  ctx.fillStyle = '#0e1a14'; ctx.fillText('WILDLING ISLE', 29, 47);
+  ctx.fillStyle = '#e8b84b'; ctx.fillText('WILDLING ISLE', 27, 45);
+  drawArt('cindret', 48, 78, 2);
+  drawArt('drippet', 104, 78, 2);
+  drawArt('thornbud', 160, 78, 2);
+  const options = hasSave() ? 2 : 1;
+  if (options === 2) {
+    ['CONTINUE', 'NEW GAME'].forEach((o, i) => {
+      if (i === titleIdx) text('>', 84, 122 + i * 13, '#e8b84b');
+      text(o, 94, 122 + i * 13, i === titleIdx ? '#f6f2e2' : '#8fb69c');
+    });
+  } else if (Math.floor(frame / 30) % 2 === 0) {
+    text('- PRESS A -', 88, 128, '#f6f2e2');
+  }
+}
+
+function drawStarter() {
+  px(0, 0, 240, 160, '#e8dfc2');
+  px(0, 0, 240, 20, '#c05a4a');
+  text('CHOOSE YOUR PARTNER', 58, 6, '#f6f2e2');
+  STARTERS.forEach((sp, i) => {
+    const x = 16 + i * 72;
+    const sel = i === starterIdx;
+    px(x, 34, 64, 74, sel ? '#f6f2e2' : '#ddd2b0');
+    if (sel) { px(x, 34, 64, 2, '#a34537'); px(x, 106, 64, 2, '#a34537'); px(x, 34, 2, 74, '#a34537'); px(x + 62, 34, 2, 74, '#a34537'); }
+    drawArt(sp, x + 14, 40, 3);
+    text(SPECIES[sp].name, x + 8, 82, '#20242c', 7);
+    text(SPECIES[sp].type, x + 8, 92, TYPE_COL[SPECIES[sp].type], 7);
+  });
+  const s = SPECIES[STARTERS[starterIdx]];
+  drawBox(4, 116, 232, 40);
+  text(s.name + ', ' + s.blurb + '.', 12, 124, '#20242c', 7);
+  text('LEFT/RIGHT to browse, A to choose!', 12, 138, '#4c5c50', 7);
+}
+
+function draw() {
+  px(0, 0, 240, 160, '#0e1410');
+  if (mode === 'title') drawTitle();
+  else if (mode === 'intro') { px(0, 0, 240, 160, '#1c3a2c'); text('DOC BRAMBLE\'S CABIN', 62, 40, '#8fb69c', 7); }
+  else if (mode === 'starter') drawStarter();
+  else if (mode === 'world') drawWorld();
+  else if (mode === 'team') drawTeamList(teamIdx, false);
+  else if (mode === 'battle') drawBattle();
+  if (dlg) drawDialog(dlg.lines, dlg.i);
+}
+
+let last = performance.now(), acc = 0;
+function loop(now) {
+  acc += Math.min(100, now - last); last = now;
+  while (acc >= 16.67) { frame++; update(); acc -= 16.67; }
+  draw();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* debug hooks for automated testing */
+window.DBG = {
+  tap: k => taps.push(k),
+  state: () => ({ mode, party: JSON.parse(JSON.stringify(party)), orbs, pos: [P.tx, P.ty], battlePhase: battle && battle.phase, battleText: battle && battle.cur }),
+  forceBattle: sp => startBattle(makeMon(sp || WILDS[ri(WILDS.length)], 3))
+};
+})();
+</script>
