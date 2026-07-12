@@ -150,7 +150,7 @@
       Your team holds 6 Wildlings &mdash; extra catches go to <b>Doc Bramble's Ranch</b>, where you can deposit and withdraw team members anytime.<br>
       Battles pay <b>coins</b> &mdash; spend them at the cabin or campfires on orbs, Sweet Berries, and <b>Bramble Jam</b> (full heal + cure). Watch out for <b>Burn</b>, <b>Shock</b>, and being put <b>On Ice</b>!<br>
       Save up for the <b>Bramble Bike</b> (any shop, 150c) &mdash; then press <b>B</b> out in the world to hop on and cover ground twice as fast.<br>
-      Boothbay Harbor has specialists: the <b>Mystic Den</b> levels up Mystic Wildlings for coins, and the <b>Move Tutor</b> teaches four secret Mystic songs found nowhere else.<br>
+      Boothbay Harbor has specialists: the <b>Mystic Den</b> levels up Mystic Wildlings for coins, and the <b>Move Tutor</b> teaches four powerful songs for <b>every type</b> &mdash; pick the Wildling and see its options.<br>
       A full moveset means choices: when a 5th move comes along, <b>you</b> decide what to forget &mdash; and the ancient <b>obelisk</b> in the meadow lets Wildlings remember moves they gave up.<br>
       Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
@@ -1072,7 +1072,31 @@ const MOVES = {
   'Starfall':    { type:'Mystic', pow:100, acc:80 },
   'Veil Rend':   { type:'Mystic', pow:95, acc:85 },
   'Mind Shear':  { type:'Mystic', pow:90, acc:90 },
-  'Fey Burst':   { type:'Mystic', pow:80, acc:100 }
+  'Fey Burst':   { type:'Mystic', pow:80, acc:100 },
+  'Sunflare':    { type:'Ember', pow:100, acc:80 },
+  'Cinder Waltz':{ type:'Ember', pow:95, acc:85 },
+  'Blue Ember':  { type:'Ember', pow:90, acc:90 },
+  'Heat Haze':   { type:'Ember', pow:80, acc:100 },
+  'Maelstrom':   { type:'Tide', pow:100, acc:80 },
+  'Undertow':    { type:'Tide', pow:95, acc:85 },
+  'Pearl Lance': { type:'Tide', pow:90, acc:90 },
+  'Mist Cutter': { type:'Tide', pow:80, acc:100 },
+  'Wildbloom':   { type:'Flora', pow:100, acc:80 },
+  'Root Quake':  { type:'Flora', pow:95, acc:85 },
+  'Petal Storm': { type:'Flora', pow:90, acc:90 },
+  'Nettle Dart': { type:'Flora', pow:80, acc:100 },
+  'Stormcall':   { type:'Spark', pow:100, acc:80 },
+  'Arc Flash':   { type:'Spark', pow:95, acc:85 },
+  'Ion Fang':    { type:'Spark', pow:90, acc:90 },
+  'Static Net':  { type:'Spark', pow:80, acc:100 },
+  'Tempest':     { type:'Gale', pow:100, acc:80 },
+  'Jetstream':   { type:'Gale', pow:95, acc:85 },
+  'Talon Dive':  { type:'Gale', pow:90, acc:90 },
+  'Zephyr Kiss': { type:'Gale', pow:80, acc:100 },
+  'Avalanche':   { type:'Stone', pow:100, acc:80 },
+  'Granite Ram': { type:'Stone', pow:95, acc:85 },
+  'Flint Edge':  { type:'Stone', pow:90, acc:90 },
+  'Sandblast':   { type:'Stone', pow:80, acc:100 }
 };
 const SPECIES = {
   /* starter lines — evolve at 13 and 25 */
@@ -1457,7 +1481,7 @@ const AREAS = {
     sign: [
       'WELCOME TO BOOTHBAY HARBOR.',
       'WEST HOUSE: the Mystic Den - Mystic training.',
-      'CENTER HOUSE: the Move Tutor - secret songs.',
+      'CENTER HOUSE: the Move Tutor - songs for all types.',
       'Rest at the campfire. Ferry at the west dock.',
       'NORTH: Pinewood Trails - harbormaster on duty.'
     ],
@@ -1689,13 +1713,17 @@ const BIKE = { key: 'bike', name: 'Bramble Bike', price: 150, desc: 'ride fast! 
 const shopList = () => flags.bike ? SHOP : SHOP.concat(BIKE);
 let riding = false;           // on the bike right now (ownership lives in flags.bike)
 /* Boothbay Harbor specialists */
-const TUTOR_MOVES = ['Starfall', 'Veil Rend', 'Mind Shear', 'Fey Burst'];
-const TUTOR_INFO = {
-  'Starfall': 'calls the night sky down',
-  'Veil Rend': 'tears the veil between worlds',
-  'Mind Shear': 'a blade of pure thought',
-  'Fey Burst': 'never misses its mark'
+const TUTOR_SETS = {
+  Mystic: ['Starfall', 'Veil Rend', 'Mind Shear', 'Fey Burst'],
+  Ember:  ['Sunflare', 'Cinder Waltz', 'Blue Ember', 'Heat Haze'],
+  Tide:   ['Maelstrom', 'Undertow', 'Pearl Lance', 'Mist Cutter'],
+  Flora:  ['Wildbloom', 'Root Quake', 'Petal Storm', 'Nettle Dart'],
+  Spark:  ['Stormcall', 'Arc Flash', 'Ion Fang', 'Static Net'],
+  Gale:   ['Tempest', 'Jetstream', 'Talon Dive', 'Zephyr Kiss'],
+  Stone:  ['Avalanche', 'Granite Ram', 'Flint Edge', 'Sandblast']
 };
+const TUTOR_INFO = ['the heaviest of songs', 'a crushing verse', 'a keen refrain', 'never misses its mark'];
+const tutorSet = m => TUTOR_SETS[SPECIES[m.sp].type] || TUTOR_SETS.Mystic;
 const TUTOR_PRICE = 150, DEN_PRICE = 200;
 let denIdx = 0, tutMv = 0, tutMon = 0;
 let restIdx = 0, shopIdx = 0, shopTop = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
@@ -2478,24 +2506,22 @@ function update() {
     return;
   }
 
-  if (mode === 'tutorMove') {
-    if (tap('up')) { tutMv = (tutMv + TUTOR_MOVES.length - 1) % TUTOR_MOVES.length; sMove(); }
-    if (tap('down')) { tutMv = (tutMv + 1) % TUTOR_MOVES.length; sMove(); }
-    if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
-    else if (tap('A')) { sOk(); tutMon = 0; mode = 'tutorMon'; }
-    return;
-  }
-
   if (mode === 'tutorMon') {
     if (tap('up')) { tutMon = (tutMon + party.length - 1) % party.length; sMove(); }
     if (tap('down')) { tutMon = (tutMon + 1) % party.length; sMove(); }
-    if (tap('B')) { sBack(); mode = 'tutorMove'; }
+    if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
+    else if (tap('A')) { sOk(); tutMv = 0; mode = 'tutorMove'; }
+    return;
+  }
+
+  if (mode === 'tutorMove') {
+    const set = tutorSet(party[tutMon]);
+    if (tap('up')) { tutMv = (tutMv + set.length - 1) % set.length; sMove(); }
+    if (tap('down')) { tutMv = (tutMv + 1) % set.length; sMove(); }
+    if (tap('B')) { sBack(); mode = 'tutorMon'; }
     else if (tap('A')) {
-      const m = party[tutMon], mv = TUTOR_MOVES[tutMv];
-      if (SPECIES[m.sp].type !== 'Mystic') {
-        sBack(); mode = 'world';
-        say(['TUTOR: These songs are for Mystic kind alone.']);
-      } else if (m.moves.includes(mv)) {
+      const m = party[tutMon], mv = set[tutMv];
+      if (m.moves.includes(mv)) {
         sBack(); mode = 'world';
         say([nameOf(m) + ' already knows ' + mv + '.']);
       } else if (coins < TUTOR_PRICE) {
@@ -2662,7 +2688,7 @@ function update() {
         const hu = t === 'H' && hutAt(fx, fy);
         if (hu) {
           if (hu.kind === 'den') { denIdx = 0; mode = 'den'; sOk(); }
-          else if (hu.kind === 'tutor') { tutMv = 0; mode = 'tutorMove'; sOk(); }
+          else if (hu.kind === 'tutor') { tutMon = 0; mode = 'tutorMon'; sOk(); }
           else say(['The warehouse is locked tight.', 'A note reads: "Gone fishing. Back never. - E."']);
           return;
         }
@@ -3293,20 +3319,21 @@ function drawShop() {
 }
 
 function drawTutor() {
+  const m = party[tutMon], set = tutorSet(m);
   px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
   drawBox(8, 12, 224, 116);
-  text('MOVE TUTOR', 18, 19, '#20242c');
+  text(SPECIES[m.sp].type.toUpperCase() + ' SONGS', 18, 19, '#20242c');
   text('Coins: ' + coins, 160, 19, '#4c5c50', 7);
-  TUTOR_MOVES.forEach((mv, i) => {
+  set.forEach((mv, i) => {
     const d = MOVES[mv], oy = 38 + i * 22;
     if (i === tutMv) text('>', 16, oy, '#a34537', 7);
-    text(mv, 26, oy, '#20242c', 7);
+    text(mv, 26, oy, m.moves.includes(mv) ? '#8a8570' : '#20242c', 7);
     text('PWR ' + d.pow + '  ACC ' + d.acc, 108, oy, '#4c5c50', 7);
-    text(TUTOR_PRICE + 'c', 202, oy, '#4c5c50', 7);
-    text(TUTOR_INFO[mv], 26, oy + 9, '#8a8570', 7);
+    text(m.moves.includes(mv) ? 'known' : TUTOR_PRICE + 'c', 198, oy, '#4c5c50', 7);
+    text(TUTOR_INFO[i], 26, oy + 9, '#8a8570', 7);
   });
   drawBox(8, 132, 224, 18);
-  text('Mystic Wildlings only.  A: pick  B: back', 18, 137, '#4c5c50', 7);
+  text('For ' + nameOf(m) + '.  A: teach  B: back', 18, 137, '#4c5c50', 7);
 }
 
 function drawInfo() {
@@ -3493,7 +3520,7 @@ function draw() {
   else if (mode === 'tutorMon') {
     drawTeamList(tutMon, true);
     drawBox(4, 140, 232, 18);
-    text('Teach ' + TUTOR_MOVES[tutMv] + ' to whom? (' + TUTOR_PRICE + 'c)', 12, 145, '#20242c', 7);
+    text('MOVE TUTOR: whose song shall we find?', 12, 145, '#20242c', 7);
   }
   else if (mode === 'info') drawInfo();
   else if (mode === 'dex') drawDex(dexIdx);
