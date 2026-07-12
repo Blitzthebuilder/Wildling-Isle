@@ -1676,7 +1676,8 @@ const SHOP = [
 const BIKE = { key: 'bike', name: 'Bramble Bike', price: 150, desc: 'ride fast! hop on/off with B' };
 const shopList = () => flags.bike ? SHOP : SHOP.concat(BIKE);
 let riding = false;           // on the bike right now (ownership lives in flags.bike)
-let restIdx = 0, shopIdx = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
+let restIdx = 0, shopIdx = 0, shopTop = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
+const SHOP_VIS = 4;           // shop rows visible at once; longer lists scroll
 let pendingLearns = [];       // [{m, mv}] move-learning decisions awaiting the player
 let lrnIdx = 0;               // cursor on the forget-a-move screen
 let obIdx = 0, obMv = 0, obList = [];   // obelisk: mon cursor, move cursor, relearnable moves
@@ -2416,7 +2417,7 @@ function update() {
         healParty(restSpot === 'cabin'
           ? ['Doc Bramble welcomes you in.', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']
           : ['You rest by the crackling campfire...', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']);
-      } else if (restIdx === 1) { shopIdx = 0; shopMsg = null; mode = 'shop'; }
+      } else if (restIdx === 1) { shopIdx = 0; shopTop = 0; shopMsg = null; mode = 'shop'; }
       else mode = 'world';
     }
     return;
@@ -2426,12 +2427,14 @@ function update() {
     const list = shopList();
     if (tap('up')) { shopIdx = (shopIdx + list.length - 1) % list.length; sMove(); }
     if (tap('down')) { shopIdx = (shopIdx + 1) % list.length; sMove(); }
+    if (shopIdx < shopTop) shopTop = shopIdx;
+    if (shopIdx >= shopTop + SHOP_VIS) shopTop = shopIdx - SHOP_VIS + 1;
     if (tap('B') || tap('C')) { sBack(); mode = 'rest'; }
     else if (tap('A')) {
       const it = list[shopIdx];
       if (coins >= it.price) {
         coins -= it.price;
-        if (it.key === 'bike') { flags.bike = true; shopIdx = 0; shopMsg = 'Bought the Bramble Bike! Press B to ride.'; }
+        if (it.key === 'bike') { flags.bike = true; shopIdx = 0; shopTop = 0; shopMsg = 'Bike bought! Press B to ride.'; }
         else {
           if (it.key === 'orb') orbs++; else items[it.key]++;
           shopMsg = 'Bought ' + it.name + '!';
@@ -3141,20 +3144,25 @@ function drawRest() {
 }
 
 function drawShop() {
+  const list = shopList();
   px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
-  drawBox(14, 20, 212, 106);
-  text('SHOP', 24, 27, '#20242c');
-  text('Coins: ' + coins, 160, 27, '#4c5c50', 7);
-  shopList().forEach((it, i) => {
-    const oy = 44 + i * 22;
-    if (i === shopIdx) text('>', 24, oy, '#a34537', 7);
+  drawBox(8, 12, 224, 116);
+  text('SHOP', 18, 19, '#20242c');
+  text('Coins: ' + coins, 150, 19, '#4c5c50', 7);
+  const end = Math.min(list.length, shopTop + SHOP_VIS);
+  list.slice(shopTop, end).forEach((it, r) => {
+    const i = shopTop + r;
+    const oy = 38 + r * 22;
+    if (i === shopIdx) text('>', 16, oy, '#a34537', 7);
     const owned = it.key === 'orb' ? orbs : it.key === 'bike' ? (flags.bike ? 1 : 0) : items[it.key];
-    text(it.name + '  ' + it.price + 'c', 34, oy, '#20242c', 7);
-    text('own x' + owned, 170, oy, '#4c5c50', 7);
-    text(it.desc, 34, oy + 9, '#8a8570', 7);
+    text(it.name + '  ' + it.price + 'c', 26, oy, '#20242c', 7);
+    text('own x' + owned, 182, oy, '#4c5c50', 7);
+    text(it.desc, 26, oy + 9, '#8a8570', 7);
   });
-  drawBox(14, 130, 212, 18);
-  text(shopMsg || 'A: buy   B: back', 24, 135, shopMsg ? '#2c5a41' : '#4c5c50', 7);
+  if (shopTop > 0) text('^ more', 190, 30, '#a34537', 7);
+  if (end < list.length) text('v more', 190, 119, '#a34537', 7);
+  drawBox(8, 132, 224, 18);
+  text((shopMsg || 'A: buy   B: back').slice(0, 46), 18, 137, shopMsg ? '#2c5a41' : '#4c5c50', 7);
 }
 
 function drawInfo() {
