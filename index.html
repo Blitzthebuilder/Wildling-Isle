@@ -2122,17 +2122,39 @@ function switchTo(idx, forced) {
     battle.q = q; battle.phase = 'text'; nextText();
   }
 }
+function nearestHeal() {
+  // closest standing spot beside a campfire or cabin in the current area
+  let best = null, bd = 1e9;
+  for (let y = 0; y < A.mh; y++) for (let x = 0; x < A.mw; x++) {
+    const t = A.map[y][x];
+    if (t !== 'c' && t !== 'H') continue;
+    if (!walkable(x, y + 1) || trainerAt(x, y + 1)) continue;
+    const d = Math.abs(x - P.tx) + Math.abs(y + 1 - P.ty);
+    if (d < bd) { bd = d; best = { x, y: y + 1, tile: t }; }
+  }
+  return best;
+}
 function endBattle() {
   const kind = battle.endKind;
   const tr = battle.trainer;
   battle = null;
   mode = 'world';
   if (kind === 'blackout') {
-    area = 'meadow'; A = AREAS.meadow;
-    P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
+    const spot = nearestHeal();
+    if (spot) {
+      P.tx = spot.x; P.ty = spot.y;
+    } else {
+      area = 'meadow'; A = AREAS.meadow;
+      P.tx = START.x; P.ty = START.y;
+    }
+    P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
     party.forEach(m => { m.hp = maxHp(m); m.st = null; });
     orbs = Math.max(orbs, 5);
-    say(['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']);
+    say(spot && spot.tile === 'c'
+      ? ['You come to beside a crackling campfire.', 'Your team is rested. Take it slow out there!']
+      : area === 'meadow'
+        ? ['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']
+        : ['You are carried inside and patched up.', 'Take it slow out there!']);
   } else if (kind === 'win' && tr) {
     if (tr.flag) flags[tr.flag] = true;
     say(tr.win);
