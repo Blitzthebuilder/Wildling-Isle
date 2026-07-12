@@ -149,6 +149,7 @@
       <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> cycles team &rarr; Wildling-dex &rarr; Ranch.<br>
       Your team holds 6 Wildlings &mdash; extra catches go to <b>Doc Bramble's Ranch</b>, where you can deposit and withdraw team members anytime.<br>
       Battles pay <b>coins</b> &mdash; spend them at the cabin or campfires on orbs, Sweet Berries, and <b>Bramble Jam</b> (full heal + cure). Watch out for <b>Burn</b>, <b>Shock</b>, and being put <b>On Ice</b>!<br>
+      A full moveset means choices: when a 5th move comes along, <b>you</b> decide what to forget &mdash; and the ancient <b>obelisk</b> in the meadow lets Wildlings remember moves they gave up.<br>
       Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
       Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!<br>
@@ -1164,7 +1165,7 @@ const AREAS = {
       'T......=..,,,,,........T...T',
       'T..T...=..,,,,,............T',
       'T......=..,,,,,............T',
-      'T......=...................T',
+      'T......=............O......T',
       'T......====................T',
       'T.......HH=....F..F........T',
       'T.......HH=..F.F.F.........T',
@@ -1306,7 +1307,7 @@ for (const k in AREAS) {
   a.map = a.raw.map(r => r.padEnd(MW, r[0]).slice(0, MW));
   a.mh = a.raw.length;
 }
-const SOLID = 'T~HSRc';
+const SOLID = 'T~HSRcO';
 const START = { x: 9, y: 18 };
 /* elemental bird spawns: unlocked by gate, rolled per grass encounter;
    secret — hoarding charm orbs above lureOrbs quadruples the rate */
@@ -1342,6 +1343,9 @@ const SHOP = [
   { key: 'jam',   name: 'Bramble Jam', price: 60, desc: 'full heal + cures any status' }
 ];
 let restIdx = 0, shopIdx = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
+let pendingLearns = [];       // [{m, mv}] move-learning decisions awaiting the player
+let lrnIdx = 0;               // cursor on the forget-a-move screen
+let obIdx = 0, obMv = 0, obList = [];   // obelisk: mon cursor, move cursor, relearnable moves
 let rnCol = 0, rnIdx = 0;     // ranch screen cursor: column (0 team, 1 ranch) + row
 let rmsg = null;              // ranch screen notice { t, until }
 const markSeen = sp => { if (!dex[sp]) dex[sp] = 1; };
@@ -1578,8 +1582,10 @@ function levelUpMon(m, q) {
 }
 function learnMove(m, mv, q) {
   if (m.moves.includes(mv)) return;
-  if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
-  else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
+  if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); return; }
+  if (pendingLearns.some(p => p.m === m && p.mv === mv)) return;
+  pendingLearns.push({ m, mv });
+  if (q) q.push(`${nameOf(m)} wants to learn ${mv}...`);
 }
 function victory(q) {
   const me = curMon(), en = battle.enemy;
@@ -1729,6 +1735,7 @@ function endBattle() {
     say(tr.win);
   }
   save();
+  if (pendingLearns.length) { lrnIdx = 0; mode = 'learn'; }
 }
 
 /* ---------- input ---------- */
@@ -1938,6 +1945,63 @@ function update() {
     return;
   }
 
+  if (mode === 'learn') {
+    const pl = pendingLearns[0];
+    if (!pl) { mode = 'world'; return; }
+    if (tap('up')) { lrnIdx = (lrnIdx + 4) % 5; sMove(); }
+    if (tap('down')) { lrnIdx = (lrnIdx + 1) % 5; sMove(); }
+    if (tap('B')) { lrnIdx = 4; sMove(); }         // jump to GIVE UP (no backing out mid-decision)
+    else if (tap('A')) {
+      sOk();
+      if (lrnIdx < 4) {
+        const old = pl.m.moves[lrnIdx];
+        pl.m.moves[lrnIdx] = pl.mv;
+        say([`${nameOf(pl.m)} forgot ${old}...`, `...and learned ${pl.mv}!`]);
+      } else {
+        say([`${nameOf(pl.m)} gave up on ${pl.mv}.`]);
+      }
+      pendingLearns.shift();
+      lrnIdx = 0;
+      save();
+      if (!pendingLearns.length) mode = 'world';
+    }
+    return;
+  }
+
+  if (mode === 'obeliskMon') {
+    if (tap('up')) { obIdx = (obIdx + party.length - 1) % party.length; sMove(); }
+    if (tap('down')) { obIdx = (obIdx + 1) % party.length; sMove(); }
+    if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
+    else if (tap('A')) {
+      sOk();
+      const m = party[obIdx];
+      obList = [...new Set(SPECIES[m.sp].learn.filter(l => l[0] <= m.level && !m.moves.includes(l[1])).map(l => l[1]))];
+      if (!obList.length) say([nameOf(m) + ' already remembers all it can.']);
+      else { obMv = 0; mode = 'obeliskMove'; }
+    }
+    return;
+  }
+
+  if (mode === 'obeliskMove') {
+    if (tap('up')) { obMv = (obMv + obList.length - 1) % obList.length; sMove(); }
+    if (tap('down')) { obMv = (obMv + 1) % obList.length; sMove(); }
+    if (tap('B')) { sBack(); mode = 'obeliskMon'; }
+    else if (tap('A')) {
+      sOk();
+      const m = party[obIdx], mv = obList[obMv];
+      if (m.moves.length < 4) {
+        m.moves.push(mv);
+        save();
+        mode = 'world';
+        say(['The obelisk glows softly...', nameOf(m) + ' remembered ' + mv + '!']);
+      } else {
+        pendingLearns.push({ m, mv });
+        lrnIdx = 0; mode = 'learn';
+      }
+    }
+    return;
+  }
+
   if (mode === 'rest') {
     if (tap('up')) { restIdx = (restIdx + 2) % 3; sMove(); }
     if (tap('down')) { restIdx = (restIdx + 1) % 3; sMove(); }
@@ -2010,6 +2074,7 @@ function update() {
           m.hp = maxHp(m);
           devMsg = nameOf(m) + ' is now ' + SPECIES[m.sp].name + ' L' + m.level;
           save();
+          if (pendingLearns.length) { lrnIdx = 0; mode = 'learn'; }
         }
       } else if (devIdx === 3) {
         flags.gate1 = flags.gate2 = flags.champion = true; championSeen = true;
@@ -2060,6 +2125,10 @@ function update() {
       if (t === 'H' || t === 'c') {
         restSpot = t === 'H' ? 'cabin' : 'camp';
         restIdx = 0; shopMsg = null; mode = 'rest'; sOk();
+        return;
+      }
+      if (t === 'O') {
+        obIdx = 0; mode = 'obeliskMon'; sOk();
         return;
       }
       if (t === 'S') {
@@ -2257,6 +2326,13 @@ function drawTile(t, x, y, sx, sy) {
     const f = Math.floor(frame / 12) % 2;
     px(sx + 12, sy + 10, 3, 3, f ? '#e8b84b' : '#e2573d');
     px(sx + 12, sy + 13, 3, 1, '#3a3f36');
+  } else if (t === 'O') {
+    px(sx + 5, sy + 2, 6, 12, '#8a8fa0');
+    px(sx + 6, sy + 1, 4, 1, '#a6acc0');
+    px(sx + 4, sy + 14, 8, 2, '#5a5f70');
+    const g = Math.floor(frame / 15) % 2;
+    px(sx + 7, sy + 4, 2, 2, g ? '#a678d4' : '#d3b3f0');
+    px(sx + 7, sy + 8, 2, 2, g ? '#d3b3f0' : '#a678d4');
   } else if (t === '1' || t === '2') {
     px(sx + 2, sy + 2, 12, 12, '#2a2e28');
     px(sx + 4, sy + 4, 8, 10, '#111511');
@@ -2434,6 +2510,42 @@ function drawTeamItemBox() {
     if (i === tiIdx) text('>', 136, oy, '#a34537', 7);
     text(o, 146, oy, '#20242c', 7);
   });
+}
+
+function drawLearn() {
+  const pl = pendingLearns[0];
+  if (!pl) return;
+  px(0, 0, 240, 160, 'rgba(16,22,18,.94)');
+  const nu = MOVES[pl.mv];
+  text(nameOf(pl.m) + ' wants to learn', 12, 6, '#e8b84b');
+  text(pl.mv, 12, 18, TYPE_COL[nu.type]);
+  text(nu.type + '  PWR ' + nu.pow + '  ACC ' + nu.acc, 100, 20, TYPE_COL[nu.type], 7);
+  text('Forget which move?', 12, 34, '#8fa396', 7);
+  pl.m.moves.forEach((mv, i) => {
+    const d = MOVES[mv], y = 48 + i * 15;
+    if (i === lrnIdx) { px(8, y - 2, 224, 13, 'rgba(232,184,75,.2)'); text('>', 10, y, '#e8b84b', 7); }
+    text(mv, 20, y, '#f6f2e2', 7);
+    text(d.type, 104, y, TYPE_COL[d.type], 7);
+    text('PWR ' + d.pow + '  ACC ' + d.acc, 152, y, '#cfe3d2', 7);
+  });
+  const gy = 48 + 4 * 15;
+  if (lrnIdx === 4) { px(8, gy - 2, 224, 13, 'rgba(232,184,75,.2)'); text('>', 10, gy, '#e8b84b', 7); }
+  text('GIVE UP LEARNING ' + pl.mv, 20, gy, '#e2573d', 7);
+  text('UP/DOWN choose, A confirm', 12, 146, '#4c5c50', 7);
+}
+
+function drawObeliskMove() {
+  px(0, 0, 240, 160, 'rgba(20,16,26,.95)');
+  const m = party[obIdx];
+  text(nameOf(m) + ' can remember:', 12, 8, '#e8b84b');
+  obList.forEach((mv, i) => {
+    const d = MOVES[mv], y = 26 + i * 15;
+    if (i === obMv) { px(8, y - 2, 224, 13, 'rgba(232,184,75,.2)'); text('>', 10, y, '#e8b84b', 7); }
+    text(mv, 20, y, '#f6f2e2', 7);
+    text(d.type, 104, y, TYPE_COL[d.type], 7);
+    text('PWR ' + d.pow + '  ACC ' + d.acc, 152, y, '#cfe3d2', 7);
+  });
+  text('A: remember   B: back', 12, 146, '#8fa396', 7);
 }
 
 function drawRest() {
@@ -2632,6 +2744,13 @@ function draw() {
   else if (mode === 'teamitem') { drawTeamList(teamIdx, false); drawTeamItemBox(); }
   else if (mode === 'rest') { drawWorld(); drawRest(); }
   else if (mode === 'shop') { drawWorld(); drawShop(); }
+  else if (mode === 'learn') drawLearn();
+  else if (mode === 'obeliskMon') {
+    drawTeamList(obIdx, true);
+    drawBox(4, 140, 232, 18);
+    text('THE OBELISK: who should remember?', 12, 145, '#20242c', 7);
+  }
+  else if (mode === 'obeliskMove') drawObeliskMove();
   else if (mode === 'info') drawInfo();
   else if (mode === 'dex') drawDex(dexIdx);
   else if (mode === 'ranch') drawRanch();
@@ -2663,6 +2782,7 @@ window.DBG = {
     flags: JSON.parse(JSON.stringify(flags)),
     dlg: dlg ? dlg.lines[dlg.i] : null,
     teamMenu: tmMenu, teamSel: tmSel,
+    pendingLearns: pendingLearns.map(p => ({ sp: p.m.sp, mv: p.mv })),
     battlePhase: battle && battle.phase,
     battleText: battle && battle.cur,
     battleVi: battle && battle.vi,
