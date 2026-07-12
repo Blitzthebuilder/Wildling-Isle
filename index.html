@@ -1464,7 +1464,7 @@ function startBattle(enemy) {
   const q = [];
   battle = {
     enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
-    q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled,
+    q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: enemy.hp
   };
@@ -1481,7 +1481,7 @@ function startTrainerBattle(tr) {
   const q = [];
   battle = {
     enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
-    q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled,
+    q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: tr.party[0].hp
   };
@@ -1493,14 +1493,24 @@ function startTrainerBattle(tr) {
 function nextText() {
   if (battle.q.length) {
     const e = battle.q.shift();
-    if (typeof e === 'string') { battle.cur = e; battle.fx = null; }
-    else {
-      battle.cur = e.s;
-      battle.fx = Object.assign({ t0: battle.age }, e.fx);
-      const fx = battle.fx;
+    const fx = typeof e === 'string' ? null : e.fx;
+    battle.cur = typeof e === 'string' ? e : e.s;
+    battle.fx = (fx && !fxDisabled) ? Object.assign({ t0: battle.age }, fx) : null;
+    if (fx) {
+      // side effects fire when the line is SHOWN, so outcomes aren't spoiled early
       if (fx.kind === 'sendIn') { if (fx.side === 'en') battle.enGone = false; else battle.meGone = false; }
-      else if (fx.kind === 'catchOk') battle.enGone = true;
       else if (fx.kind === 'burst') battle.enGone = false;
+      else if (fx.kind === 'faint' && fxDisabled) { if (fx.side === 'en') battle.enGone = true; else battle.meGone = true; }
+      else if (fx.kind === 'catchOk') {
+        battle.enGone = true;
+        sCatch();
+        if (battle.nickFor) {
+          const caught = battle.nickFor;
+          battle.nickFor = null;
+          const nick = askNick('Caught ' + SPECIES[caught.sp].name + '! Give it a nickname? (blank = no)');
+          if (nick !== undefined) caught.nick = nick;
+        }
+      }
     }
     return;
   }
@@ -1523,7 +1533,7 @@ const effSpd = m => Math.floor(stat(m, 'spd') / (m.st === 'chl' ? 2 : 1));
 /* ---------- battle fx ---------- */
 let fxParts = [];             // impact particles {x,y,vx,vy,life,col}
 let fxDisabled = false;       // headless tests switch animations off
-function pushFx(q, s, fx) { q.push(fxDisabled ? s : { s, fx }); }
+function pushFx(q, s, fx) { q.push({ s, fx }); }
 function spawnParts(cx, cy, col, n) {
   for (let i = 0; i < (n || 10); i++) {
     fxParts.push({ x: cx, y: cy, vx: (Math.random() - 0.5) * 3.4, vy: -Math.random() * 2.6, life: 14 + ri(10), col });
@@ -1673,18 +1683,15 @@ function tryCatch() {
   const w = ok ? 3 : 1 + ri(2);            // caught = 3 wobbles; escapes break out after 1-2
   pushFx(q, 'You toss a Charm Orb...', { kind: 'toss', w, dur: 52 + w * 34, block: 1 });
   if (ok) {
-    sCatch();
     if (party.length < 6) {
       party.push(en);
       markCaught(en.sp);
-      const nick = askNick('Caught ' + SPECIES[en.sp].name + '! Give it a nickname? (blank = no)');
-      if (nick !== undefined) en.nick = nick;
+      battle.nickFor = en;    // prompt fires when the Gotcha line is shown, not now
       pushFx(q, `Gotcha! ${nameOf(en)} joined your team!`, { kind: 'catchOk', dur: 20 });
     } else if (ranch.length < RANCH_MAX) {
       ranch.push(en);
       markCaught(en.sp);
-      const nick = askNick('Caught ' + SPECIES[en.sp].name + '! Give it a nickname? (blank = no)');
-      if (nick !== undefined) en.nick = nick;
+      battle.nickFor = en;
       pushFx(q, `Gotcha! Your team is full, so ${nameOf(en)}`, { kind: 'catchOk', dur: 20 });
       q.push("was sent to Doc Bramble's Ranch!");
     } else {
