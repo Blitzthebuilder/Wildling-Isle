@@ -148,6 +148,7 @@
     <p>
       <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> cycles team &rarr; Wildling-dex &rarr; Ranch.<br>
       Your team holds 6 Wildlings &mdash; extra catches go to <b>Doc Bramble's Ranch</b>, where you can deposit and withdraw team members anytime.<br>
+      Battles pay <b>coins</b> &mdash; spend them at the cabin or campfires on orbs, Sweet Berries, and <b>Bramble Jam</b> (full heal + cure). Watch out for <b>Burn</b>, <b>Shock</b>, and being put <b>On Ice</b>!<br>
       Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
       Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!<br>
@@ -857,6 +858,90 @@ const ART = {
     '...vv..vv...',
     '............'
   ],
+  sporeling: [
+    '....RRRR....',
+    '..RRRRRRRR..',
+    '.RRwRRRRwRR.',
+    '.RRRRRRRRRR.',
+    '..RRRRRRRR..',
+    '....NNNN....',
+    '...NkNNkN...',
+    '...NNNNNN...',
+    '....NNNN....',
+    '....N..N....',
+    '............',
+    '............'
+  ],
+  shroombler: [
+    '...RRRRRR...',
+    '..RRwRRwRR..',
+    '.RRRRRRRRRR.',
+    '.RwRRRRRRwR.',
+    '..RRRRRRRR..',
+    '...NNNNNN...',
+    '..NNkNNkNN..',
+    '..NNNNNNNN..',
+    '..NNNNNNNN..',
+    '...NN..NN...',
+    '...GG..GG...',
+    '............'
+  ],
+  mycolossus: [
+    '.G..RRRR..G.',
+    '..RRRRRRRR..',
+    '.RRwRRRRwRR.',
+    'RRRRRRRRRRRR',
+    'RwRRRRRRRRwR',
+    '.RRRRRRRRRR.',
+    '...NNNNNN...',
+    '..NNkNNkNN..',
+    '..NNNNNNNN..',
+    '.G.NNNNNN.G.',
+    '...NN..NN...',
+    '............'
+  ],
+  emberoc: [
+    '.R...rr...R.',
+    '.RR.rrrr.RR.',
+    'RRRrrkkrrRRR',
+    '.RRrrrrrrRR.',
+    '..rrryyrrr..',
+    '..rryyyyrr..',
+    '...rrrrrr...',
+    '....rrrr....',
+    '...r.rr.r...',
+    '....e..e....',
+    '............',
+    '............'
+  ],
+  voltalon: [
+    '.k...ee...k.',
+    '.ke.eeee.ek.',
+    'eeeeekkeeeee',
+    '.eeeeeeeeee.',
+    '..eewwwwee..',
+    '..ewwwwwwe..',
+    '...eeeeee...',
+    '....eeee....',
+    '...e.ee.e...',
+    '....k..k....',
+    '............',
+    '............'
+  ],
+  tidewing: [
+    '.B...cc...B.',
+    '.BB.cccc.BB.',
+    'BBBcckkccBBB',
+    '.BBccccccBB.',
+    '..ccCCCCcc..',
+    '..cCCCCCCc..',
+    '...cccccc...',
+    '....cccc....',
+    '...c.cc.c...',
+    '....C..C....',
+    '............',
+    '............'
+  ],
   sylvarch: [
     '.G.n....n.G.',
     '..Gn....nG..',
@@ -1015,6 +1100,20 @@ const SPECIES = {
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash']], blurb:'the veiled seer' },
   oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08,
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' },
+  /* mushroom line */
+  sporeling:  { name:'Sporeling',  type:'Flora', base:{hp:46,atk:44,def:50,spd:32}, catch:.75, evolve:{at:12,to:'shroombler'},
+                learn:[[1,'Moss Wrap'],[4,'Leaf Flick']], blurb:'the shy spore' },
+  shroombler: { name:'Shroombler', type:'Flora', base:{hp:60,atk:58,def:66,spd:40}, catch:.3, evolve:{at:24,to:'mycolossus'},
+                learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap']], blurb:'the toadstool twins' },
+  mycolossus: { name:'Mycolossus', type:'Flora', base:{hp:80,atk:72,def:84,spd:48}, catch:.12,
+                learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap'],[24,'Thorn Storm']], blurb:'the fungal titan' },
+  /* elemental birds — pseudo-legendaries, rare mid-game spawns after gate 1 */
+  emberoc:    { name:'Emberoc',    type:'Ember', base:{hp:78,atk:84,def:72,spd:92}, catch:.17,
+                learn:[[1,'Singe'],[1,'Wing Flick'],[1,'Flame Burst'],[26,'Inferno']], blurb:'the cinder roc' },
+  voltalon:   { name:'Voltalon',   type:'Spark', base:{hp:74,atk:86,def:70,spd:96}, catch:.17,
+                learn:[[1,'Static Zap'],[1,'Wing Flick'],[1,'Volt Storm'],[26,'Slam']], blurb:'the storm talon' },
+  tidewing:   { name:'Tidewing',   type:'Tide',  base:{hp:82,atk:80,def:76,spd:90}, catch:.17,
+                learn:[[1,'Splash Jet'],[1,'Wing Flick'],[1,'Tide Surge'],[26,'Riptide']], blurb:'the wave rider' },
   /* legendary — found only by those who know where to look */
   sylvarch:   { name:'Sylvarch',   type:'Mystic', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
                 learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' }
@@ -1025,7 +1124,7 @@ function maxHp(m) { return Math.floor(SPECIES[m.sp].base.hp * m.level / 18) + m.
 function stat(m, k) { return Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4; }
 function movesFor(sp, lvl) { return SPECIES[sp].learn.filter(l => l[0] <= lvl).map(l => l[1]).slice(-4); }
 function makeMon(sp, lvl) {
-  const m = { sp, level: lvl, xp: 0 };
+  const m = { sp, level: lvl, xp: 0, st: null };
   m.hp = maxHp(m);
   m.moves = movesFor(sp, lvl);
   return m;
@@ -1038,7 +1137,8 @@ const DEX_ORDER = [
   'mossling','mossoak','eldermoss','bubbet','bubblun','geyserun',
   'flarepup','scorchound','pyrewolf','finlet','marfin','leviafin','petalit','thistlash','verdantis',
   'statikit','voltcat','thunderlynx','breezel','cyclonet','tempestrel','shalecub','bouldbear','terragrizz',
-  'wispurr','mystifur','oraclaw','sylvarch'
+  'wispurr','mystifur','oraclaw',
+  'sporeling','shroombler','mycolossus','emberoc','voltalon','tidewing','sylvarch'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -1074,7 +1174,8 @@ const AREAS = {
       'T,,,,,.........,,,,,,......T',
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
     ],
-    wilds: ['puffowl','puffowl','zapmite','zapmite','rockit','rockit','mossling','mossling','bubbet','bubbet','flarepup','flarepup','petalit','petalit','wispurr'], lvl: [2, 7],
+    wilds: ['puffowl','puffowl','zapmite','zapmite','rockit','rockit','mossling','mossling','bubbet','bubbet','flarepup','flarepup','petalit','petalit','sporeling','sporeling','wispurr'], lvl: [2, 7],
+    bird: 'voltalon',
     exits: { '1': { to:'cavern', x:1, y:10 } },
     gate: {
       x:26, y:7, flag:'gate1',
@@ -1124,7 +1225,8 @@ const AREAS = {
       'R..........................R',
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRR'
     ],
-    wilds: ['zapmite','zapmite','rockit','rockit','mossling','bubbet','voltmite','boulderit','statikit','statikit','shalecub','shalecub','flarepup','wispurr'], lvl: [8, 14],
+    wilds: ['zapmite','zapmite','rockit','rockit','mossling','bubbet','voltmite','boulderit','statikit','statikit','shalecub','shalecub','flarepup','sporeling','shroombler','wispurr'], lvl: [8, 14],
+    bird: 'emberoc',
     exits: { '1': { to:'meadow', x:25, y:7 }, '2': { to:'shore', x:1, y:18 } },
     gate: {
       x:26, y:10, flag:'gate2',
@@ -1173,6 +1275,7 @@ const AREAS = {
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTT'
     ],
     wilds: ['puffowl','bubbet','bubbet','rockit','galehoot','bubblun','mossoak','finlet','finlet','breezel','breezel','marfin','cyclonet','wispurr','mystifur'], lvl: [13, 19],
+    bird: 'tidewing',
     exits: { '1': { to:'cavern', x:25, y:10 } },
     gate: {
       x:13, y:2, flag:'champion',
@@ -1228,6 +1331,14 @@ const RANCH_MAX = 30;
 let tmMenu = -1;              // team submenu option index (-1 = closed)
 let tmSel = -1;               // mon picked for a switch (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
+let coins = 0;
+let items = { berry: 0, jam: 0 };
+const SHOP = [
+  { key: 'orb',   name: 'Charm Orb',   price: 10, desc: 'befriends weakened Wildlings' },
+  { key: 'berry', name: 'Sweet Berry', price: 15, desc: 'restores 40 HP in battle' },
+  { key: 'jam',   name: 'Bramble Jam', price: 60, desc: 'full heal + cures any status' }
+];
+let restIdx = 0, shopIdx = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
 let rnCol = 0, rnIdx = 0;     // ranch screen cursor: column (0 team, 1 ranch) + row
 let rmsg = null;              // ranch screen notice { t, until }
 const markSeen = sp => { if (!dex[sp]) dex[sp] = 1; };
@@ -1255,7 +1366,7 @@ const DEV_OPTS = ['HEAL + 99 ORBS', 'GIVE WILDLING', 'LEAD +5 LEVELS', 'UNLOCK P
 let championSeen = false;
 function saveData() {
   return {
-    v: 4, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex,
+    v: 5, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex, coins, items,
     party: party.map(packMon),
     ranch: ranch.map(packMon)
   };
@@ -1264,8 +1375,8 @@ function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveData())); } catch (e) {}
   if (flags.champion) championSeen = true;
 }
-const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null });
-const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null });
+const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null });
+const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null });
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
 function applyData(d) {
   if (!d || !d.party || !d.party.length) return false;
@@ -1278,6 +1389,8 @@ function applyData(d) {
   flags = (d.v >= 2 && d.flags) ? d.flags : {};
   chosen = (d.v >= 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
   dex = (d.v >= 3 && d.dex) ? d.dex : {};
+  coins = (d.v >= 5 && d.coins != null) ? d.coins : 25;
+  items = (d.v >= 5 && d.items) ? { berry: d.items.berry | 0, jam: d.items.jam | 0 } : { berry: 1, jam: 0 };
   party.forEach(m => markCaught(m.sp));
   P.tx = clamp(d.tx | 0, 1, MW - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
   P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
@@ -1342,7 +1455,7 @@ function startBattle(enemy) {
   battle = {
     enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
     q: [`A wild ${nameOf(enemy)} appeared!`, `Go, ${nameOf(party[ai])}!`],
-    cur: null, mi: 0, vi: 0, ti: 0, forced: false,
+    cur: null, mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: enemy.hp
   };
   nextText();
@@ -1355,7 +1468,7 @@ function startTrainerBattle(tr) {
   battle = {
     enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
     q: [`${tr.name} wants to battle!`, `${tr.name} sent out ${nameOf(tr.party[0])}!`, `Go, ${nameOf(party[ai])}!`],
-    cur: null, mi: 0, vi: 0, ti: 0, forced: false,
+    cur: null, mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: tr.party[0].hp
   };
   nextText();
@@ -1368,6 +1481,15 @@ function nextText() {
   if (a === 'forceTeam') { battle.phase = 'team'; battle.forced = true; battle.ti = 0; return; }
   battle.phase = a;
 }
+const ST = {
+  brn: { tag: 'BRN', col: '#e2573d' },
+  shk: { tag: 'SHK', col: '#d8b23c' },
+  chl: { tag: 'ICE', col: '#5cb8e6' }
+};
+const INFLICT = { Ember: ['brn', 0.2], Spark: ['shk', 0.25], Tide: ['chl', 0.2] };
+const ST_MSG = { brn: 'was burned!', shk: 'is shocked!', chl: 'was put on ice!' };
+const effSpd = m => Math.floor(stat(m, 'spd') / (m.st === 'chl' ? 2 : 1));
+
 function atkStep(a, d, mvName, q) {
   const mv = MOVES[mvName];
   q.push(`${nameOf(a)} used ${mvName}!`);
@@ -1380,6 +1502,21 @@ function atkStep(a, d, mvName, q) {
   sHit();
   if (mult > 1) q.push("It's super effective!");
   if (mult < 1) q.push("It's not very effective...");
+  const inf = INFLICT[mv.type];
+  if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
+    d.st = inf[0];
+    q.push(`${nameOf(d)} ${ST_MSG[d.st]}`);
+  }
+}
+function actOnce(a, d, mvName, q) {
+  if (a.st === 'shk' && Math.random() < 0.3) { q.push(`${nameOf(a)} is shocked and can't move!`); return; }
+  atkStep(a, d, mvName, q);
+}
+function burnTick(m, q) {
+  if (m.st === 'brn' && m.hp > 0) {
+    m.hp = Math.max(0, m.hp - Math.max(1, Math.floor(maxHp(m) / 12)));
+    q.push(`${nameOf(m)} is hurt by its burn!`);
+  }
 }
 function checkOutcome(q) {
   const me = curMon(), en = battle.enemy;
@@ -1406,12 +1543,13 @@ function checkOutcome(q) {
 function doRound(myMoveName) {
   const me = curMon(), en = battle.enemy;
   const enMv = en.moves[ri(en.moves.length)];
-  const meFirst = stat(me, 'spd') >= stat(en, 'spd');
+  const meFirst = effSpd(me) >= effSpd(en);
   const order = meFirst ? [[me, en, myMoveName], [en, me, enMv]] : [[en, me, enMv], [me, en, myMoveName]];
   const q = [];
   for (const [a, d, mv] of order) {
-    if (a.hp > 0 && d.hp > 0) atkStep(a, d, mv, q);
+    if (a.hp > 0 && d.hp > 0) actOnce(a, d, mv, q);
   }
+  burnTick(me, q); burnTick(en, q);
   checkOutcome(q);
 }
 function levelUpMon(m, q) {
@@ -1445,6 +1583,9 @@ function victory(q) {
   const gain = en.level * (battle.trainer ? 26 : 18);
   me.xp += gain;
   q.push(`${nameOf(me)} gained ${gain} XP!`);
+  const pay = en.level * (battle.trainer ? 3 : 1);
+  coins += pay;
+  q.push(`Found ${pay} coins!`);
   while (me.xp >= xpNeed(me.level)) {
     me.xp -= xpNeed(me.level);
     levelUpMon(me, q);
@@ -1505,7 +1646,8 @@ function tryCatch() {
   } else {
     q.push(`Oh no! ${nameOf(en)} broke free!`);
     const me = curMon();
-    atkStep(en, me, en.moves[ri(en.moves.length)], q);
+    actOnce(en, me, en.moves[ri(en.moves.length)], q);
+    burnTick(me, q); burnTick(en, q);
     checkOutcome(q);
   }
 }
@@ -1525,9 +1667,32 @@ function tryRun() {
   } else {
     q.push("Can't escape!");
     const me = curMon(), en = battle.enemy;
-    atkStep(en, me, en.moves[ri(en.moves.length)], q);
+    actOnce(en, me, en.moves[ri(en.moves.length)], q);
+    burnTick(me, q); burnTick(en, q);
     checkOutcome(q);
   }
+}
+function useItem(kind) {
+  const me = curMon(), en = battle.enemy;
+  const q = [];
+  const noTurn = () => { battle.after = 'menu'; battle.q = q; battle.phase = 'text'; nextText(); };
+  if (kind === 'berry') {
+    if (items.berry <= 0) { q.push('No Sweet Berries left!'); return noTurn(); }
+    if (me.hp >= maxHp(me)) { q.push('It would have no effect!'); return noTurn(); }
+    items.berry--;
+    me.hp = Math.min(maxHp(me), me.hp + 40);
+    q.push(`${nameOf(me)} munched the Sweet Berry!`);
+  } else {
+    if (items.jam <= 0) { q.push('No Bramble Jam left!'); return noTurn(); }
+    if (me.hp >= maxHp(me) && !me.st) { q.push('It would have no effect!'); return noTurn(); }
+    items.jam--;
+    me.hp = maxHp(me); me.st = null;
+    sCatch();
+    q.push(`${nameOf(me)} is fully restored by the Bramble Jam!`);
+  }
+  actOnce(en, me, en.moves[ri(en.moves.length)], q);
+  burnTick(me, q); burnTick(en, q);
+  checkOutcome(q);
 }
 function switchTo(idx, forced) {
   const q = [];
@@ -1537,7 +1702,8 @@ function switchTo(idx, forced) {
   q.push(`Go, ${nameOf(party[idx])}!`);
   if (!forced) {
     const me = curMon(), en = battle.enemy;
-    atkStep(en, me, en.moves[ri(en.moves.length)], q);
+    actOnce(en, me, en.moves[ri(en.moves.length)], q);
+    burnTick(me, q); burnTick(en, q);
     checkOutcome(q);
   } else {
     battle.after = 'menu';
@@ -1552,7 +1718,7 @@ function endBattle() {
   if (kind === 'blackout') {
     area = 'meadow'; A = AREAS.meadow;
     P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
-    party.forEach(m => { m.hp = maxHp(m); });
+    party.forEach(m => { m.hp = maxHp(m); m.st = null; });
     orbs = Math.max(orbs, 5);
     say(['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']);
   } else if (kind === 'win' && tr) {
@@ -1623,7 +1789,7 @@ function gateChallenge() {
   say(g.intro, () => startTrainerBattle({ name: 'BRIAR', party: g.party(), i: 0, flag: g.flag, win: g.win }));
 }
 function healParty(lines) {
-  party.forEach(m => { m.hp = maxHp(m); });
+  party.forEach(m => { m.hp = maxHp(m); m.st = null; });
   orbs = Math.max(orbs, 5);
   sCatch();
   say(lines, save);
@@ -1668,6 +1834,8 @@ function update() {
       flags = {};
       dex = {};
       ranch = [];
+      coins = 30;
+      items = { berry: 2, jam: 0 };
       markCaught(sp);
       area = 'meadow'; A = AREAS.meadow;
       P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
@@ -1683,15 +1851,16 @@ function update() {
   }
 
   if (mode === 'team') {
-    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / RENAME / BACK
-      if (tap('up')) { tmMenu = (tmMenu + 3) % 4; sMove(); }
-      if (tap('down')) { tmMenu = (tmMenu + 1) % 4; sMove(); }
+    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / ITEM / RENAME / BACK
+      if (tap('up')) { tmMenu = (tmMenu + 4) % 5; sMove(); }
+      if (tap('down')) { tmMenu = (tmMenu + 1) % 5; sMove(); }
       if (tap('B')) { sBack(); tmMenu = -1; }
       else if (tap('A')) {
         sOk();
         if (tmMenu === 0) { tmSel = teamIdx; tmMenu = -1; }
         else if (tmMenu === 1) { infoIdx = teamIdx; mode = 'info'; tmMenu = -1; }
-        else if (tmMenu === 2) {
+        else if (tmMenu === 2) { tiIdx = 0; mode = 'teamitem'; tmMenu = -1; }
+        else if (tmMenu === 3) {
           const m = party[teamIdx];
           const nick = askNick('Nickname for ' + SPECIES[m.sp].name + '?', m.nick || '');
           if (nick !== undefined) { m.nick = nick; save(); }
@@ -1766,6 +1935,60 @@ function update() {
     return;
   }
 
+  if (mode === 'rest') {
+    if (tap('up')) { restIdx = (restIdx + 2) % 3; sMove(); }
+    if (tap('down')) { restIdx = (restIdx + 1) % 3; sMove(); }
+    if (tap('B')) { sBack(); mode = 'world'; }
+    else if (tap('A')) {
+      sOk();
+      if (restIdx === 0) {
+        mode = 'world';
+        healParty(restSpot === 'cabin'
+          ? ['Doc Bramble welcomes you in.', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']
+          : ['You rest by the crackling campfire...', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']);
+      } else if (restIdx === 1) { shopIdx = 0; shopMsg = null; mode = 'shop'; }
+      else mode = 'world';
+    }
+    return;
+  }
+
+  if (mode === 'shop') {
+    if (tap('up')) { shopIdx = (shopIdx + SHOP.length - 1) % SHOP.length; sMove(); }
+    if (tap('down')) { shopIdx = (shopIdx + 1) % SHOP.length; sMove(); }
+    if (tap('B') || tap('C')) { sBack(); mode = 'rest'; }
+    else if (tap('A')) {
+      const it = SHOP[shopIdx];
+      if (coins >= it.price) {
+        coins -= it.price;
+        if (it.key === 'orb') orbs++; else items[it.key]++;
+        shopMsg = 'Bought ' + it.name + '!';
+        sCatch(); save();
+      } else { shopMsg = 'Not enough coins!'; sBack(); }
+    }
+    return;
+  }
+
+  if (mode === 'teamitem') {
+    if (tap('up')) { tiIdx = (tiIdx + 2) % 3; sMove(); }
+    if (tap('down')) { tiIdx = (tiIdx + 1) % 3; sMove(); }
+    if (tap('B')) { sBack(); mode = 'team'; }
+    else if (tap('A')) {
+      sOk();
+      const m = party[teamIdx];
+      if (tiIdx === 0) {
+        if (items.berry <= 0) say(['No Sweet Berries left!']);
+        else if (m.hp >= maxHp(m)) say(['It would have no effect!']);
+        else { items.berry--; m.hp = Math.min(maxHp(m), m.hp + 40); sCatch(); save(); say([nameOf(m) + ' munched the Sweet Berry!']); }
+      } else if (tiIdx === 1) {
+        if (items.jam <= 0) say(['No Bramble Jam left!']);
+        else if (m.hp >= maxHp(m) && !m.st) say(['It would have no effect!']);
+        else { items.jam--; m.hp = maxHp(m); m.st = null; sCatch(); save(); say([nameOf(m) + ' is fully restored by the Bramble Jam!']); }
+      }
+      mode = 'team';
+    }
+    return;
+  }
+
   if (mode === 'dev') {
     if (tap('up')) { devIdx = (devIdx + DEV_OPTS.length - 1) % DEV_OPTS.length; sMove(); }
     if (tap('down')) { devIdx = (devIdx + 1) % DEV_OPTS.length; sMove(); }
@@ -1830,12 +2053,9 @@ function update() {
         else say(['The old tree trembles!', 'A presence uncoils from its roots...'], () => startBattle(makeMon('sylvarch', 32)));
         return;
       }
-      if (t === 'H') {
-        healParty(['Doc Bramble welcomes you in.', 'Your team is fully rested!', 'Charm Orbs restocked to 5.']);
-        return;
-      }
-      if (t === 'c') {
-        healParty(['You rest by the crackling campfire...', 'Your team is fully rested!', 'Charm Orbs restocked to 5.']);
+      if (t === 'H' || t === 'c') {
+        restSpot = t === 'H' ? 'cabin' : 'camp';
+        restIdx = 0; shopMsg = null; mode = 'rest'; sOk();
         return;
       }
       if (t === 'S') {
@@ -1874,9 +2094,13 @@ function update() {
           return;
         }
         if (ch === ',' && Math.random() < 0.12) {
-          const sp = A.wilds[ri(A.wilds.length)];
-          const lvl = A.lvl[0] + ri(A.lvl[1] - A.lvl[0] + 1);
-          startBattle(makeMon(sp, lvl));
+          if (flags.gate1 && A.bird && Math.random() < 0.04) {
+            startBattle(makeMon(A.bird, 28));
+          } else {
+            const sp = A.wilds[ri(A.wilds.length)];
+            const lvl = A.lvl[0] + ri(A.lvl[1] - A.lvl[0] + 1);
+            startBattle(makeMon(sp, lvl));
+          }
         }
       }
     }
@@ -1900,9 +2124,22 @@ function update() {
       if (tap('A')) {
         sOk();
         if (b.mi === 0) { b.vi = 0; b.phase = 'moves'; }
-        else if (b.mi === 1) tryCatch();
+        else if (b.mi === 1) { b.bi = 0; b.phase = 'bag'; }
         else if (b.mi === 2) { b.ti = 0; b.phase = 'team'; b.forced = false; }
         else tryRun();
+      }
+      return;
+    }
+    if (b.phase === 'bag') {
+      if (tap('up')) { b.bi = (b.bi + 3) % 4; sMove(); }
+      if (tap('down')) { b.bi = (b.bi + 1) % 4; sMove(); }
+      if (tap('B')) { sBack(); b.phase = 'menu'; }
+      else if (tap('A')) {
+        sOk();
+        if (b.bi === 0) tryCatch();
+        else if (b.bi === 1) useItem('berry');
+        else if (b.bi === 2) useItem('jam');
+        else b.phase = 'menu';
       }
       return;
     }
@@ -2063,11 +2300,13 @@ function drawWorld() {
 
   if (party.length) {
     const lead = party[0];
-    px(3, 3, 118, 24, 'rgba(20,28,22,.78)');
+    px(3, 3, 118, 31, 'rgba(20,28,22,.78)');
     text(nameOf(lead) + ' L' + lead.level, 7, 6, '#f6f2e2');
     drawBar(7, 17, 62, lead.hp / maxHp(lead));
     text(lead.hp + '/' + maxHp(lead), 74, 14, '#cfe3d2', 7);
     text('Orbs x' + orbs, 74, 21, '#e8b84b', 7);
+    text('Coins ' + coins, 7, 24, '#f5d67b', 7);
+    if (lead.st) text(ST[lead.st].tag, 74, 28, ST[lead.st].col, 7);
   }
   if (banner) {
     if (frame < banner.until) {
@@ -2082,6 +2321,7 @@ function drawMonPlate(x, y, m, disp, showXp) {
   drawBox(x, y, 104, showXp ? 34 : 28);
   text(nameOf(m), x + 6, y + 5, '#20242c');
   text('L' + m.level, x + 80, y + 5, '#4c5c50');
+  if (m.st) text(ST[m.st].tag, x + 58, y + 5, ST[m.st].col, 7);
   drawBar(x + 6, y + 17, 80, disp / maxHp(m));
   if (showXp) {
     px(x + 6, y + 25, 80, 2, '#c9c2a8');
@@ -2110,7 +2350,7 @@ function drawBattle() {
   } else if (b.phase === 'menu') {
     drawBox(4, 112, 232, 44);
     text('What will ' + nameOf(curMon()) + ' do?', 12, 118, '#4c5c50', 7);
-    const opts = ['FIGHT', 'CATCH', 'TEAM', 'RUN'];
+    const opts = ['FIGHT', 'BAG', 'TEAM', 'RUN'];
     opts.forEach((o, i) => {
       const ox = 20 + (i % 2) * 110, oy = 128 + Math.floor(i / 2) * 13;
       if (i === b.mi) text('>', ox - 9, oy, '#a34537');
@@ -2127,6 +2367,15 @@ function drawBattle() {
     const sel = MOVES[mv[b.vi]];
     px(6, 144, 228, 10, '#e6e0cc');
     text(sel.type + '  PWR ' + sel.pow + '  ACC ' + sel.acc, 14, 145, TYPE_COL[sel.type] || '#20242c', 7);
+  } else if (b.phase === 'bag') {
+    drawBox(4, 112, 232, 44);
+    const rows = ['Charm Orb  x' + orbs, 'Sweet Berry  x' + items.berry, 'Bramble Jam  x' + items.jam, 'BACK'];
+    rows.forEach((r, i) => {
+      const oy = 116 + i * 10;
+      if (i === b.bi) text('>', 12, oy, '#a34537', 7);
+      text(r, 22, oy, '#20242c', 7);
+    });
+    text(['toss to befriend', 'restores 40 HP', 'full heal + cure', ''][b.bi], 140, 116 + b.bi * 10, '#4c5c50', 7);
   } else if (b.phase === 'team') {
     drawTeamList(b.ti, true);
   }
@@ -2150,16 +2399,56 @@ function drawTeamList(idx, inBattle) {
     text(m.hp + '/' + maxHp(m), 106, y + 8, '#cfe3d2', 7);
     if (i === 0 && !inBattle) text('LEADER', 176, y + 2, '#8fb69c', 7);
     if (m.hp <= 0) text('FNT', 176, y + 2, '#e2573d', 7);
+    else if (m.st) text(ST[m.st].tag, 210, y + 2, ST[m.st].col, 7);
   });
   if (!inBattle && tmMenu >= 0) {
-    const my = clamp(22 + idx * 22, 14, 96);
-    drawBox(156, my, 76, 62);
-    ['SWITCH', 'INFO', 'RENAME', 'BACK'].forEach((o, i) => {
+    const my = clamp(22 + idx * 22, 14, 84);
+    drawBox(156, my, 76, 74);
+    ['SWITCH', 'INFO', 'ITEM', 'RENAME', 'BACK'].forEach((o, i) => {
       const oy = my + 7 + i * 13;
       if (i === tmMenu) text('>', 162, oy, '#a34537', 7);
       text(o, 172, oy, '#20242c', 7);
     });
   }
+}
+
+function drawTeamItemBox() {
+  const my = clamp(22 + teamIdx * 22, 14, 106);
+  drawBox(130, my, 102, 49);
+  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam, 'BACK'].forEach((o, i) => {
+    const oy = my + 7 + i * 13;
+    if (i === tiIdx) text('>', 136, oy, '#a34537', 7);
+    text(o, 146, oy, '#20242c', 7);
+  });
+}
+
+function drawRest() {
+  px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
+  drawBox(50, 34, 140, 78);
+  text(restSpot === 'cabin' ? "DOC BRAMBLE'S CABIN" : 'CAMPFIRE', 62, 41, '#20242c', 7);
+  ['REST (free)', 'SHOP', 'LEAVE'].forEach((o, i) => {
+    const oy = 58 + i * 15;
+    if (i === restIdx) text('>', 64, oy, '#a34537', 7);
+    text(o, 76, oy, '#20242c', 7);
+  });
+  text('Coins: ' + coins, 62, 100, '#4c5c50', 7);
+}
+
+function drawShop() {
+  px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
+  drawBox(14, 20, 212, 106);
+  text('SHOP', 24, 27, '#20242c');
+  text('Coins: ' + coins, 160, 27, '#4c5c50', 7);
+  SHOP.forEach((it, i) => {
+    const oy = 44 + i * 22;
+    if (i === shopIdx) text('>', 24, oy, '#a34537', 7);
+    const owned = it.key === 'orb' ? orbs : items[it.key];
+    text(it.name + '  ' + it.price + 'c', 34, oy, '#20242c', 7);
+    text('own x' + owned, 170, oy, '#4c5c50', 7);
+    text(it.desc, 34, oy + 9, '#8a8570', 7);
+  });
+  drawBox(14, 130, 212, 18);
+  text(shopMsg || 'A: buy   B: back', 24, 135, shopMsg ? '#2c5a41' : '#4c5c50', 7);
 }
 
 function drawInfo() {
@@ -2176,6 +2465,7 @@ function drawInfo() {
   text('L' + m.level + '   XP ' + m.xp + '/' + xpNeed(m.level), 56, m.nick ? 52 : 44, '#cfe3d2', 7);
   drawBar(56, 64, 100, m.hp / maxHp(m));
   text(m.hp + '/' + maxHp(m) + ' HP', 162, 61, '#cfe3d2', 7);
+  if (m.st) text(ST[m.st].tag, 216, 61, ST[m.st].col, 7);
   text('ATK ' + stat(m, 'atk') + '   DEF ' + stat(m, 'def') + '   SPD ' + stat(m, 'spd'), 56, 74, '#cfe3d2', 7);
   text('MOVES', 12, 90, '#8fb69c', 7);
   m.moves.forEach((mv, i) => {
@@ -2193,8 +2483,8 @@ function drawDex(idx) {
   text('WILDLING-DEX', 12, 6, '#e8b84b');
   text('CAUGHT ' + caught + '/' + DEX_ORDER.length, 156, 6, '#8fa396', 7);
   DEX_ORDER.forEach((sp, i) => {
-    const cx = 8 + (i % 8) * 29, cy = 20 + Math.floor(i / 8) * 19;
-    if (i === idx) px(cx - 2, cy - 1, 27, 17, 'rgba(232,184,75,.25)');
+    const cx = 8 + (i % 8) * 29, cy = 19 + Math.floor(i / 8) * 16;
+    if (i === idx) px(cx - 2, cy - 1, 27, 15, 'rgba(232,184,75,.25)');
     const st = dex[sp] || 0;
     if (st > 0) drawArt(sp, cx + 5, cy + 1, 1);
     else { px(cx + 5, cy + 2, 12, 12, '#22291f'); text('?', cx + 9, cy + 5, '#4c5c50', 7); }
@@ -2262,8 +2552,8 @@ function drawDevPick() {
   text('GIVE WILDLING', 12, 6, '#e8b84b');
   text('A: give  B: back', 156, 6, '#8fa396', 7);
   DEX_ORDER.forEach((sp, i) => {
-    const cx = 8 + (i % 8) * 29, cy = 20 + Math.floor(i / 8) * 19;
-    if (i === devPick) px(cx - 2, cy - 1, 27, 17, 'rgba(232,184,75,.3)');
+    const cx = 8 + (i % 8) * 29, cy = 19 + Math.floor(i / 8) * 16;
+    if (i === devPick) px(cx - 2, cy - 1, 27, 15, 'rgba(232,184,75,.3)');
     drawArt(sp, cx + 5, cy + 1, 1);
   });
   drawBox(4, 140, 232, 18);
@@ -2325,6 +2615,9 @@ function draw() {
   else if (mode === 'starter') drawStarter();
   else if (mode === 'world') drawWorld();
   else if (mode === 'team') drawTeamList(teamIdx, false);
+  else if (mode === 'teamitem') { drawTeamList(teamIdx, false); drawTeamItemBox(); }
+  else if (mode === 'rest') { drawWorld(); drawRest(); }
+  else if (mode === 'shop') { drawWorld(); drawShop(); }
   else if (mode === 'info') drawInfo();
   else if (mode === 'dex') drawDex(dexIdx);
   else if (mode === 'ranch') drawRanch();
@@ -2351,7 +2644,7 @@ window.DBG = {
   step: n => { n = n || 1; for (let i = 0; i < n; i++) { frame++; update(); } },
   draw: () => draw(),
   state: () => ({
-    mode, area, orbs, pos: [P.tx, P.ty],
+    mode, area, orbs, coins, items: JSON.parse(JSON.stringify(items)), pos: [P.tx, P.ty],
     party: JSON.parse(JSON.stringify(party)),
     flags: JSON.parse(JSON.stringify(flags)),
     dlg: dlg ? dlg.lines[dlg.i] : null,
@@ -2371,6 +2664,7 @@ window.DBG = {
   warp: (a, x, y) => warp(a, x, y),
   menu: i => { if (battle) battle.mi = i; },
   dev: v => { devAllowed = !!v; },
+  cheat: (c, b, j) => { coins = c; items.berry = b; items.jam = j; },
   forceBattle: sp => startBattle(makeMon(sp || A.wilds[ri(A.wilds.length)], 3))
 };
 })();
