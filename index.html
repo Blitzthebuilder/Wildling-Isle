@@ -159,7 +159,8 @@
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
       Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!<br>
       And champions hear rumors of a <b>bigger, rougher isle</b> across the water, where an undefeated harbor champion waits...<br>
-      Rumor has it a rare <b>Mystic</b> Wildling drifts through every corner of the isle...
+      Rumor has it a rare <b>Mystic</b> Wildling drifts through every corner of the isle...<br>
+      And every trainer's open secret: the <b>old supply box</b> beside Doc Bramble's cabin never runs empty.
     </p>
   </details>
 </div>
@@ -1282,7 +1283,7 @@ const AREAS = {
       'T......=..,,,,,............T',
       'T......=............O......T',
       'T......====................T',
-      'T.......HH=....F..F........T',
+      'T......XHH=....F..F........T',
       'T.......HH=..F.F.F.........T',
       'T.....S...=................T',
       'T..........................T',
@@ -1697,7 +1698,7 @@ for (const k in AREAS) {
   a.map = a.raw.map(r => r.padEnd(a.mw, r[0]).slice(0, a.mw));
   a.mh = a.raw.length;
 }
-const SOLID = 'T~HSRcObL';
+const SOLID = 'T~HSRcObLX';
 const START = { x: 9, y: 18 };
 /* elemental bird spawns: unlocked by gate, rolled per grass encounter;
    secret — hoarding charm orbs above lureOrbs quadruples the rate */
@@ -1726,7 +1727,7 @@ let tmMenu = -1;              // team submenu option index (-1 = closed)
 let tmSel = -1;               // mon picked for a switch (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
 let coins = 0;
-let items = { berry: 0, jam: 0 };
+let items = { berry: 0, jam: 0, locket: 0 };
 const SHOP = [
   { key: 'orb',   name: 'Charm Orb',   price: 10, desc: 'befriends weakened Wildlings' },
   { key: 'berry', name: 'Sweet Berry', price: 15, desc: 'restores 40 HP in battle' },
@@ -1793,8 +1794,8 @@ function save() {
   if (flags.champion) championSeen = true;
   if (flags.champion2) championSeen2 = true;
 }
-const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null });
-const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null });
+const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null, held: m.held || null });
+const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null, held: m.held === 'locket' ? 'locket' : null });
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
 function applyData(d) {
   if (!d || !d.party || !d.party.length) return false;
@@ -2002,6 +2003,14 @@ function burnTick(m, q) {
     pushFx(q, `${nameOf(m)} is hurt by its burn!`, { kind: 'stat', side, dur: 14, dHp: { side, hp: m.hp } });
   }
 }
+function heldTick(m, q) {
+  // Moss Locket: the holder mends 20% of max HP at the end of each turn
+  if (m.held === 'locket' && m.hp > 0 && m.hp < maxHp(m)) {
+    m.hp = Math.min(maxHp(m), m.hp + Math.max(1, Math.floor(maxHp(m) / 5)));
+    const side = m === battle.enemy ? 'en' : 'me';
+    pushFx(q, `${nameOf(m)}'s Moss Locket glows softly...`, { kind: 'stat', side, dur: 14, dHp: { side, hp: m.hp } });
+  }
+}
 function checkOutcome(q) {
   const me = curMon(), en = battle.enemy;
   if (en.hp <= 0) {
@@ -2031,7 +2040,7 @@ function doRound(myMoveName) {
   for (const [a, d, mv] of order) {
     if (a.hp > 0 && d.hp > 0) actOnce(a, d, mv, q);
   }
-  burnTick(me, q); burnTick(en, q);
+  burnTick(me, q); burnTick(en, q); heldTick(me, q);
   checkOutcome(q);
 }
 function levelUpMon(m, q) {
@@ -2141,7 +2150,7 @@ function tryCatch() {
     pushFx(q, `Oh no! ${nameOf(en)} broke free!`, { kind: 'burst', dur: 14, block: 1 });
     const me = curMon();
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
-    burnTick(me, q); burnTick(en, q);
+    burnTick(me, q); burnTick(en, q); heldTick(me, q);
     checkOutcome(q);
   }
 }
@@ -2162,7 +2171,7 @@ function tryRun() {
     q.push("Can't escape!");
     const me = curMon(), en = battle.enemy;
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
-    burnTick(me, q); burnTick(en, q);
+    burnTick(me, q); burnTick(en, q); heldTick(me, q);
     checkOutcome(q);
   }
 }
@@ -2185,7 +2194,7 @@ function useItem(kind) {
     pushFx(q, `${nameOf(me)} is fully restored by the Bramble Jam!`, { kind: 'stat', side: 'me', dur: 14, dHp: { side: 'me', hp: me.hp } });
   }
   actOnce(en, me, en.moves[ri(en.moves.length)], q);
-  burnTick(me, q); burnTick(en, q);
+  burnTick(me, q); burnTick(en, q); heldTick(me, q);
   checkOutcome(q);
 }
 function switchTo(idx, forced) {
@@ -2205,7 +2214,7 @@ function switchTo(idx, forced) {
   if (!forced) {
     const me = curMon(), en = battle.enemy;
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
-    burnTick(me, q); burnTick(en, q);
+    burnTick(me, q); burnTick(en, q); heldTick(me, q);
     checkOutcome(q);
   } else {
     battle.after = 'menu';
@@ -2631,8 +2640,8 @@ function update() {
   }
 
   if (mode === 'teamitem') {
-    if (tap('up')) { tiIdx = (tiIdx + 2) % 3; sMove(); }
-    if (tap('down')) { tiIdx = (tiIdx + 1) % 3; sMove(); }
+    if (tap('up')) { tiIdx = (tiIdx + 3) % 4; sMove(); }
+    if (tap('down')) { tiIdx = (tiIdx + 1) % 4; sMove(); }
     if (tap('B')) { sBack(); mode = 'team'; }
     else if (tap('A')) {
       sOk();
@@ -2645,6 +2654,17 @@ function update() {
         if (items.jam <= 0) say(['No Bramble Jam left!']);
         else if (m.hp >= maxHp(m) && !m.st) say(['It would have no effect!']);
         else { items.jam--; m.hp = maxHp(m); m.st = null; sCatch(); save(); say([nameOf(m) + ' is fully restored by the Bramble Jam!']); }
+      } else if (tiIdx === 2) {
+        if (m.held === 'locket') {
+          m.held = null; items.locket = (items.locket || 0) + 1;
+          save(); say([nameOf(m) + ' handed back the Moss Locket.']);
+        } else if ((items.locket || 0) <= 0) {
+          say(['No Moss Lockets to give.', 'They say an old supply box near a cabin', 'never runs empty...']);
+        } else {
+          items.locket--; m.held = 'locket';
+          sCatch(); save();
+          say([nameOf(m) + ' now holds the Moss Locket!', 'It will mend a little every battle turn.']);
+        }
       }
       mode = 'team';
     }
@@ -2748,6 +2768,15 @@ function update() {
       }
       if (t === 'S') {
         say(A.sign);
+        return;
+      }
+      if (t === 'X') {
+        items.locket = (items.locket || 0) + 1;
+        sCatch(); save();
+        say(['The old supply box creaks open...',
+             'You found a MOSS LOCKET!',
+             'A held Wildling mends a little each battle turn.',
+             '(Give it from the team menu under ITEM.)']);
         return;
       }
     }
@@ -2985,6 +3014,12 @@ function drawTile(t, x, y, sx, sy) {
     px(sx + 2, sy + 2, 12, 7, '#c49a68');
     px(sx + 4, sy + 4, 8, 1, '#6b4a2f');
     px(sx + 4, sy + 6, 6, 1, '#6b4a2f');
+  } else if (t === 'X') {
+    px(sx + 2, sy + 5, 12, 9, '#9a6b42');       // old supply box
+    px(sx + 2, sy + 5, 12, 2, '#c49a68');
+    px(sx + 2, sy + 9, 12, 1, '#6b4a2f');
+    px(sx + 7, sy + 5, 2, 9, '#6b4a2f');
+    px(sx + 6, sy + 3, 4, 2, '#8fd07a');        // a mossy glint peeks out
   } else if (t === 'c') {
     px(sx + 2, sy + 5, 9, 8, '#b8543f');
     px(sx + 4, sy + 3, 5, 2, '#b8543f');
@@ -3292,6 +3327,7 @@ function drawTeamList(idx, inBattle) {
     if (i === idx) { px(4, y - 2, 232, 20, 'rgba(232,184,75,.18)'); text('>', 6, y + 4, '#e8b84b'); }
     if (!inBattle && i === tmSel) { px(4, y - 2, 232, 20, 'rgba(74,144,216,.22)'); text('*', 6, y + 4, '#4a90d8'); }
     drawArt(m.sp, 14, y - 2, 1.5);
+    if (m.held) px(34, y + 3, 3, 3, '#8fd07a');
     text(nameOf(m) + '  L' + m.level, 40, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66');
     drawBar(40, y + 11, 60, m.hp / maxHp(m));
     px(40, y + 16, 60, 1, '#2c3a30');
@@ -3313,9 +3349,11 @@ function drawTeamList(idx, inBattle) {
 }
 
 function drawTeamItemBox() {
-  const my = clamp(22 + teamIdx * 22, 14, 106);
-  drawBox(130, my, 102, 49);
-  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam, 'BACK'].forEach((o, i) => {
+  const m = party[teamIdx];
+  const my = clamp(22 + teamIdx * 22, 14, 94);
+  drawBox(130, my, 102, 62);
+  const lk = m && m.held === 'locket' ? 'Take Locket back' : 'Moss Locket x' + (items.locket || 0);
+  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam, lk, 'BACK'].forEach((o, i) => {
     const oy = my + 7 + i * 13;
     if (i === tiIdx) text('>', 136, oy, '#a34537', 7);
     text(o, 146, oy, '#20242c', 7);
@@ -3426,6 +3464,7 @@ function drawInfo() {
   text(m.hp + '/' + maxHp(m) + ' HP', 162, 61, '#cfe3d2', 7);
   if (m.st) text(ST[m.st].tag, 216, 61, ST[m.st].col, 7);
   text('ATK ' + stat(m, 'atk') + '   DEF ' + stat(m, 'def') + '   SPD ' + stat(m, 'spd'), 56, 74, '#cfe3d2', 7);
+  if (m.held === 'locket') text('Holds: Moss Locket (mends each turn)', 56, 82, '#8fd07a', 7);
   text('MOVES', 12, 90, '#8fb69c', 7);
   m.moves.forEach((mv, i) => {
     const d = MOVES[mv], y = 102 + i * 13;
