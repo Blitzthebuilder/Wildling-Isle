@@ -167,6 +167,26 @@ const ctx = cvs.getContext('2d');
 ctx.imageSmoothingEnabled = false;
 ctx.textBaseline = 'top';
 
+/* Render internally at an integer multiple of 240x160 sized to the real
+   screen, so game pixels land exactly on device pixels (no fractional-scale
+   smudge). All game code keeps drawing in 240x160 logical coordinates. */
+let SCREEN_SCALE = 1;
+function fitCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = cvs.clientWidth || 240;
+  const s = Math.max(1, Math.min(6, Math.round(cssW * dpr / 240)));
+  if (s === SCREEN_SCALE && cvs.width === 240 * s) return;
+  SCREEN_SCALE = s;
+  cvs.width = 240 * s;
+  cvs.height = 160 * s;
+  /* resizing the canvas wipes context settings, so restore them */
+  ctx.setTransform(s, 0, 0, s, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.textBaseline = 'top';
+}
+fitCanvas();
+addEventListener('resize', fitCanvas);
+
 const ri = n => Math.floor(Math.random() * n);
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
