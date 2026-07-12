@@ -1411,6 +1411,27 @@ function doRound(myMoveName) {
   }
   checkOutcome(q);
 }
+function levelUpMon(m, q) {
+  const oldMax = maxHp(m);
+  m.level++;
+  m.hp += maxHp(m) - oldMax;
+  if (q) q.push(`${nameOf(m)} grew to level ${m.level}!`);
+  const ev = SPECIES[m.sp].evolve;
+  if (ev && m.level >= ev.at) {
+    const oldName = nameOf(m), preMax = maxHp(m);
+    m.sp = ev.to;
+    m.hp += maxHp(m) - preMax;
+    markCaught(m.sp);
+    sEvolve();
+    if (q) q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[m.sp].name}, ${SPECIES[m.sp].blurb}!`);
+  }
+  for (const [lv, mv] of SPECIES[m.sp].learn) {
+    if (lv === m.level && !m.moves.includes(mv)) {
+      if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
+      else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
+    }
+  }
+}
 function victory(q) {
   const me = curMon(), en = battle.enemy;
   const gain = en.level * (battle.trainer ? 26 : 18);
@@ -1418,25 +1439,7 @@ function victory(q) {
   q.push(`${nameOf(me)} gained ${gain} XP!`);
   while (me.xp >= xpNeed(me.level)) {
     me.xp -= xpNeed(me.level);
-    const oldMax = maxHp(me);
-    me.level++;
-    me.hp += maxHp(me) - oldMax;
-    q.push(`${nameOf(me)} grew to level ${me.level}!`);
-    const ev = SPECIES[me.sp].evolve;
-    if (ev && me.level >= ev.at) {
-      const oldName = nameOf(me), preMax = maxHp(me);
-      me.sp = ev.to;
-      me.hp += maxHp(me) - preMax;
-      markCaught(me.sp);
-      sEvolve();
-      q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[me.sp].name}, ${SPECIES[me.sp].blurb}!`);
-    }
-    for (const [lv, mv] of SPECIES[me.sp].learn) {
-      if (lv === me.level && !me.moves.includes(mv)) {
-        if (me.moves.length < 4) { me.moves.push(mv); q.push(`${nameOf(me)} learned ${mv}!`); }
-        else { const old = me.moves.shift(); me.moves.push(mv); q.push(`${nameOf(me)} forgot ${old} and learned ${mv}!`); }
-      }
-    }
+    levelUpMon(me, q);
   }
   const tr = battle.trainer;
   if (tr && tr.i < tr.party.length - 1) {
@@ -1742,7 +1745,12 @@ function update() {
       } else if (devIdx === 1) { devPick = 0; mode = 'devpick'; }
       else if (devIdx === 2) {
         const m = party[0];
-        if (m) { m.level = Math.min(60, m.level + 5); m.hp = maxHp(m); devMsg = nameOf(m) + ' is now L' + m.level; save(); }
+        if (m) {
+          for (let i = 0; i < 5 && m.level < 60; i++) levelUpMon(m, null);
+          m.hp = maxHp(m);
+          devMsg = nameOf(m) + ' is now ' + SPECIES[m.sp].name + ' L' + m.level;
+          save();
+        }
       } else if (devIdx === 3) {
         flags.gate1 = flags.gate2 = flags.champion = true; championSeen = true;
         devMsg = 'Gates open, champion granted'; save();
