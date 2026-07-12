@@ -263,6 +263,32 @@ const ART = {
     '...kk..kk...',
     '...oo..oo...'
   ],
+  scamp: [
+    '....gggg....',
+    '...gggggg...',
+    '...hffffh...',
+    '...hfkfkh...',
+    '....ffff....',
+    '...mmmmmm...',
+    '..fmmmmmmf..',
+    '...mmmmmm...',
+    '...nnnnnn...',
+    '...nn..nn...',
+    '...kk..kk...'
+  ],
+  salt: [
+    '....NNNN....',
+    '...NNNNNN...',
+    '..NNNNNNNN..',
+    '...hffffh...',
+    '....fkfk....',
+    '...cccccc...',
+    '..fccccccf..',
+    '...cccccc...',
+    '...kkkkkk...',
+    '...kk..kk...',
+    '...nn..nn...'
+  ],
   cindret: [
     '............',
     '..rrr.......',
@@ -1232,7 +1258,18 @@ const AREAS = {
       'NOTICE: Tall grass rustles with wild Wildlings.',
       'Doc Bramble heals tired teams at the cabin.',
       'EAST: Bramble Caverns. Gate keeper on duty.'
-    ]
+    ],
+    trainers: [{
+      key: 'pip', x: 20, y: 16, name: 'SCOUT PIP', art: 'scamp',
+      intro: [
+        'SCOUT PIP: Hey! Over here by the flowers!',
+        'My team trains in this meadow every day.',
+        "Let's battle!"
+      ],
+      rematch: ['SCOUT PIP: Rematch time! We got stronger!'],
+      win: ['SCOUT PIP: Whoa, nice moves!', 'Come find me for a rematch anytime.'],
+      party: () => [makeMon('sporeling', 8), makeMon('puffowl', 9)]
+    }]
   },
   cavern: {
     label: 'BRAMBLE CAVERNS',
@@ -1281,7 +1318,18 @@ const AREAS = {
       'DANGER: Falling rocks. Watch your head.',
       'Rest your team at the campfire.',
       'EAST: Tempest Shore.'
-    ]
+    ],
+    trainers: [{
+      key: 'flint', x: 20, y: 12, name: 'MINER FLINT', art: 'salt',
+      intro: [
+        'MINER FLINT: Careful round these rocks, kid.',
+        'My crew and I dig here. And we battle harder',
+        'than we dig. Put up your team!'
+      ],
+      rematch: ['MINER FLINT: Back for another round? Dig in!'],
+      win: ['MINER FLINT: Ha! Solid as granite, you are.', 'Swing by whenever you want a scrap.'],
+      party: () => [makeMon('shalecub', 14), makeMon('boulderit', 15)]
+    }]
   },
   shore: {
     label: 'TEMPEST SHORE',
@@ -1337,7 +1385,18 @@ const AREAS = {
       'TEMPEST SHORE. Mind the riptides.',
       "They say the isle's strongest trainer",
       'waits at the end of the pier.'
-    ]
+    ],
+    trainers: [{
+      key: 'reed', x: 24, y: 6, name: 'ANGLER REED', art: 'salt',
+      intro: [
+        'ANGLER REED: Shhh... you scared off my catch!',
+        "Guess you'll have to make up for it.",
+        'Rod down, Wildlings out!'
+      ],
+      rematch: ['ANGLER REED: The big one got away again.', 'You, though? Right where I want you.'],
+      win: ['ANGLER REED: Reeled me in good, kid.', "I'll be here when you want another go."],
+      party: () => [makeMon('finlet', 19), makeMon('marfin', 20)]
+    }]
   },
   /* ---- BOOTHBAY ISLE: postgame, unlocked by the champion ferry ---- */
   harbor: {
@@ -1388,7 +1447,18 @@ const AREAS = {
       'WELCOME TO BOOTHBAY HARBOR.',
       'Rest at the Seaside Inn. Ferry at the west dock.',
       'NORTH: Pinewood Trails - harbormaster on duty.'
-    ]
+    ],
+    trainers: [{
+      key: 'cleat', x: 25, y: 12, name: 'DECKHAND CLEAT', art: 'scamp',
+      intro: [
+        'DECKHAND CLEAT: Fresh off the ferry, eh?',
+        'Every hand on this dock battles between hauls.',
+        "Let's see what the little isle taught you!"
+      ],
+      rematch: ['DECKHAND CLEAT: Tide brought you back!', 'Ready when you are.'],
+      win: ['DECKHAND CLEAT: Blow me down! Well fought.', 'Catch me between hauls for a rematch.'],
+      party: () => [makeMon('bubblun', 23), makeMon('voltcat', 23)]
+    }]
   },
   pines: {
     label: 'PINEWOOD TRAILS',
@@ -1439,7 +1509,18 @@ const AREAS = {
       'The pines hide the toughest broods on the isle.',
       'NORTHEAST: Granite Head Light.',
       'SOUTH TRAIL: back to Boothbay Harbor.'
-    ]
+    ],
+    trainers: [{
+      key: 'fern', x: 28, y: 8, name: 'FORAGER FERN', art: 'scamp',
+      intro: [
+        'FORAGER FERN: Mind the mushrooms - some bite.',
+        'I forage these woods with my own crew.',
+        'Care to trade some bruises?'
+      ],
+      rematch: ['FORAGER FERN: The woods said you were coming.', 'Round two!'],
+      win: ['FORAGER FERN: Tough as old pine knots!', 'Come trade bruises again sometime.'],
+      party: () => [makeMon('shroombler', 27), makeMon('mossoak', 28)]
+    }]
   },
   cliffs: {
     label: 'GRANITE HEAD LIGHT',
@@ -1473,7 +1554,18 @@ const AREAS = {
       'GRANITE HEAD LIGHT. Est. long ago.',
       'The dock below sails for Squirrel Isle',
       'when the fog allows. Good luck.'
-    ]
+    ],
+    trainers: [{
+      key: 'beacon', x: 26, y: 3, name: 'KEEPER BEACON', art: 'salt',
+      intro: [
+        'KEEPER BEACON: Forty years I have kept this light.',
+        'The storms taught my team everything they know.',
+        'Let this old keeper test your mettle!'
+      ],
+      rematch: ['KEEPER BEACON: The lamp still burns, and so do we!'],
+      win: ['KEEPER BEACON: Bright as the beam itself!', 'Climb back up whenever you like.'],
+      party: () => [makeMon('cragolith', 31), makeMon('thunderlynx', 31)]
+    }]
   },
   fogisle: {
     label: 'SQUIRREL ISLE',
@@ -1504,6 +1596,17 @@ const AREAS = {
     wilds: ['stratowl','fulmite','cragolith','eldermoss','geyserun','pyrewolf','leviafin','verdantis','tempestrel','terragrizz','mycolossus','oraclaw'], lvl: [31, 38],
     bird: 'tidewing',
     exits: { '6': { to:'cliffs', x:32, y:13 } },
+    trainers: [{
+      key: 'sage', x: 23, y: 10, name: 'HERMIT SAGE', art: 'salt',
+      intro: [
+        'HERMIT SAGE: Few find me through the fog.',
+        'I came here to train where no one watches.',
+        'Show me what the fog cannot hide!'
+      ],
+      rematch: ['HERMIT SAGE: The fog parts for you again. Begin!'],
+      win: ['HERMIT SAGE: Clarity! You fight with clear eyes.', 'Seek me out whenever the fog allows.'],
+      party: () => [makeMon('eldermoss', 33), makeMon('geyserun', 33)]
+    }],
     gate: {
       x:19, y:2, flag:'champion2', name:'MARA', art:'mara',
       intro: [
@@ -2026,7 +2129,7 @@ function endBattle() {
     orbs = Math.max(orbs, 5);
     say(['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']);
   } else if (kind === 'win' && tr) {
-    flags[tr.flag] = true;
+    if (tr.flag) flags[tr.flag] = true;
     say(tr.win);
   }
   save();
@@ -2083,6 +2186,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 /* ---------- world helpers ---------- */
 function walkable(x, y) { return !SOLID.includes(tileAt(x, y)); }
+const trainerAt = (x, y) => (A.trainers || []).find(t => t.x === x && t.y === y);
 function warp(toArea, tx, ty) {
   area = toArea; A = AREAS[area];
   P.tx = tx; P.ty = ty; P.px = tx * 16; P.py = ty * 16; P.moving = false;
@@ -2412,6 +2516,12 @@ function update() {
       const fx = P.tx + dx, fy = P.ty + dy;
       const g = A.gate;
       if (g && !flags[g.flag] && fx === g.x && fy === g.y) { gateChallenge(); return; }
+      const nt = trainerAt(fx, fy);
+      if (nt) {
+        const lines = flags['t_' + nt.key] ? nt.rematch : nt.intro;
+        say(lines, () => startTrainerBattle({ name: nt.name, party: nt.party(), i: 0, flag: 't_' + nt.key, win: nt.win }));
+        return;
+      }
       const t = tileAt(fx, fy);
       if (area === 'meadow' && fx === 3 && fy === 11 && t === 'T') {
         if (flags.sylvarch) say(['The old tree stands quiet and content.', 'Its heart travels with you now.']);
@@ -2446,7 +2556,7 @@ function update() {
         const nx = P.tx + dx, ny = P.ty + dy;
         const g = A.gate;
         if (g && !flags[g.flag] && nx === g.x && ny === g.y) { gateChallenge(); return; }
-        if (walkable(nx, ny)) {
+        if (walkable(nx, ny) && !trainerAt(nx, ny)) {
           P.moving = true;
           P.gx = nx; P.gy = ny;
         }
@@ -2719,6 +2829,7 @@ function drawWorld() {
       drawTile(tileAt(x, y), x, y, x * 16 - camx, y * 16 - camy);
   const g = A.gate;
   if (g && !flags[g.flag]) drawArt(g.art || 'rival', g.x * 16 - camx + 2, g.y * 16 - camy + 2, 1);
+  for (const t of A.trainers || []) drawArt(t.art, t.x * 16 - camx + 2, t.y * 16 - camy + 2, 1);
   if (A.fog) {
     for (let i = 0; i < 4; i++) {
       const fy = ((Math.floor(frame / 3) + i * 52) % 200) - 20;
