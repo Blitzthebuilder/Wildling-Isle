@@ -1727,7 +1727,10 @@ function nextText() {
     battle.fx = (fx && !fxDisabled) ? Object.assign({ t0: battle.age }, fx) : null;
     if (fx) {
       // side effects fire when the line is SHOWN, so outcomes aren't spoiled early
-      if (fx.kind === 'sendIn') { if (fx.side === 'en') battle.enGone = false; else battle.meGone = false; }
+      if (fx.kind === 'sendIn') {
+        if (fx.swap) { battle.enemy = fx.swap; battle.dispEn = fx.swap.hp; }
+        if (fx.side === 'en') battle.enGone = false; else battle.meGone = false;
+      }
       else if (fx.kind === 'burst') battle.enGone = false;
       else if (fx.kind === 'faint' && fxDisabled) { if (fx.side === 'en') battle.enGone = true; else battle.meGone = true; }
       else if (fx.kind === 'catchOk') {
@@ -1882,9 +1885,9 @@ function victory(q) {
     tr.i++;
     const nx = tr.party[tr.i];
     markSeen(nx.sp);
-    battle.enemy = nx;
-    battle.dispEn = nx.hp;
-    pushFx(q, `${tr.name} sends out ${nameOf(nx)}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1 });
+    // the swap is carried on the fx and applied when the line displays,
+    // so the faint animation plays on the mon that actually fainted
+    pushFx(q, `${tr.name} sends out ${nameOf(nx)}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1, swap: nx });
     battle.after = 'menu';
   } else {
     battle.endKind = battle.endKind || 'win';
