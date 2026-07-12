@@ -149,6 +149,7 @@
       <b>Arrows / WASD</b> move &nbsp;&middot;&nbsp; <b>Z or Enter</b> = A (confirm / talk, hold to fast-forward) &nbsp;&middot;&nbsp; <b>X</b> = B (back) &nbsp;&middot;&nbsp; <b>C</b> cycles team &rarr; Wildling-dex &rarr; Ranch.<br>
       Your team holds 6 Wildlings &mdash; extra catches go to <b>Doc Bramble's Ranch</b>, where you can deposit and withdraw team members anytime.<br>
       Battles pay <b>coins</b> &mdash; spend them at the cabin or campfires on orbs, Sweet Berries, and <b>Bramble Jam</b> (full heal + cure). Watch out for <b>Burn</b>, <b>Shock</b>, and being put <b>On Ice</b>!<br>
+      Save up for the <b>Bramble Bike</b> (any shop, 150c) &mdash; then press <b>B</b> out in the world to hop on and cover ground twice as fast.<br>
       A full moveset means choices: when a 5th move comes along, <b>you</b> decide what to forget &mdash; and the ancient <b>obelisk</b> in the meadow lets Wildlings remember moves they gave up.<br>
       Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
@@ -1672,6 +1673,9 @@ const SHOP = [
   { key: 'berry', name: 'Sweet Berry', price: 15, desc: 'restores 40 HP in battle' },
   { key: 'jam',   name: 'Bramble Jam', price: 60, desc: 'full heal + cures any status' }
 ];
+const BIKE = { key: 'bike', name: 'Bramble Bike', price: 150, desc: 'ride fast! hop on/off with B' };
+const shopList = () => flags.bike ? SHOP : SHOP.concat(BIKE);
+let riding = false;           // on the bike right now (ownership lives in flags.bike)
 let restIdx = 0, shopIdx = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
 let pendingLearns = [];       // [{m, mv}] move-learning decisions awaiting the player
 let lrnIdx = 0;               // cursor on the forget-a-move screen
@@ -2419,15 +2423,19 @@ function update() {
   }
 
   if (mode === 'shop') {
-    if (tap('up')) { shopIdx = (shopIdx + SHOP.length - 1) % SHOP.length; sMove(); }
-    if (tap('down')) { shopIdx = (shopIdx + 1) % SHOP.length; sMove(); }
+    const list = shopList();
+    if (tap('up')) { shopIdx = (shopIdx + list.length - 1) % list.length; sMove(); }
+    if (tap('down')) { shopIdx = (shopIdx + 1) % list.length; sMove(); }
     if (tap('B') || tap('C')) { sBack(); mode = 'rest'; }
     else if (tap('A')) {
-      const it = SHOP[shopIdx];
+      const it = list[shopIdx];
       if (coins >= it.price) {
         coins -= it.price;
-        if (it.key === 'orb') orbs++; else items[it.key]++;
-        shopMsg = 'Bought ' + it.name + '!';
+        if (it.key === 'bike') { flags.bike = true; shopIdx = 0; shopMsg = 'Bought the Bramble Bike! Press B to ride.'; }
+        else {
+          if (it.key === 'orb') orbs++; else items[it.key]++;
+          shopMsg = 'Bought ' + it.name + '!';
+        }
         sCatch(); save();
       } else { shopMsg = 'Not enough coins!'; sBack(); }
     }
@@ -2510,6 +2518,11 @@ function update() {
     if (tap('D') && devAllowed) { devIdx = 0; devMsg = null; mode = 'dev'; sOk(); return; }
     if (tap('V')) { exportCode(); return; }
     if (tap('C')) { teamIdx = 0; tmMenu = -1; tmSel = -1; mode = 'team'; sOk(); return; }
+    if (tap('B') && flags.bike) {
+      riding = !riding;
+      banner = { text: riding ? 'ON THE BIKE' : 'ON FOOT', until: frame + 70 };
+      sMove();
+    }
     if (tap('A')) {
       const dx = P.dir === 'left' ? -1 : P.dir === 'right' ? 1 : 0;
       const dy = P.dir === 'up' ? -1 : P.dir === 'down' ? 1 : 0;
@@ -2563,8 +2576,9 @@ function update() {
       }
     } else {
       const txp = P.gx * 16, typ = P.gy * 16;
-      P.px += Math.sign(txp - P.px) * 2;
-      P.py += Math.sign(typ - P.py) * 2;
+      const spd = riding ? 4 : 2;
+      P.px += Math.sign(txp - P.px) * spd;
+      P.py += Math.sign(typ - P.py) * spd;
       if (P.px === txp && P.py === typ) {
         P.tx = P.gx; P.ty = P.gy; P.moving = false;
         const ch = tileAt(P.tx, P.ty);
@@ -2838,7 +2852,17 @@ function drawWorld() {
     }
   }
   const bob = P.moving && Math.floor(frame / 8) % 2 ? -1 : 0;
-  drawArt('hero', P.px - camx + 2, P.py - camy + 2 + bob, 1);
+  if (riding) {
+    const hx = P.px - camx, hy = P.py - camy;
+    px(hx + 2, hy + 12, 4, 4, '#20242c');       // rear wheel
+    px(hx + 10, hy + 12, 4, 4, '#20242c');      // front wheel
+    px(hx + 3, hy + 13, 2, 2, '#aab2b8');
+    px(hx + 11, hy + 13, 2, 2, '#aab2b8');
+    px(hx + 4, hy + 11, 8, 2, '#e2573d');       // frame
+    drawArt('hero', hx + 2, hy - 1 + bob, 1);
+  } else {
+    drawArt('hero', P.px - camx + 2, P.py - camy + 2 + bob, 1);
+  }
 
   if (party.length) {
     const lead = party[0];
@@ -3121,10 +3145,10 @@ function drawShop() {
   drawBox(14, 20, 212, 106);
   text('SHOP', 24, 27, '#20242c');
   text('Coins: ' + coins, 160, 27, '#4c5c50', 7);
-  SHOP.forEach((it, i) => {
+  shopList().forEach((it, i) => {
     const oy = 44 + i * 22;
     if (i === shopIdx) text('>', 24, oy, '#a34537', 7);
-    const owned = it.key === 'orb' ? orbs : items[it.key];
+    const owned = it.key === 'orb' ? orbs : it.key === 'bike' ? (flags.bike ? 1 : 0) : items[it.key];
     text(it.name + '  ' + it.price + 'c', 34, oy, '#20242c', 7);
     text('own x' + owned, 170, oy, '#4c5c50', 7);
     text(it.desc, 34, oy + 9, '#8a8570', 7);
@@ -3345,6 +3369,7 @@ window.DBG = {
     battleVi: battle && battle.vi,
     battleEnemy: battle && { sp: battle.enemy.sp, level: battle.enemy.level },
     battleBars: battle && { me: Math.round(battle.tgtMe), en: Math.round(battle.tgtEn) },
+    riding,
     trainer: battle && battle.trainer && battle.trainer.name
   }),
   party: () => party,
