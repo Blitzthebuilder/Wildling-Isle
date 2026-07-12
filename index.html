@@ -1225,6 +1225,9 @@ let dex = {};                 // sp -> 1 seen, 2 caught
 let dexIdx = 0;
 let ranch = [];               // stored Wildlings beyond the 6-mon team
 const RANCH_MAX = 30;
+let tmMenu = -1;              // team submenu option index (-1 = closed)
+let tmSel = -1;               // mon picked for a switch (-1 = none)
+let infoIdx = 0;              // party index shown on the info screen
 let rnCol = 0, rnIdx = 0;     // ranch screen cursor: column (0 team, 1 ranch) + row
 let rmsg = null;              // ranch screen notice { t, until }
 const markSeen = sp => { if (!dex[sp]) dex[sp] = 1; };
@@ -1424,13 +1427,18 @@ function levelUpMon(m, q) {
     markCaught(m.sp);
     sEvolve();
     if (q) q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[m.sp].name}, ${SPECIES[m.sp].blurb}!`);
-  }
-  for (const [lv, mv] of SPECIES[m.sp].learn) {
-    if (lv === m.level && !m.moves.includes(mv)) {
-      if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
-      else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
+    for (const [lv, mv] of SPECIES[m.sp].learn) {       // back-learn everything the new form should know by now
+      if (lv < m.level) learnMove(m, mv, q);
     }
   }
+  for (const [lv, mv] of SPECIES[m.sp].learn) {
+    if (lv === m.level) learnMove(m, mv, q);
+  }
+}
+function learnMove(m, mv, q) {
+  if (m.moves.includes(mv)) return;
+  if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
+  else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
 }
 function victory(q) {
   const me = curMon(), en = battle.enemy;
@@ -1675,19 +1683,44 @@ function update() {
   }
 
   if (mode === 'team') {
+    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / RENAME / BACK
+      if (tap('up')) { tmMenu = (tmMenu + 3) % 4; sMove(); }
+      if (tap('down')) { tmMenu = (tmMenu + 1) % 4; sMove(); }
+      if (tap('B')) { sBack(); tmMenu = -1; }
+      else if (tap('A')) {
+        sOk();
+        if (tmMenu === 0) { tmSel = teamIdx; tmMenu = -1; }
+        else if (tmMenu === 1) { infoIdx = teamIdx; mode = 'info'; tmMenu = -1; }
+        else if (tmMenu === 2) {
+          const m = party[teamIdx];
+          const nick = askNick('Nickname for ' + SPECIES[m.sp].name + '?', m.nick || '');
+          if (nick !== undefined) { m.nick = nick; save(); }
+          tmMenu = -1;
+        } else tmMenu = -1;
+      }
+      return;
+    }
     if (tap('up')) { teamIdx = (teamIdx + party.length - 1) % party.length; sMove(); }
     if (tap('down')) { teamIdx = (teamIdx + 1) % party.length; sMove(); }
     if (tap('A')) {
-      if (teamIdx !== 0) {
-        const t = party[0]; party[0] = party[teamIdx]; party[teamIdx] = t;
-        teamIdx = 0; sOk();
-      } else {
-        const nick = askNick('Nickname for ' + SPECIES[party[0].sp].name + '?', party[0].nick || '');
-        if (nick !== undefined) { party[0].nick = nick; save(); sOk(); }
-      }
+      if (tmSel >= 0) {                      // completing a switch
+        if (tmSel !== teamIdx) {
+          const t = party[tmSel]; party[tmSel] = party[teamIdx]; party[teamIdx] = t;
+          save();
+        }
+        tmSel = -1; sOk();
+      } else { tmMenu = 0; sOk(); }
     }
-    if (tap('C')) { dexIdx = 0; mode = 'dex'; sOk(); }
-    else if (tap('B')) { sBack(); mode = 'world'; }
+    if (tap('C')) { tmSel = -1; dexIdx = 0; mode = 'dex'; sOk(); }
+    else if (tap('B')) {
+      if (tmSel >= 0) { tmSel = -1; sBack(); }
+      else { sBack(); mode = 'world'; }
+    }
+    return;
+  }
+
+  if (mode === 'info') {
+    if (tap('A') || tap('B') || tap('C')) { sBack(); mode = 'team'; }
     return;
   }
 
@@ -1783,7 +1816,7 @@ function update() {
   if (mode === 'world') {
     if (tap('D') && devAllowed) { devIdx = 0; devMsg = null; mode = 'dev'; sOk(); return; }
     if (tap('V')) { exportCode(); return; }
-    if (tap('C')) { teamIdx = 0; mode = 'team'; sOk(); return; }
+    if (tap('C')) { teamIdx = 0; tmMenu = -1; tmSel = -1; mode = 'team'; sOk(); return; }
     if (tap('A')) {
       const dx = P.dir === 'left' ? -1 : P.dir === 'right' ? 1 : 0;
       const dy = P.dir === 'up' ? -1 : P.dir === 'down' ? 1 : 0;
@@ -2101,11 +2134,14 @@ function drawBattle() {
 
 function drawTeamList(idx, inBattle) {
   px(0, 0, 240, 160, 'rgba(16,22,18,.92)');
-  text(inBattle ? 'CHOOSE A WILDLING' : 'YOUR TEAM', 12, 8, '#e8b84b');
-  if (!inBattle) text('A:lead/name B:back C:dex', 108, 8, '#8fa396', 7);
+  if (inBattle) text('CHOOSE A WILDLING', 12, 8, '#e8b84b');
+  else if (tmSel >= 0) text('SWAP WITH...?', 12, 8, '#e8b84b');
+  else text('YOUR TEAM', 12, 8, '#e8b84b');
+  if (!inBattle) text('A:menu B:back C:dex', 128, 8, '#8fa396', 7);
   party.forEach((m, i) => {
     const y = 22 + i * 22;
     if (i === idx) { px(4, y - 2, 232, 20, 'rgba(232,184,75,.18)'); text('>', 6, y + 4, '#e8b84b'); }
+    if (!inBattle && i === tmSel) { px(4, y - 2, 232, 20, 'rgba(74,144,216,.22)'); text('*', 6, y + 4, '#4a90d8'); }
     drawArt(m.sp, 14, y - 2, 1.5);
     text(nameOf(m) + '  L' + m.level, 40, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66');
     drawBar(40, y + 11, 60, m.hp / maxHp(m));
@@ -2114,6 +2150,40 @@ function drawTeamList(idx, inBattle) {
     text(m.hp + '/' + maxHp(m), 106, y + 8, '#cfe3d2', 7);
     if (i === 0 && !inBattle) text('LEADER', 176, y + 2, '#8fb69c', 7);
     if (m.hp <= 0) text('FNT', 176, y + 2, '#e2573d', 7);
+  });
+  if (!inBattle && tmMenu >= 0) {
+    const my = clamp(22 + idx * 22, 14, 96);
+    drawBox(156, my, 76, 62);
+    ['SWITCH', 'INFO', 'RENAME', 'BACK'].forEach((o, i) => {
+      const oy = my + 7 + i * 13;
+      if (i === tmMenu) text('>', 162, oy, '#a34537', 7);
+      text(o, 172, oy, '#20242c', 7);
+    });
+  }
+}
+
+function drawInfo() {
+  const m = party[infoIdx];
+  if (!m) { mode = 'team'; return; }
+  const s = SPECIES[m.sp];
+  px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
+  text('WILDLING INFO', 12, 6, '#e8b84b');
+  text('A/B: back', 186, 6, '#8fa396', 7);
+  drawArt(m.sp, 10, 22, 3);
+  text(nameOf(m), 56, 22, '#f6f2e2');
+  if (m.nick) text('(' + s.name + ')', 56, 32, '#8fa396', 7);
+  text(s.type + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
+  text('L' + m.level + '   XP ' + m.xp + '/' + xpNeed(m.level), 56, m.nick ? 52 : 44, '#cfe3d2', 7);
+  drawBar(56, 64, 100, m.hp / maxHp(m));
+  text(m.hp + '/' + maxHp(m) + ' HP', 162, 61, '#cfe3d2', 7);
+  text('ATK ' + stat(m, 'atk') + '   DEF ' + stat(m, 'def') + '   SPD ' + stat(m, 'spd'), 56, 74, '#cfe3d2', 7);
+  text('MOVES', 12, 90, '#8fb69c', 7);
+  m.moves.forEach((mv, i) => {
+    const d = MOVES[mv], y = 102 + i * 13;
+    text(mv, 16, y, '#f6f2e2', 7);
+    text(d.type, 100, y, TYPE_COL[d.type], 7);
+    text('PWR ' + d.pow, 148, y, '#cfe3d2', 7);
+    text('ACC ' + d.acc, 192, y, '#cfe3d2', 7);
   });
 }
 
@@ -2255,6 +2325,7 @@ function draw() {
   else if (mode === 'starter') drawStarter();
   else if (mode === 'world') drawWorld();
   else if (mode === 'team') drawTeamList(teamIdx, false);
+  else if (mode === 'info') drawInfo();
   else if (mode === 'dex') drawDex(dexIdx);
   else if (mode === 'ranch') drawRanch();
   else if (mode === 'dev') drawDev();
@@ -2284,6 +2355,7 @@ window.DBG = {
     party: JSON.parse(JSON.stringify(party)),
     flags: JSON.parse(JSON.stringify(flags)),
     dlg: dlg ? dlg.lines[dlg.i] : null,
+    teamMenu: tmMenu, teamSel: tmSel,
     battlePhase: battle && battle.phase,
     battleText: battle && battle.cur,
     battleVi: battle && battle.vi,
