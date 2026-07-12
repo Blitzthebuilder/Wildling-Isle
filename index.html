@@ -1308,6 +1308,9 @@ for (const k in AREAS) {
 }
 const SOLID = 'T~HSRc';
 const START = { x: 9, y: 18 };
+/* elemental bird spawns: unlocked by gate, rolled per grass encounter;
+   secret — hoarding charm orbs above lureOrbs quadruples the rate */
+const BIRD_SPAWN = { gate: 'gate1', rate: 0.04, luredRate: 0.16, lureOrbs: 20, level: 28 };
 
 /* ---------- state ---------- */
 let mode = 'title';           // title | intro | starter | world | team | dex | battle
@@ -1997,7 +2000,8 @@ function update() {
       sOk();
       if (devIdx === 0) {
         party.forEach(m => { m.hp = maxHp(m); }); ranch.forEach(m => { m.hp = maxHp(m); });
-        orbs = 99; devMsg = 'Team healed, 99 orbs'; save();
+        orbs = 99;   // note: >20 orbs also activates the bird-lure secret — handy for testing it
+        devMsg = 'Team healed, 99 orbs'; save();
       } else if (devIdx === 1) { devPick = 0; mode = 'devpick'; }
       else if (devIdx === 2) {
         const m = party[0];
@@ -2094,8 +2098,9 @@ function update() {
           return;
         }
         if (ch === ',' && Math.random() < 0.12) {
-          if (flags.gate1 && A.bird && Math.random() < 0.04) {
-            startBattle(makeMon(A.bird, 28));
+          const birdChance = orbs > BIRD_SPAWN.lureOrbs ? BIRD_SPAWN.luredRate : BIRD_SPAWN.rate;
+          if (flags[BIRD_SPAWN.gate] && A.bird && Math.random() < birdChance) {
+            startBattle(makeMon(A.bird, BIRD_SPAWN.level));
           } else {
             const sp = A.wilds[ri(A.wilds.length)];
             const lvl = A.lvl[0] + ri(A.lvl[1] - A.lvl[0] + 1);
@@ -2664,7 +2669,12 @@ window.DBG = {
   warp: (a, x, y) => warp(a, x, y),
   menu: i => { if (battle) battle.mi = i; },
   dev: v => { devAllowed = !!v; },
-  cheat: (c, b, j) => { coins = c; items.berry = b; items.jam = j; },
+  cheat: (c, b, j, o) => {
+    if (c != null) coins = c;
+    if (b != null) items.berry = b;
+    if (j != null) items.jam = j;
+    if (o != null) orbs = o;
+  },
   forceBattle: sp => startBattle(makeMon(sp || A.wilds[ri(A.wilds.length)], 3))
 };
 })();
