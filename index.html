@@ -1695,7 +1695,8 @@ function startBattle(enemy) {
     enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
     q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
-    dispMe: party[ai].hp, dispEn: enemy.hp
+    dispMe: party[ai].hp, dispEn: enemy.hp,
+    tgtMe: party[ai].hp, tgtEn: enemy.hp
   };
   pushFx(q, `A wild ${nameOf(enemy)} appeared!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1 });
   pushFx(q, `Go, ${nameOf(party[ai])}!`, { kind: 'sendIn', side: 'me', dur: 18, block: 1 });
@@ -1712,7 +1713,8 @@ function startTrainerBattle(tr) {
     enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
     q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
-    dispMe: party[ai].hp, dispEn: tr.party[0].hp
+    dispMe: party[ai].hp, dispEn: tr.party[0].hp,
+    tgtMe: party[ai].hp, tgtEn: tr.party[0].hp
   };
   q.push(`${tr.name} wants to battle!`);
   pushFx(q, `${tr.name} sent out ${nameOf(tr.party[0])}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1 });
@@ -1727,12 +1729,15 @@ function nextText() {
     battle.fx = (fx && !fxDisabled) ? Object.assign({ t0: battle.age }, fx) : null;
     if (fx) {
       // side effects fire when the line is SHOWN, so outcomes aren't spoiled early
+      if (fx.dHp && (fx.kind !== 'atk' || fxDisabled)) {
+        if (fx.dHp.side === 'en') battle.tgtEn = fx.dHp.hp; else battle.tgtMe = fx.dHp.hp;
+      }
       if (fx.kind === 'sendIn') {
-        if (fx.swap) { battle.enemy = fx.swap; battle.dispEn = fx.swap.hp; }
+        if (fx.swap) { battle.enemy = fx.swap; battle.dispEn = fx.swap.hp; battle.tgtEn = fx.swap.hp; }
         if (fx.side === 'en') battle.enGone = false; else battle.meGone = false;
       }
       else if (fx.kind === 'burst') battle.enGone = false;
-      else if (fx.kind === 'faint' && fxDisabled) { if (fx.side === 'en') battle.enGone = true; else battle.meGone = true; }
+      else if (fx.kind === 'faint') { sFaint(); if (fxDisabled) { if (fx.side === 'en') battle.enGone = true; else battle.meGone = true; } }
       else if (fx.kind === 'catchOk') {
         battle.enGone = true;
         sCatch();
@@ -1748,6 +1753,10 @@ function nextText() {
   }
   battle.cur = null;
   battle.fx = null;
+  // text is done: catch any HP change with no line of its own (item heals,
+  // level-up gains) so the bars settle before the next phase
+  battle.tgtMe = curMon().hp;
+  battle.tgtEn = battle.enemy.hp;
   const a = battle.after;
   if (a === 'end') { endBattle(); return; }
   if (a === 'forceTeam') { battle.phase = 'team'; battle.forced = true; battle.ti = 0; return; }
@@ -1781,13 +1790,16 @@ function atkStep(a, d, mvName, q) {
     q.push('The attack missed!');
     return;
   }
-  pushFx(q, `${nameOf(a)} used ${mvName}!`, { kind: 'atk', side: aSide, type: mv.type, dur: 26, block: 1 });
+  // dHp carries the defender's post-hit HP so the bar drains at animation
+  // contact, not the moment the whole round is computed
+  const fxo = { kind: 'atk', side: aSide, type: mv.type, dur: 26, block: 1 };
+  pushFx(q, `${nameOf(a)} used ${mvName}!`, fxo);
   const eff = (CHART[mv.type] || {})[SPECIES[d.sp].type];
   const mult = eff == null ? 1 : eff;
   let dmg = ((2 * a.level / 5 + 2) * mv.pow * stat(a, 'atk') / Math.max(1, stat(d, 'def'))) / 20 + 2;
   dmg = Math.max(1, Math.floor(dmg * mult * (0.85 + Math.random() * 0.15)));
   d.hp = Math.max(0, d.hp - dmg);
-  sHit();
+  fxo.dHp = { side: dSide, hp: d.hp };
   if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
   if (mult < 1) q.push("It's not very effective...");
   const inf = INFLICT[mv.type];
@@ -1803,17 +1815,16 @@ function actOnce(a, d, mvName, q) {
 function burnTick(m, q) {
   if (m.st === 'brn' && m.hp > 0) {
     m.hp = Math.max(0, m.hp - Math.max(1, Math.floor(maxHp(m) / 12)));
-    q.push(`${nameOf(m)} is hurt by its burn!`);
+    const side = m === battle.enemy ? 'en' : 'me';
+    pushFx(q, `${nameOf(m)} is hurt by its burn!`, { kind: 'stat', side, dur: 14, dHp: { side, hp: m.hp } });
   }
 }
 function checkOutcome(q) {
   const me = curMon(), en = battle.enemy;
   if (en.hp <= 0) {
-    sFaint();
     pushFx(q, battle.trainer ? `The foe's ${nameOf(en)} fainted!` : `The wild ${nameOf(en)} fainted!`, { kind: 'faint', side: 'en', dur: 32, block: 1 });
     victory(q);
   } else if (me.hp <= 0) {
-    sFaint();
     pushFx(q, `${nameOf(me)} fainted!`, { kind: 'faint', side: 'me', dur: 32, block: 1 });
     if (party.some(m => m.hp > 0)) {
       battle.after = 'forceTeam';
@@ -1972,14 +1983,14 @@ function useItem(kind) {
     if (me.hp >= maxHp(me)) { q.push('It would have no effect!'); return noTurn(); }
     items.berry--;
     me.hp = Math.min(maxHp(me), me.hp + 40);
-    q.push(`${nameOf(me)} munched the Sweet Berry!`);
+    pushFx(q, `${nameOf(me)} munched the Sweet Berry!`, { kind: 'stat', side: 'me', dur: 14, dHp: { side: 'me', hp: me.hp } });
   } else {
     if (items.jam <= 0) { q.push('No Bramble Jam left!'); return noTurn(); }
     if (me.hp >= maxHp(me) && !me.st) { q.push('It would have no effect!'); return noTurn(); }
     items.jam--;
     me.hp = maxHp(me); me.st = null;
     sCatch();
-    q.push(`${nameOf(me)} is fully restored by the Bramble Jam!`);
+    pushFx(q, `${nameOf(me)} is fully restored by the Bramble Jam!`, { kind: 'stat', side: 'me', dur: 14, dHp: { side: 'me', hp: me.hp } });
   }
   actOnce(en, me, en.moves[ri(en.moves.length)], q);
   burnTick(me, q); burnTick(en, q);
@@ -1990,6 +2001,7 @@ function switchTo(idx, forced) {
   if (!forced) q.push(`Enough, ${nameOf(curMon())}!`);
   battle.ai = idx;
   battle.dispMe = party[idx].hp;
+  battle.tgtMe = party[idx].hp;
   pushFx(q, `Go, ${nameOf(party[idx])}!`, { kind: 'sendIn', side: 'me', dur: 18, block: 1 });
   if (!forced) {
     const me = curMon(), en = battle.enemy;
@@ -2468,8 +2480,8 @@ function update() {
   if (mode === 'battle') {
     const b = battle;
     if (!b) return;
-    b.dispMe += (curMon().hp - b.dispMe) * 0.12;
-    b.dispEn += (b.enemy.hp - b.dispEn) * 0.12;
+    b.dispMe += (b.tgtMe - b.dispMe) * 0.12;
+    b.dispEn += (b.tgtEn - b.dispEn) * 0.12;
     b.age++;
     const fx = b.fx;
     if (fx) {
@@ -2477,6 +2489,8 @@ function update() {
       if (fx.kind === 'atk' && !fx.whiff && ft === 12) {
         const c = fx.side === 'me' ? [178, 44] : [56, 80];
         spawnParts(c[0], c[1], TYPE_COL[fx.type] || '#f6f2e2');
+        sHit();
+        if (fx.dHp) { if (fx.dHp.side === 'en') b.tgtEn = fx.dHp.hp; else b.tgtMe = fx.dHp.hp; }
       }
       if (fx.kind === 'stat' && ft === 2) {
         const c = fx.side === 'en' ? [178, 44] : [56, 80];
@@ -3209,6 +3223,7 @@ window.DBG = {
     battleText: battle && battle.cur,
     battleVi: battle && battle.vi,
     battleEnemy: battle && { sp: battle.enemy.sp, level: battle.enemy.level },
+    battleBars: battle && { me: Math.round(battle.tgtMe), en: Math.round(battle.tgtEn) },
     trainer: battle && battle.trainer && battle.trainer.name
   }),
   party: () => party,
