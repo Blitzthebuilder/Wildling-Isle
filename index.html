@@ -2079,14 +2079,23 @@ function victory(q) {
     tr.i++;
     const nx = tr.party[tr.i];
     markSeen(nx.sp);
-    // the swap is carried on the fx and applied when the line displays,
-    // so the faint animation plays on the mon that actually fainted
-    pushFx(q, `${tr.name} sends out ${nameOf(nx)}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1, swap: nx });
-    battle.after = 'menu';
+    // announce the incoming foe and offer a free switch before it enters
+    battle.pendingFoe = nx;
+    battle.ki = 0;
+    q.push(`${tr.name} is about to send in ${nameOf(nx)}.`);
+    battle.after = 'askSwap';
   } else {
     battle.endKind = battle.endKind || 'win';
     battle.after = 'end';
   }
+}
+function queueFoeEntry(q) {
+  // the swap is carried on the fx and applied when the line displays,
+  // so the faint animation plays on the mon that actually fainted
+  const nx = battle.pendingFoe;
+  battle.pendingFoe = null;
+  pushFx(q, `${battle.trainer.name} sends out ${nameOf(nx)}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1, swap: nx });
+  battle.after = 'menu';
 }
 function tryCatch() {
   const q = [];
@@ -2186,6 +2195,13 @@ function switchTo(idx, forced) {
   battle.dispMe = party[idx].hp;
   battle.tgtMe = party[idx].hp;
   pushFx(q, `Go, ${nameOf(party[idx])}!`, { kind: 'sendIn', side: 'me', dur: 18, block: 1 });
+  if (battle.freeSwap) {
+    // switching on a KO preview is free: the foe enters, no counterattack
+    battle.freeSwap = false;
+    queueFoeEntry(q);
+    battle.q = q; battle.phase = 'text'; nextText();
+    return;
+  }
   if (!forced) {
     const me = curMon(), en = battle.enemy;
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
@@ -2858,10 +2874,30 @@ function update() {
       if (tap('A')) { sOk(); doRound(mv[b.vi]); }
       return;
     }
+    if (b.phase === 'askSwap') {
+      if (tap('up') || tap('down')) { b.ki = 1 - b.ki; sMove(); }
+      const keep = tap('B');           // B is a shortcut for KEEP FIGHTING
+      if (keep) b.ki = 0;
+      if (tap('A') || keep) {
+        sOk();
+        if (b.ki === 0) {
+          const q = [];
+          queueFoeEntry(q);
+          b.q = q; b.phase = 'text'; nextText();
+        } else {
+          b.freeSwap = true; b.ti = 0; b.forced = false; b.phase = 'team';
+        }
+      }
+      return;
+    }
     if (b.phase === 'team') {
       if (tap('up')) { b.ti = (b.ti + party.length - 1) % party.length; sMove(); }
       if (tap('down')) { b.ti = (b.ti + 1) % party.length; sMove(); }
-      if (tap('B') && !b.forced) { sBack(); b.phase = 'menu'; }
+      if (tap('B') && !b.forced) {
+        sBack();
+        if (b.freeSwap) { b.freeSwap = false; b.ki = 0; b.phase = 'askSwap'; }
+        else b.phase = 'menu';
+      }
       if (tap('A')) {
         const m = party[b.ti];
         if (m.hp > 0 && (b.forced || b.ti !== b.ai)) { sOk(); switchTo(b.ti, b.forced); b.forced = false; }
@@ -3232,6 +3268,14 @@ function drawBattle() {
       text(r, 22, oy, '#20242c', 7);
     });
     text(['toss to befriend', 'restores 40 HP', 'full heal + cure', ''][b.bi], 140, 116 + b.bi * 10, '#4c5c50', 7);
+  } else if (b.phase === 'askSwap') {
+    drawBox(4, 106, 232, 50);
+    text('Swap in a different Wildling?', 14, 114, '#20242c', 7);
+    ['KEEP FIGHTING', 'SWITCH'].forEach((o, i) => {
+      const oy = 128 + i * 12;
+      if (i === b.ki) text('>', 18, oy, '#a34537', 7);
+      text(o, 30, oy, '#20242c', 7);
+    });
   } else if (b.phase === 'team') {
     drawTeamList(b.ti, true);
   }
@@ -3584,6 +3628,7 @@ window.DBG = {
     battleVi: battle && battle.vi,
     battleEnemy: battle && { sp: battle.enemy.sp, level: battle.enemy.level },
     battleBars: battle && { me: Math.round(battle.tgtMe), en: Math.round(battle.tgtEn) },
+    battleActive: battle && battle.ai,
     riding,
     trainer: battle && battle.trainer && battle.trainer.name
   }),
