@@ -153,6 +153,7 @@
       Walk in tall grass to meet wild Wildlings. Toss Charm Orbs to befriend them. Rest at the cabin or campfires to heal.<br>
       Progress auto-saves where the browser allows. For a bullet-proof backup, tap <b>CODE</b> in-game to copy a save code, and tap it on the title screen to load one.<br>
       Wildlings <b>evolve twice</b> as they level up. Defeat your rival <b>Briar</b> at each gate to reach new areas &mdash; beat him at the end of the pier to become <b>Champion</b>!<br>
+      And champions hear rumors of a <b>bigger, rougher isle</b> across the water, where an undefeated harbor champion waits...<br>
       Rumor has it a rare <b>Mystic</b> Wildling drifts through every corner of the isle...
     </p>
   </details>
@@ -215,6 +216,19 @@ const ART = {
     '...jjjjjj...',
     '...jj..jj...',
     '...kk..kk...'
+  ],
+  mara: [
+    '....yyyy....',
+    '...yyyyyy...',
+    '...yffffy...',
+    '...yfkfky...',
+    '....ffff....',
+    '...BBBBBB...',
+    '..fBBBBBBf..',
+    '...BBBBBB...',
+    '...kkkkkk...',
+    '...kk..kk...',
+    '...ss..ss...'
   ],
   rival: [
     '....oooo....',
@@ -1255,7 +1269,7 @@ const AREAS = {
     raw: [
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTT',
       'T~~~~~~~~~~~~~~~~~~~~~~~~~~T',
-      'T~~~~~~~~~~~~=~~~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~3~~~~~~~~~~~~~T',
       'T~~~~~~~~~~~~=~~~~~~~~~~~~~T',
       'T~~~~~~~~~~~~=~~~~~~~~~~~~~T',
       'T~~~~,,......=......,,~~~~~T',
@@ -1278,7 +1292,7 @@ const AREAS = {
     ],
     wilds: ['puffowl','bubbet','bubbet','rockit','galehoot','bubblun','mossoak','finlet','finlet','breezel','breezel','marfin','cyclonet','wispurr','mystifur'], lvl: [13, 19],
     bird: 'tidewing',
-    exits: { '1': { to:'cavern', x:25, y:10 } },
+    exits: { '1': { to:'cavern', x:25, y:10 }, '3': { to:'harbor', x:2, y:16 } },
     gate: {
       x:13, y:2, flag:'champion',
       intro: [
@@ -1292,7 +1306,10 @@ const AREAS = {
         "Heh. You've earned it, champ.",
         'YOU are the CHAMPION of Wildling Isle!',
         'Doc Bramble will want to hear about this.',
-        '(Keep exploring and perfecting your team!)'
+        '...Say. Across the water lies BOOTHBAY ISLE.',
+        'Bigger. Rougher. Their harbor champion',
+        'has NEVER lost. The ferry leaves from',
+        'this very pier. Go show them, champ.'
       ],
       party: () => [makeMon('fulmite', 23), makeMon('cragolith', 23), makeMon(evoTo(evoTo(rivalSp())), 26)]
     },
@@ -1301,14 +1318,202 @@ const AREAS = {
       "They say the isle's strongest trainer",
       'waits at the end of the pier.'
     ]
+  },
+  /* ---- BOOTHBAY ISLE: postgame, unlocked by the champion ferry ---- */
+  harbor: {
+    label: 'BOOTHBAY HARBOR',
+    ground:'#9cc06e', dot:'#84ac58', enc:'#74a656', blade:'#42883f', blade2:'#31703c',
+    inn: 'THE SEASIDE INN',
+    door: { x: 4, y: 5 },
+    raw: [
+      'TTTTTTTTTTTTTTTTTTTT4TTTTTTTTTTTTTTTTTTT',
+      'T,,,,,,....T........=........T,,,,,,,,.T',
+      'T,,,,,,....T........=........T,,,,,,,,.T',
+      'T..........T........=..................T',
+      'T...HH..............=........HH........T',
+      'T...HH..............=........HH........T',
+      'T............HH.....=..................T',
+      'T............HH.....=..................T',
+      'T...S...............=......,,,,,,......T',
+      'T...................=......,,,,,,......T',
+      'T....,,,,......c....=......,,,,,,......T',
+      'T....,,,,...........=..................T',
+      'T....,,,,...........=..................T',
+      'T...................=..................T',
+      'T~~~~~b~~~~~~~~~~~~~=~~~~~~b~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~~~~~~~~=~~~~~~~~~~~~~~~~~~T',
+      '3====================~~~~~b~~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T',
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+    ],
+    wilds: ['bubblun','bubblun','marfin','marfin','galehoot','cyclonet','mossoak','boulderit','voltcat','wispurr'], lvl: [22, 28],
+    bird: 'tidewing',
+    exits: { '3': { to:'shore', x:13, y:3 }, '4': { to:'pines', x:27, y:19 } },
+    gate: {
+      x:20, y:1, flag:'gate3', name:'MARA', art:'mara',
+      intro: [
+        'MARA: Hold fast, mainlander.',
+        "I'm Mara, harbormaster of Boothbay Isle.",
+        'Champion of the little isle, are you?',
+        'Out here the tide hits harder. Prove it!'
+      ],
+      win: [
+        'MARA: Well sailed! You can handle a squall.',
+        'The Pinewood Trails are open to you.',
+        'Mind the fog past the pines...'
+      ],
+      party: () => [makeMon('thornvine', 26), makeMon('marfin', 25), makeMon('voltcat', 25)]
+    },
+    sign: [
+      'WELCOME TO BOOTHBAY HARBOR.',
+      'Rest at the Seaside Inn. Ferry at the west dock.',
+      'NORTH: Pinewood Trails - harbormaster on duty.'
+    ]
+  },
+  pines: {
+    label: 'PINEWOOD TRAILS',
+    ground:'#7fae62', dot:'#6a9a50', enc:'#5f9448', blade:'#2e6e3a', blade2:'#1f5230',
+    raw: [
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT5TTTTT',
+      'T,,,,,......TTTT.........TTTT..........T',
+      'T,,,,,......TTTT..,,,,,..TTTT..........T',
+      'T......TT.........,,,,,......TTTT......T',
+      'TTTTT..TT.........,,,,,......TTTT......T',
+      'T......TTTTT............TTTTT..........T',
+      'T..,,,,........TTTT.....TTTTT...,,,,,..T',
+      'T..,,,,..TTTT..TTTT.............,,,,,..T',
+      'T..,,,,..TTTT.........TTT.......,,,,,..T',
+      'T........TTTT..,,,,...TTT..............T',
+      'TTTTTT.........,,,,...........TTTTTTT..T',
+      'T..............,,,,....................T',
+      'T...TTTT..............TTTT....c.S......T',
+      'T...TTTT...,,,,,......TTTT.............T',
+      'T..........,,,,,...............TTTT....T',
+      'T..TTT.....,,,,,......,,,,.....TTTT....T',
+      'T..TTT................,,,,.............T',
+      'T..........TTTTT......,,,,....TTT......T',
+      'T,,,,......TTTTT..............TTT......T',
+      'T,,,,..............TTT.................T',
+      'T,,,,....,,,....TTTTTT.....4...........T',
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+    ],
+    wilds: ['mossoak','mossoak','shroombler','shroombler','scorchound','thistlash','galehoot','eldermoss','mycolossus','wispurr','mystifur'], lvl: [25, 31],
+    bird: 'voltalon',
+    exits: { '4': { to:'harbor', x:20, y:2 }, '5': { to:'cliffs', x:1, y:1 } },
+    gate: {
+      x:34, y:1, flag:'gate4', name:'MARA', art:'mara',
+      intro: [
+        'MARA: Back again? The pines toughen everyone.',
+        'Past me lies Granite Head and the outer isle.',
+        'Show me that champion grit once more!'
+      ],
+      win: [
+        "MARA: Aye, you're the real thing.",
+        'Granite Head Light marks the way east.',
+        'The isle across the fog holds our summit.'
+      ],
+      party: () => [makeMon('bramblore', 31), makeMon('cragolith', 30), makeMon('fulmite', 30), makeMon('geyserun', 30)]
+    },
+    sign: [
+      'PINEWOOD TRAILS. Stay on the paths.',
+      'The pines hide the toughest broods on the isle.',
+      'EAST: Granite Head Light.'
+    ]
+  },
+  cliffs: {
+    label: 'GRANITE HEAD LIGHT',
+    ground:'#a8a08a', dot:'#948c76', enc:'#847e68', blade:'#5a5648', blade2:'#454236',
+    raw: [
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR~~~~~~~~~R',
+      '5.....,,,,....RRRR............~~~~b~~~~R',
+      'R.....,,,,....RRRR.........L..~~~~~~~~~R',
+      'R..........................L..~~~~~~~~~R',
+      'R....RRR........,,,,,......L...~~~~~~~~R',
+      'R....RRR........,,,,,..........~~~~~~~~R',
+      'R...............,,,,,..........~~~~~~~~R',
+      'R...c.S................................R',
+      'R.........RRRR......,,,,......RR.......R',
+      'R.........RRRR......,,,,......RR.......R',
+      'R...,,,,............,,,,...............R',
+      'R...,,,,...............................R',
+      'R...,,,,.....RR........===========6~~~~R',
+      'R......................................R',
+      'R......RRRR.......,,,,,.......RRRR.....R',
+      'R......RRRR.......,,,,,.......RRRR.....R',
+      'R.................,,,,,................R',
+      'R,,,,,.........................,,,,,,..R',
+      'R,,,,,.........................,,,,,,..R',
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR'
+    ],
+    wilds: ['boulderit','boulderit','cragolith','voltcat','thunderlynx','galehoot','stratowl','bouldbear','terragrizz','mystifur'], lvl: [28, 34],
+    bird: 'emberoc',
+    exits: { '5': { to:'pines', x:34, y:2 }, '6': { to:'fogisle', x:19, y:17 } },
+    sign: [
+      'GRANITE HEAD LIGHT. Est. long ago.',
+      'The dock below sails for Squirrel Isle',
+      'when the fog allows. Good luck.'
+    ]
+  },
+  fogisle: {
+    label: 'SQUIRREL ISLE',
+    ground:'#8aa084', dot:'#788e74', enc:'#6c8468', blade:'#41653f', blade2:'#324e34',
+    fog: true,
+    raw: [
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+      'T~~~~~~~~~~~~~~....=....~~~~~~~~~~~~~~~T',
+      'T~~~~~~~~~~~~~~....=....~~~~~~~~~~~~~~~T',
+      'T..................=...................T',
+      'T.....,,,,.........=..........,,,,.....T',
+      'T.....,,,,.........=..........,,,,.....T',
+      'T..TTT.............=.....TTT...........T',
+      'T..TTT..,,,,,......=......TTT..........T',
+      'T.......,,,,,......=...................T',
+      'T.......,,,,,......=......,,,,,,.......T',
+      'T..................=......,,,,,,.......T',
+      'T....c.S...........=......,,,,,,.......T',
+      'T..................=...................T',
+      'T...RRR............=..........RRR......T',
+      'T...RRR....,,,,....=..........RRR......T',
+      'T..........,,,,....=...................T',
+      'T..........,,,,....=......,,,,.........T',
+      'T..................=...................T',
+      'T..................6...................T',
+      'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'
+    ],
+    wilds: ['stratowl','fulmite','cragolith','eldermoss','geyserun','pyrewolf','leviafin','verdantis','tempestrel','terragrizz','mycolossus','oraclaw'], lvl: [31, 38],
+    bird: 'tidewing',
+    exits: { '6': { to:'cliffs', x:32, y:13 } },
+    gate: {
+      x:19, y:2, flag:'champion2', name:'MARA', art:'mara',
+      intro: [
+        'MARA: So you crossed the fog to Squirrel Isle.',
+        'Every hand in that harbor trained under me.',
+        'I am the HARBOR CHAMPION of Boothbay.',
+        "No champion of ours has ever fallen. Storm's up!"
+      ],
+      win: [
+        'MARA: ...The storm breaks. You have won.',
+        'Two isles. Two crowns.',
+        'YOU are the HARBOR CHAMPION of Boothbay!',
+        'The whole sea will sing of you, mainlander.',
+        '(Every horizon lies open now. Keep sailing.)'
+      ],
+      party: () => [makeMon('stratowl', 35), makeMon('terragrizz', 35), makeMon('pyrewolf', 36), makeMon('torrentide', 36), makeMon('oraclaw', 38)]
+    },
+    sign: [
+      'SQUIRREL ISLE. The fog keeps its own counsel.',
+      'The summit path climbs north.',
+      'Only champions come back down.'
+    ]
   }
 };
 for (const k in AREAS) {
   const a = AREAS[k];
-  a.map = a.raw.map(r => r.padEnd(MW, r[0]).slice(0, MW));
+  a.mw = Math.max(...a.raw.map(r => r.length));
+  a.map = a.raw.map(r => r.padEnd(a.mw, r[0]).slice(0, a.mw));
   a.mh = a.raw.length;
 }
-const SOLID = 'T~HSRcO';
+const SOLID = 'T~HSRcObL';
 const START = { x: 9, y: 18 };
 /* elemental bird spawns: unlocked by gate, rolled per grass encounter;
    secret — hoarding charm orbs above lureOrbs quadruples the rate */
@@ -1363,11 +1568,12 @@ const P = { tx: START.x, ty: START.y, px: START.x * 16, py: START.y * 16, dir: '
 const held = new Set();
 let taps = [];
 
-const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= A.mh) ? A.map[0][0] : A.map[y][x];
+const tileAt = (x, y) => (x < 0 || y < 0 || x >= A.mw || y >= A.mh) ? A.map[0][0] : A.map[y][x];
 
 /* ---------- save ---------- */
 const IS_BETA = typeof location !== 'undefined' && location.pathname.indexOf('/beta') !== -1;
 const SAVE_KEY = IS_BETA ? 'wildling-isle-save-beta' : 'wildling-isle-save';
+let championSeen2 = false;
 let devAllowed = IS_BETA;
 let devIdx = 0, devPick = 0, devMsg = null;
 const DEV_OPTS = ['HEAL + 99 ORBS', 'GIVE WILDLING', 'LEAD +5 LEVELS', 'UNLOCK PROGRESS', 'RELOCK PROGRESS', 'DEX: SEE ALL', 'EXIT'];
@@ -1382,6 +1588,7 @@ function saveData() {
 function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveData())); } catch (e) {}
   if (flags.champion) championSeen = true;
+  if (flags.champion2) championSeen2 = true;
 }
 const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null });
 const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null });
@@ -1400,9 +1607,10 @@ function applyData(d) {
   coins = (d.v >= 5 && d.coins != null) ? d.coins : 25;
   items = (d.v >= 5 && d.items) ? { berry: d.items.berry | 0, jam: d.items.jam | 0 } : { berry: 1, jam: 0 };
   party.forEach(m => markCaught(m.sp));
-  P.tx = clamp(d.tx | 0, 1, MW - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
+  P.tx = clamp(d.tx | 0, 1, A.mw - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
   P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
   if (flags.champion) championSeen = true;
+  if (flags.champion2) championSeen2 = true;
   return true;
 }
 function load() {
@@ -1435,6 +1643,7 @@ function importCode() {
 try {
   const d = JSON.parse(localStorage.getItem(SAVE_KEY));
   if (d && d.flags && d.flags.champion) championSeen = true;
+  if (d && d.flags && d.flags.champion2) championSeen2 = true;
 } catch (e) {}
 
 /* ---------- dialog ---------- */
@@ -1846,7 +2055,7 @@ function warp(toArea, tx, ty) {
 }
 function gateChallenge() {
   const g = A.gate;
-  say(g.intro, () => startTrainerBattle({ name: 'BRIAR', party: g.party(), i: 0, flag: g.flag, win: g.win }));
+  say(g.intro, () => startTrainerBattle({ name: g.name || 'BRIAR', party: g.party(), i: 0, flag: g.flag, win: g.win }));
 }
 function healParty(lines) {
   party.forEach(m => { m.hp = maxHp(m); m.st = null; });
@@ -2127,10 +2336,12 @@ function update() {
           if (pendingLearns.length) { lrnIdx = 0; mode = 'learn'; }
         }
       } else if (devIdx === 3) {
-        flags.gate1 = flags.gate2 = flags.champion = true; championSeen = true;
-        devMsg = 'Gates open, champion granted'; save();
+        flags.gate1 = flags.gate2 = flags.champion = flags.gate3 = flags.gate4 = flags.champion2 = true;
+        championSeen = championSeen2 = true;
+        devMsg = 'All gates + both championships granted'; save();
       } else if (devIdx === 4) {
         delete flags.gate1; delete flags.gate2; delete flags.champion; delete flags.sylvarch;
+        delete flags.gate3; delete flags.gate4; delete flags.champion2;
         devMsg = 'Progress relocked'; save();
       } else if (devIdx === 5) { DEX_ORDER.forEach(markSeen); devMsg = 'All 46 marked seen'; save(); }
       else { mode = 'world'; }
@@ -2395,6 +2606,22 @@ function drawTile(t, x, y, sx, sy) {
     const f = Math.floor(frame / 12) % 2;
     px(sx + 12, sy + 10, 3, 3, f ? '#e8b84b' : '#e2573d');
     px(sx + 12, sy + 13, 3, 1, '#3a3f36');
+  } else if (t === 'b') {
+    px(sx, sy, 16, 16, '#4f8fd6');
+    px(sx + 2 + (Math.floor(frame / 20) % 2) * 3, sy + 3, 6, 1, '#8ec4ee');
+    px(sx + 2, sy + 8, 12, 5, '#8a4b2e');
+    px(sx + 3, sy + 13, 10, 2, '#5f2f1c');
+    px(sx + 5, sy + 4, 6, 4, '#f6f2e2');
+    px(sx + 10, sy + 2, 1, 2, '#5f2f1c');
+  } else if (t === 'L') {
+    const top = tileAt(x, y - 1) !== 'L';
+    px(sx + 4, sy, 8, 16, '#f0ece2');
+    px(sx + 4, sy + (top ? 10 : 4), 8, 3, '#c9432f');
+    if (top) {
+      px(sx + 3, sy, 10, 2, '#5a5f70');
+      px(sx + 5, sy + 2, 6, 4, Math.floor(frame / 25) % 2 ? '#ffd94a' : '#f5efc0');
+      px(sx + 4, sy + 6, 8, 1, '#5a5f70');
+    }
   } else if (t === 'O') {
     px(sx + 5, sy + 2, 6, 12, '#8a8fa0');
     px(sx + 6, sy + 1, 4, 1, '#a6acc0');
@@ -2437,14 +2664,21 @@ function drawDialog(lines, i) {
 }
 
 function drawWorld() {
-  const camx = clamp(P.px - 112, 0, MW * 16 - 240);
+  const camx = clamp(P.px - 112, 0, A.mw * 16 - 240);
   const camy = clamp(P.py - 72, 0, A.mh * 16 - 160);
   const x0 = Math.floor(camx / 16), y0 = Math.floor(camy / 16);
   for (let y = y0; y <= y0 + 10 && y < A.mh; y++)
-    for (let x = x0; x <= x0 + 15 && x < MW; x++)
+    for (let x = x0; x <= x0 + 15 && x < A.mw; x++)
       drawTile(tileAt(x, y), x, y, x * 16 - camx, y * 16 - camy);
   const g = A.gate;
-  if (g && !flags[g.flag]) drawArt('rival', g.x * 16 - camx + 2, g.y * 16 - camy + 2, 1);
+  if (g && !flags[g.flag]) drawArt(g.art || 'rival', g.x * 16 - camx + 2, g.y * 16 - camy + 2, 1);
+  if (A.fog) {
+    for (let i = 0; i < 4; i++) {
+      const fy = ((Math.floor(frame / 3) + i * 52) % 200) - 20;
+      px(0, fy, 240, 10, 'rgba(215,222,228,0.10)');
+      px(0, fy + 14, 240, 4, 'rgba(215,222,228,0.07)');
+    }
+  }
   const bob = P.moving && Math.floor(frame / 8) % 2 ? -1 : 0;
   drawArt('hero', P.px - camx + 2, P.py - camy + 2 + bob, 1);
 
@@ -2715,7 +2949,7 @@ function drawObeliskMove() {
 function drawRest() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
   drawBox(50, 34, 140, 78);
-  text(restSpot === 'cabin' ? "DOC BRAMBLE'S CABIN" : 'CAMPFIRE', 62, 41, '#20242c', 7);
+  text(restSpot === 'camp' ? 'CAMPFIRE' : (A.inn || "DOC BRAMBLE'S CABIN"), 62, 41, '#20242c', 7);
   ['REST (free)', 'SHOP', 'LEAVE'].forEach((o, i) => {
     const oy = 58 + i * 15;
     if (i === restIdx) text('>', 64, oy, '#a34537', 7);
@@ -2863,7 +3097,8 @@ function drawTitle() {
   ctx.font = 'bold 21px monospace';
   ctx.fillStyle = '#0e1a14'; ctx.fillText('WILDLING ISLE', 29, 47);
   ctx.fillStyle = '#e8b84b'; ctx.fillText('WILDLING ISLE', 27, 45);
-  if (championSeen) text('* CHAMPION *', 84, 68, '#e8b84b', 7);
+  if (championSeen) text('* CHAMPION *', championSeen2 ? 30 : 84, 68, '#e8b84b', 7);
+  if (championSeen2) text('* HARBOR CHAMPION *', 116, 68, '#7ac0e8', 7);
   text('CODE: load a save code', 66, 108, '#5f8a6e', 7);
   drawArt('cindret', 48, 78, 2);
   drawArt('drippet', 104, 78, 2);
@@ -2950,6 +3185,7 @@ window.DBG = {
     battlePhase: battle && battle.phase,
     battleText: battle && battle.cur,
     battleVi: battle && battle.vi,
+    battleEnemy: battle && { sp: battle.enemy.sp, level: battle.enemy.level },
     trainer: battle && battle.trainer && battle.trainer.name
   }),
   party: () => party,
