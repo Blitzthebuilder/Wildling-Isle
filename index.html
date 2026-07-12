@@ -2322,9 +2322,18 @@ function drawWorld() {
   }
 }
 
-function drawMonPlate(x, y, m, disp, showXp) {
+function drawPaw(x, y) {
+  const col = '#b9854b';
+  px(x, y + 1, 1, 1, col);       // outer toes
+  px(x + 4, y + 1, 1, 1, col);
+  px(x + 2, y, 1, 1, col);       // middle toe
+  px(x + 1, y + 3, 3, 2, col);   // pad
+}
+
+function drawMonPlate(x, y, m, disp, showXp, paw) {
   drawBox(x, y, 104, showXp ? 34 : 28);
-  text(nameOf(m), x + 6, y + 5, '#20242c');
+  if (paw) drawPaw(x + 5, y + 5);
+  text(nameOf(m), x + (paw ? 13 : 6), y + 5, '#20242c');
   text('L' + m.level, x + 80, y + 5, '#4c5c50');
   if (m.st) text(ST[m.st].tag, x + 58, y + 5, ST[m.st].col, 7);
   drawBar(x + 6, y + 17, 80, disp / maxHp(m));
@@ -2346,7 +2355,7 @@ function drawBattle() {
   drawArt(b.enemy.sp, 160, 26, 3);
   drawArt(curMon().sp, 38, 62, 3);
 
-  drawMonPlate(6, 6, b.enemy, b.dispEn, false);
+  drawMonPlate(6, 6, b.enemy, b.dispEn, false, dex[b.enemy.sp] === 2);
   drawMonPlate(130, 74, curMon(), b.dispMe, true);
   if (b.trainer) text(b.trainer.name + ' ' + (b.trainer.i + 1) + '/' + b.trainer.party.length, 8, 36, '#4c5c50', 7);
 
