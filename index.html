@@ -134,6 +134,7 @@
         <button id="codeBtn">CODE</button>
         <button id="resetBtn">NEW&nbsp;GAME</button>
         <button id="muteBtn">SOUND&nbsp;ON</button>
+        <button id="devBtn" hidden>DEV</button>
       </div>
       <div class="ab">
         <button class="b-btn" data-k="B" aria-label="B button">B</button>
@@ -855,6 +856,20 @@ const ART = {
     '..VV....VV..',
     '...vv..vv...',
     '............'
+  ],
+  sylvarch: [
+    '.G.n....n.G.',
+    '..Gn....nG..',
+    '...nnnnnn...',
+    '...nknnkn...',
+    '...nnnnnn...',
+    '....nwwn....',
+    '..nnnnnnnn..',
+    '.nnnnnnnnnn.',
+    '.nnGGGGGGnn.',
+    '.nnnnnnnnnn.',
+    '..nn.nn.nn..',
+    '..ww.ww.ww..'
   ]
 };
 function drawArt(key, x, y, sc) {
@@ -999,7 +1014,10 @@ const SPECIES = {
   mystifur:   { name:'Mystifur',   type:'Mystic', base:{hp:52,atk:68,def:50,spd:80}, catch:.15, evolve:{at:28,to:'oraclaw'},
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash']], blurb:'the veiled seer' },
   oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08,
-                learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' }
+                learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' },
+  /* legendary — found only by those who know where to look */
+  sylvarch:   { name:'Sylvarch',   type:'Mystic', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
+                learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
@@ -1020,7 +1038,7 @@ const DEX_ORDER = [
   'mossling','mossoak','eldermoss','bubbet','bubblun','geyserun',
   'flarepup','scorchound','pyrewolf','finlet','marfin','leviafin','petalit','thistlash','verdantis',
   'statikit','voltcat','thunderlynx','breezel','cyclonet','tempestrel','shalecub','bouldbear','terragrizz',
-  'wispurr','mystifur','oraclaw'
+  'wispurr','mystifur','oraclaw','sylvarch'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -1226,8 +1244,11 @@ let taps = [];
 const tileAt = (x, y) => (x < 0 || y < 0 || x >= MW || y >= A.mh) ? A.map[0][0] : A.map[y][x];
 
 /* ---------- save ---------- */
-const SAVE_KEY = (typeof location !== 'undefined' && location.pathname.indexOf('/beta') !== -1)
-  ? 'wildling-isle-save-beta' : 'wildling-isle-save';
+const IS_BETA = typeof location !== 'undefined' && location.pathname.indexOf('/beta') !== -1;
+const SAVE_KEY = IS_BETA ? 'wildling-isle-save-beta' : 'wildling-isle-save';
+let devAllowed = IS_BETA;
+let devIdx = 0, devPick = 0, devMsg = null;
+const DEV_OPTS = ['HEAL + 99 ORBS', 'GIVE WILDLING', 'LEAD +5 LEVELS', 'UNLOCK PROGRESS', 'RELOCK PROGRESS', 'DEX: SEE ALL', 'EXIT'];
 let championSeen = false;
 function saveData() {
   return {
@@ -1390,6 +1411,27 @@ function doRound(myMoveName) {
   }
   checkOutcome(q);
 }
+function levelUpMon(m, q) {
+  const oldMax = maxHp(m);
+  m.level++;
+  m.hp += maxHp(m) - oldMax;
+  if (q) q.push(`${nameOf(m)} grew to level ${m.level}!`);
+  const ev = SPECIES[m.sp].evolve;
+  if (ev && m.level >= ev.at) {
+    const oldName = nameOf(m), preMax = maxHp(m);
+    m.sp = ev.to;
+    m.hp += maxHp(m) - preMax;
+    markCaught(m.sp);
+    sEvolve();
+    if (q) q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[m.sp].name}, ${SPECIES[m.sp].blurb}!`);
+  }
+  for (const [lv, mv] of SPECIES[m.sp].learn) {
+    if (lv === m.level && !m.moves.includes(mv)) {
+      if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
+      else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
+    }
+  }
+}
 function victory(q) {
   const me = curMon(), en = battle.enemy;
   const gain = en.level * (battle.trainer ? 26 : 18);
@@ -1397,25 +1439,7 @@ function victory(q) {
   q.push(`${nameOf(me)} gained ${gain} XP!`);
   while (me.xp >= xpNeed(me.level)) {
     me.xp -= xpNeed(me.level);
-    const oldMax = maxHp(me);
-    me.level++;
-    me.hp += maxHp(me) - oldMax;
-    q.push(`${nameOf(me)} grew to level ${me.level}!`);
-    const ev = SPECIES[me.sp].evolve;
-    if (ev && me.level >= ev.at) {
-      const oldName = nameOf(me), preMax = maxHp(me);
-      me.sp = ev.to;
-      me.hp += maxHp(me) - preMax;
-      markCaught(me.sp);
-      sEvolve();
-      q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[me.sp].name}, ${SPECIES[me.sp].blurb}!`);
-    }
-    for (const [lv, mv] of SPECIES[me.sp].learn) {
-      if (lv === me.level && !me.moves.includes(mv)) {
-        if (me.moves.length < 4) { me.moves.push(mv); q.push(`${nameOf(me)} learned ${mv}!`); }
-        else { const old = me.moves.shift(); me.moves.push(mv); q.push(`${nameOf(me)} forgot ${old} and learned ${mv}!`); }
-      }
-    }
+    levelUpMon(me, q);
   }
   const tr = battle.trainer;
   if (tr && tr.i < tr.party.length - 1) {
@@ -1466,6 +1490,7 @@ function tryCatch() {
     } else {
       q.push('Caught... but your team AND the Ranch are full!', `${nameOf(en)} scampered off, orb and all.`);
     }
+    if (en.sp === 'sylvarch' && (party.includes(en) || ranch.includes(en))) flags.sylvarch = true;
     battle.endKind = 'caught';
     battle.after = 'end';
     battle.q = q; battle.phase = 'text'; nextText();
@@ -1535,7 +1560,7 @@ const KEYMAP = {
   arrowleft:'left', a:'left', arrowright:'right', d:'right',
   z:'A', enter:'A', ' ':'A',
   x:'B', escape:'B', backspace:'B',
-  c:'C', v:'V'
+  c:'C', v:'V', '0':'D'
 };
 addEventListener('keydown', e => {
   const k = KEYMAP[e.key.toLowerCase()];
@@ -1567,6 +1592,9 @@ muteBtn.addEventListener('click', () => {
   if (!muted) sOk();
 });
 setMuteLabel();
+const devBtn = document.getElementById('devBtn');
+devBtn.hidden = !devAllowed;
+devBtn.addEventListener('click', () => taps.push('D'));
 document.getElementById('resetBtn').addEventListener('click', () => {
   if (confirm('Start a brand new adventure? Your save will be erased.')) {
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
@@ -1705,7 +1733,55 @@ function update() {
     return;
   }
 
+  if (mode === 'dev') {
+    if (tap('up')) { devIdx = (devIdx + DEV_OPTS.length - 1) % DEV_OPTS.length; sMove(); }
+    if (tap('down')) { devIdx = (devIdx + 1) % DEV_OPTS.length; sMove(); }
+    if (tap('B')) { sBack(); mode = 'world'; }
+    if (tap('A')) {
+      sOk();
+      if (devIdx === 0) {
+        party.forEach(m => { m.hp = maxHp(m); }); ranch.forEach(m => { m.hp = maxHp(m); });
+        orbs = 99; devMsg = 'Team healed, 99 orbs'; save();
+      } else if (devIdx === 1) { devPick = 0; mode = 'devpick'; }
+      else if (devIdx === 2) {
+        const m = party[0];
+        if (m) {
+          for (let i = 0; i < 5 && m.level < 60; i++) levelUpMon(m, null);
+          m.hp = maxHp(m);
+          devMsg = nameOf(m) + ' is now ' + SPECIES[m.sp].name + ' L' + m.level;
+          save();
+        }
+      } else if (devIdx === 3) {
+        flags.gate1 = flags.gate2 = flags.champion = true; championSeen = true;
+        devMsg = 'Gates open, champion granted'; save();
+      } else if (devIdx === 4) {
+        delete flags.gate1; delete flags.gate2; delete flags.champion; delete flags.sylvarch;
+        devMsg = 'Progress relocked'; save();
+      } else if (devIdx === 5) { DEX_ORDER.forEach(markSeen); devMsg = 'All 46 marked seen'; save(); }
+      else { mode = 'world'; }
+    }
+    return;
+  }
+
+  if (mode === 'devpick') {
+    if (tap('left')) { devPick = (devPick + DEX_ORDER.length - 1) % DEX_ORDER.length; sMove(); }
+    if (tap('right')) { devPick = (devPick + 1) % DEX_ORDER.length; sMove(); }
+    if (tap('up')) { devPick = (devPick + DEX_ORDER.length - 8) % DEX_ORDER.length; sMove(); }
+    if (tap('down')) { devPick = (devPick + 8) % DEX_ORDER.length; sMove(); }
+    if (tap('B')) { sBack(); mode = 'dev'; }
+    if (tap('A')) {
+      const sp = DEX_ORDER[devPick];
+      const m = makeMon(sp, 20);
+      if (party.length < 6) { party.push(m); devMsg = SPECIES[sp].name + ' L20 joined the team'; }
+      else if (ranch.length < RANCH_MAX) { ranch.push(m); devMsg = SPECIES[sp].name + ' L20 sent to ranch'; }
+      else { devMsg = 'No room anywhere!'; sBack(); return; }
+      markCaught(sp); sCatch(); save();
+    }
+    return;
+  }
+
   if (mode === 'world') {
+    if (tap('D') && devAllowed) { devIdx = 0; devMsg = null; mode = 'dev'; sOk(); return; }
     if (tap('V')) { exportCode(); return; }
     if (tap('C')) { teamIdx = 0; mode = 'team'; sOk(); return; }
     if (tap('A')) {
@@ -1715,6 +1791,12 @@ function update() {
       const g = A.gate;
       if (g && !flags[g.flag] && fx === g.x && fy === g.y) { gateChallenge(); return; }
       const t = tileAt(fx, fy);
+      if (area === 'meadow' && fx === 3 && fy === 11 && t === 'T') {
+        if (flags.sylvarch) say(['The old tree stands quiet and content.', 'Its heart travels with you now.']);
+        else if (!flags.champion) say(['The old tree hums softly...', 'Something deep within is watching you.', 'It does not stir. Not yet.']);
+        else say(['The old tree trembles!', 'A presence uncoils from its roots...'], () => startBattle(makeMon('sylvarch', 32)));
+        return;
+      }
       if (t === 'H') {
         healParty(['Doc Bramble welcomes you in.', 'Your team is fully rested!', 'Charm Orbs restocked to 5.']);
         return;
@@ -2085,6 +2167,41 @@ function drawRanch() {
   }
 }
 
+function drawDev() {
+  px(0, 0, 240, 160, 'rgba(20,16,26,.97)');
+  text('DEV TOOLS', 12, 8, '#e8b84b');
+  text('BETA ONLY', 176, 8, '#a678d4', 7);
+  DEV_OPTS.forEach((o, i) => {
+    const y = 26 + i * 15;
+    if (i === devIdx) { px(8, y - 2, 150, 13, 'rgba(232,184,75,.2)'); text('>', 10, y, '#e8b84b', 7); }
+    text(o, 20, y, '#f6f2e2', 7);
+  });
+  text('FLAGS', 172, 26, '#8fa396', 7);
+  text('gate1: ' + (flags.gate1 ? 'Y' : '-'), 172, 37, '#cfe3d2', 7);
+  text('gate2: ' + (flags.gate2 ? 'Y' : '-'), 172, 47, '#cfe3d2', 7);
+  text('champ: ' + (flags.champion ? 'Y' : '-'), 172, 57, '#cfe3d2', 7);
+  text('sylv:  ' + (flags.sylvarch ? 'Y' : '-'), 172, 67, '#cfe3d2', 7);
+  text('orbs:  ' + orbs, 172, 77, '#cfe3d2', 7);
+  text('team:  ' + party.length + '/6', 172, 87, '#cfe3d2', 7);
+  text('ranch: ' + ranch.length, 172, 97, '#cfe3d2', 7);
+  if (devMsg) { drawBox(4, 142, 232, 16); text(devMsg, 12, 146, '#20242c', 7); }
+}
+
+function drawDevPick() {
+  px(0, 0, 240, 160, 'rgba(20,16,26,.97)');
+  text('GIVE WILDLING', 12, 6, '#e8b84b');
+  text('A: give  B: back', 156, 6, '#8fa396', 7);
+  DEX_ORDER.forEach((sp, i) => {
+    const cx = 8 + (i % 8) * 29, cy = 20 + Math.floor(i / 8) * 19;
+    if (i === devPick) px(cx - 2, cy - 1, 27, 17, 'rgba(232,184,75,.3)');
+    drawArt(sp, cx + 5, cy + 1, 1);
+  });
+  drawBox(4, 140, 232, 18);
+  const sp = DEX_ORDER[devPick];
+  text(SPECIES[sp].name + '  ' + SPECIES[sp].type + '  L20', 12, 145, '#20242c', 7);
+  if (devMsg) text(devMsg, 118, 145, '#2c5a41', 7);
+}
+
 function drawTitle() {
   px(0, 0, 240, 160, '#1c3a2c');
   px(0, 118, 240, 42, '#14291f');
@@ -2140,6 +2257,8 @@ function draw() {
   else if (mode === 'team') drawTeamList(teamIdx, false);
   else if (mode === 'dex') drawDex(dexIdx);
   else if (mode === 'ranch') drawRanch();
+  else if (mode === 'dev') drawDev();
+  else if (mode === 'devpick') drawDevPick();
   else if (mode === 'battle') drawBattle();
   if (dlg) drawDialog(dlg.lines, dlg.i);
 }
@@ -2179,6 +2298,7 @@ window.DBG = {
   dexOrder: () => DEX_ORDER.slice(),
   warp: (a, x, y) => warp(a, x, y),
   menu: i => { if (battle) battle.mi = i; },
+  dev: v => { devAllowed = !!v; },
   forceBattle: sp => startBattle(makeMon(sp || A.wilds[ri(A.wilds.length)], 3))
 };
 })();
