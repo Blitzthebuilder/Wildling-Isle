@@ -1424,13 +1424,18 @@ function levelUpMon(m, q) {
     markCaught(m.sp);
     sEvolve();
     if (q) q.push(`What?! ${oldName} is transforming!`, `${oldName} evolved into ${SPECIES[m.sp].name}, ${SPECIES[m.sp].blurb}!`);
-  }
-  for (const [lv, mv] of SPECIES[m.sp].learn) {
-    if (lv === m.level && !m.moves.includes(mv)) {
-      if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
-      else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
+    for (const [lv, mv] of SPECIES[m.sp].learn) {       // back-learn everything the new form should know by now
+      if (lv < m.level) learnMove(m, mv, q);
     }
   }
+  for (const [lv, mv] of SPECIES[m.sp].learn) {
+    if (lv === m.level) learnMove(m, mv, q);
+  }
+}
+function learnMove(m, mv, q) {
+  if (m.moves.includes(mv)) return;
+  if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); }
+  else { const old = m.moves.shift(); m.moves.push(mv); if (q) q.push(`${nameOf(m)} forgot ${old} and learned ${mv}!`); }
 }
 function victory(q) {
   const me = curMon(), en = battle.enemy;
