@@ -1395,25 +1395,25 @@ const AREAS = {
     ground:'#7fae62', dot:'#6a9a50', enc:'#5f9448', blade:'#2e6e3a', blade2:'#1f5230',
     raw: [
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT5TTTTT',
-      'T,,,,,......TTTT.........TTTT..........T',
-      'T,,,,,......TTTT..,,,,,..TTTT..........T',
-      'T......TT.........,,,,,......TTTT......T',
-      'TTTTT..TT.........,,,,,......TTTT......T',
-      'T......TTTTT............TTTTT..........T',
+      'T,,,,,......TTTT.........TTTT.....=....T',
+      'T,,,,,......TTTT..,,,,,..TTTT.....=....T',
+      'T......TT.........,,,,,......TTTT.=....T',
+      'TTTTT..TT.........,,,,,......TTTT.=....T',
+      'T......TTTTT............TTTTT.....=....T',
       'T..,,,,........TTTT.....TTTTT...,,,,,..T',
       'T..,,,,..TTTT..TTTT.............,,,,,..T',
       'T..,,,,..TTTT.........TTT.......,,,,,..T',
       'T........TTTT..,,,,...TTT..............T',
       'TTTTTT.........,,,,...........TTTTTTT..T',
       'T..............,,,,....................T',
-      'T...TTTT..............TTTT....c.S......T',
-      'T...TTTT...,,,,,......TTTT.............T',
-      'T..........,,,,,...............TTTT....T',
-      'T..TTT.....,,,,,......,,,,.....TTTT....T',
-      'T..TTT................,,,,.............T',
-      'T..........TTTTT......,,,,....TTT......T',
-      'T,,,,......TTTTT..............TTT......T',
-      'T,,,,..............TTT.................T',
+      'T...TTTT..............TTTT.=..c.S......T',
+      'T...TTTT...,,,,,......TTTT.=...........T',
+      'T..........,,,,,...........=...TTTT....T',
+      'T..TTT.....,,,,,......,,,,.=...TTTT....T',
+      'T..TTT................,,,,.=...........T',
+      'T..........TTTTT......,,,,.=..TTT......T',
+      'T,,,,......TTTTT...........=..TTT......T',
+      'T,,,,..............TTT.....=...........T',
       'T,,,,....,,,....TTTTTT.....4...........T',
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'
     ],
@@ -1437,7 +1437,8 @@ const AREAS = {
     sign: [
       'PINEWOOD TRAILS. Stay on the paths.',
       'The pines hide the toughest broods on the isle.',
-      'EAST: Granite Head Light.'
+      'NORTHEAST: Granite Head Light.',
+      'SOUTH TRAIL: back to Boothbay Harbor.'
     ]
   },
   cliffs: {
@@ -1445,7 +1446,7 @@ const AREAS = {
     ground:'#a8a08a', dot:'#948c76', enc:'#847e68', blade:'#5a5648', blade2:'#454236',
     raw: [
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR~~~~~~~~~R',
-      '5.....,,,,....RRRR............~~~~b~~~~R',
+      '5===..,,,,....RRRR............~~~~b~~~~R',
       'R.....,,,,....RRRR.........L..~~~~~~~~~R',
       'R..........................L..~~~~~~~~~R',
       'R....RRR........,,,,,......L...~~~~~~~~R',
@@ -2598,6 +2599,15 @@ function drawTile(t, x, y, sx, sy) {
   } else if (t === '=') {
     px(sx, sy, 16, 16, '#e0cb95');
     if (h % 3 === 0) px(sx + h % 11, sy + (h >> 4) % 11, 2, 2, '#c7ad72');
+  } else if (A.exits && A.exits[t]) {
+    // area exit: worn path + pulsing gold blaze so transitions are findable
+    px(sx, sy, 16, 16, '#e0cb95');
+    if (h % 3 === 0) px(sx + h % 11, sy + (h >> 4) % 11, 2, 2, '#c7ad72');
+    const pu = Math.floor(frame / 24) % 2;
+    px(sx + 6, sy + 5 + pu, 4, 6, '#e8b84b');
+    px(sx + 7, sy + 3 + pu, 2, 2, '#e8b84b');
+    px(sx + 7, sy + 11 + pu, 2, 2, '#e8b84b');
+    px(sx + 7, sy + 7 + pu, 2, 2, '#f6e7b2');
   } else if (t === '~') {
     px(sx, sy, 16, 16, '#4f8fd6');
     const off = (Math.floor(frame / 20) + ((x + y) % 2)) % 2;
