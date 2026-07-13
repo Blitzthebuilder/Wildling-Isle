@@ -3184,8 +3184,9 @@ function drawTile(t, x, y, sx, sy) {
   } else if (t === '=') {
     px(sx, sy, 16, 16, '#e0cb95');
     if (h % 3 === 0) px(sx + h % 11, sy + (h >> 4) % 11, 2, 2, '#c7ad72');
-  } else if (A.exits && A.exits[t]) {
+  } else if (A.exits && A.exits[t] && t !== '7' && t !== '8') {
     // area exit: worn path + pulsing gold blaze so transitions are findable
+    // ('7' false wall and '8' cave-mouth have disguised renderers below - no blaze)
     px(sx, sy, 16, 16, '#e0cb95');
     if (h % 3 === 0) px(sx + h % 11, sy + (h >> 4) % 11, 2, 2, '#c7ad72');
     const pu = Math.floor(frame / 24) % 2;
