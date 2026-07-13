@@ -308,6 +308,45 @@ const ART = {
     '...kk..kk...',
     '...nn..nn...'
   ],
+  ace: [
+    '....OOOO....',
+    '...OOOOOO...',
+    '...OffffO...',
+    '...OfkfkO...',
+    '....ffff....',
+    '...kkkkkk...',
+    '..fkkkkkkf..',
+    '...kkkkkk...',
+    '...rrrrrr...',
+    '...rr..rr...',
+    '...kk..kk...'
+  ],
+  warden: [
+    '....ssss....',
+    '...ssssss...',
+    '...hffffh...',
+    '...hfkfkh...',
+    '....ffff....',
+    '...vvvvvv...',
+    '..VvvvvvvV..',
+    '..vvvvvvvv..',
+    '..vvvvvvvv..',
+    '..vv....vv..',
+    '..kk....kk..'
+  ],
+  bruiser: [
+    '....ssss....',
+    '...ssssss...',
+    '...hffffh...',
+    '...hfkfkh...',
+    '....ffff....',
+    '..rrrrrrrr..',
+    '.frrrrrrrrf.',
+    '..rrrrrrrr..',
+    '..nnnnnnnn..',
+    '..nnn..nnn..',
+    '..kkk..kkk..'
+  ],
   cindret: [
     '............',
     '..rrr.......',
@@ -1324,6 +1363,16 @@ const AREAS = {
       rematch: ['SCOUT PIP: Rematch time! We got stronger!'],
       win: ['SCOUT PIP: Whoa, nice moves!', 'Come find me for a rematch anytime.'],
       party: () => [makeMon('sporeling', 8), makeMon('puffowl', 9)]
+    }, {
+      key: 'ivy', x: 24, y: 11, name: 'DUELIST IVY', art: 'ace',
+      intro: [
+        'DUELIST IVY: So YOU are the one Briar frets over.',
+        "I don't lose to newcomers. Let me show you why.",
+        'Three Wildlings. No mercy. Begin!'
+      ],
+      rematch: ['DUELIST IVY: Back for more? Good. So am I.'],
+      win: ['DUELIST IVY: ...Hmph. You are the real thing.', 'Fine. Come test me whenever you dare.'],
+      party: () => [makeMon('flarepup', 10), makeMon('petalit', 10), makeMon('zapmite', 11)]
     }]
   },
   cavern: {
@@ -1384,6 +1433,16 @@ const AREAS = {
       rematch: ['MINER FLINT: Back for another round? Dig in!'],
       win: ['MINER FLINT: Ha! Solid as granite, you are.', 'Swing by whenever you want a scrap.'],
       party: () => [makeMon('shalecub', 14), makeMon('boulderit', 15)]
+    }, {
+      key: 'garf', x: 8, y: 14, name: 'FOREMAN GARF', art: 'bruiser',
+      intro: [
+        'FOREMAN GARF: Flint sent you my way, did he?',
+        'I run this whole dig. My team hits like a',
+        'cave-in. Brace yourself!'
+      ],
+      rematch: ['FOREMAN GARF: Another cave-in coming. Ready?'],
+      win: ['FOREMAN GARF: Bah! Buried by a rookie.', 'Come back down when you want a rematch.'],
+      party: () => [makeMon('statikit', 15), makeMon('shalecub', 16), makeMon('boulderit', 16)]
     }]
   },
   shore: {
@@ -1451,6 +1510,16 @@ const AREAS = {
       rematch: ['ANGLER REED: The big one got away again.', 'You, though? Right where I want you.'],
       win: ['ANGLER REED: Reeled me in good, kid.', "I'll be here when you want another go."],
       party: () => [makeMon('finlet', 19), makeMon('marfin', 20)]
+    }, {
+      key: 'nix', x: 18, y: 13, name: 'TIDECALLER NIX', art: 'warden',
+      intro: [
+        'TIDECALLER NIX: The tide whispers of you, challenger.',
+        'It says you are strong. Let us find out.',
+        'Rise, my Wildlings!'
+      ],
+      rematch: ['TIDECALLER NIX: The tide turns again. Face me.'],
+      win: ['TIDECALLER NIX: The sea yields to you. As do I.', 'Return when the tide calls you back.'],
+      party: () => [makeMon('cyclonet', 22), makeMon('marfin', 22), makeMon('leviafin', 23)]
     }]
   },
   /* ---- BOOTHBAY ISLE: postgame, unlocked by the champion ferry ---- */
@@ -1519,6 +1588,16 @@ const AREAS = {
       rematch: ['DECKHAND CLEAT: Tide brought you back!', 'Ready when you are.'],
       win: ['DECKHAND CLEAT: Blow me down! Well fought.', 'Catch me between hauls for a rematch.'],
       party: () => [makeMon('bubblun', 23), makeMon('voltcat', 23)]
+    }, {
+      key: 'hark', x: 16, y: 11, name: 'BOSUN HARK', art: 'ace',
+      intro: [
+        'BOSUN HARK: I keep order on this harbor, mainlander.',
+        'Cleat is a warm-up. I am the real test',
+        'before Mara. Show me steel!'
+      ],
+      rematch: ['BOSUN HARK: Back on my dock? Then draw!'],
+      win: ['BOSUN HARK: Aye... a worthy hand indeed.', 'Any time you want a proper scrap, find me.'],
+      party: () => [makeMon('galehoot', 24), makeMon('voltcat', 24), makeMon('bubblun', 24)]
     }]
   },
   pines: {
@@ -1581,6 +1660,16 @@ const AREAS = {
       rematch: ['FORAGER FERN: The woods said you were coming.', 'Round two!'],
       win: ['FORAGER FERN: Tough as old pine knots!', 'Come trade bruises again sometime.'],
       party: () => [makeMon('shroombler', 27), makeMon('mossoak', 28)]
+    }, {
+      key: 'bruno', x: 10, y: 11, name: 'TRAPPER BRUNO', art: 'bruiser',
+      intro: [
+        'TRAPPER BRUNO: Deep in these pines is my hunting ground.',
+        'Nothing crosses it without facing my pack.',
+        'You included. Come on!'
+      ],
+      rematch: ['TRAPPER BRUNO: The pack remembers you. At them!'],
+      win: ['TRAPPER BRUNO: Heh. My pack has met its match.', 'Track me down for a rematch anytime.'],
+      party: () => [makeMon('thistlash', 29), makeMon('mycolossus', 29), makeMon('eldermoss', 29)]
     }]
   },
   cliffs: {
@@ -1626,6 +1715,16 @@ const AREAS = {
       rematch: ['KEEPER BEACON: The lamp still burns, and so do we!'],
       win: ['KEEPER BEACON: Bright as the beam itself!', 'Climb back up whenever you like.'],
       party: () => [makeMon('cragolith', 31), makeMon('thunderlynx', 31)]
+    }, {
+      key: 'crag', x: 11, y: 13, name: 'WATCHER CRAG', art: 'warden',
+      intro: [
+        'WATCHER CRAG: I watch the cliffs where the light cannot reach.',
+        'Storms shaped my team on this granite.',
+        'Weather them if you can!'
+      ],
+      rematch: ['WATCHER CRAG: The cliffs test you once more. Begin!'],
+      win: ['WATCHER CRAG: You endure like the granite itself.', 'The cliffs will wait for your return.'],
+      party: () => [makeMon('thunderlynx', 32), makeMon('bouldbear', 33), makeMon('terragrizz', 33)]
     }]
   },
   fogisle: {
@@ -1667,6 +1766,16 @@ const AREAS = {
       rematch: ['HERMIT SAGE: The fog parts for you again. Begin!'],
       win: ['HERMIT SAGE: Clarity! You fight with clear eyes.', 'Seek me out whenever the fog allows.'],
       party: () => [makeMon('eldermoss', 33), makeMon('geyserun', 33)]
+    }, {
+      key: 'vesper', x: 13, y: 8, name: 'PHANTOM VESPER', art: 'ace',
+      intro: [
+        'PHANTOM VESPER: You reached the fog isle. Impressive.',
+        'Mara is close now. But first, face me -',
+        'the last shadow before the summit!'
+      ],
+      rematch: ['PHANTOM VESPER: The fog delivers you to me again. En garde!'],
+      win: ['PHANTOM VESPER: A light that cuts the fog... go on.', 'Mara awaits. Return to me when you wish.'],
+      party: () => [makeMon('tempestrel', 34), makeMon('verdantis', 34), makeMon('oraclaw', 34)]
     }],
     gate: {
       x:19, y:2, flag:'champion2', name:'MARA', art:'mara',
