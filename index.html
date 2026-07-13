@@ -322,6 +322,110 @@ const ART = {
     '..SS....SS..',
     '..ee....ee..'
   ],
+  tuftcalf: [
+    '............',
+    '...w....w...',
+    '..wn....nw..',
+    '..nnnnnnnn..',
+    '..nknnnnkn..',
+    '..nnnnnnnn..',
+    '..hNNNNNNh..',
+    '..NNNNNNNN..',
+    '..NNNNNNNN..',
+    '..N.N..N.N..',
+    '..k.k..k.k..'
+  ],
+  brumbison: [
+    '..w......w..',
+    '.wn......nw.',
+    '.nnn....nnn.',
+    '.nnnnnnnnnn.',
+    '.nknnnnnnkn.',
+    'hhnnnnnnnnhh',
+    'hhNNNNNNNNhh',
+    '.hNNNNNNNNh.',
+    '.NNNNNNNNNN.',
+    '.NN.NN.NN.N.',
+    '.kk.kk.kk.k.'
+  ],
+  tatankron: [
+    '.e........e.',
+    'ehn......nhe',
+    '.hnn....nnh.',
+    '.nnnnnnnnnn.',
+    '.nennnnnnen.',
+    'hhnnnnnnnnhh',
+    'hhNNeNNeNNhh',
+    '.hNNNNNNNNh.',
+    '.NNNNNNNNNN.',
+    '.NN.NN.NN.N.',
+    '.ee.ee.ee.e.'
+  ],
+  chompling: [
+    '............',
+    '............',
+    '..gg....gg..',
+    '.gdgggggg...',
+    '.gkgggggkg..',
+    '.wgwgwgwgw..',
+    '.ggggggggg..',
+    '.dggggggdg..',
+    '..ggggggg...',
+    '..v.g..g.v..',
+    '..k......k..'
+  ],
+  gatorush: [
+    '............',
+    '.gg......gg.',
+    'gdgg....gdgg',
+    'gkggggggggkg',
+    'wgwgwgwgwgwg',
+    '.ggggggggg..',
+    '.dgggggggd..',
+    '.gggvvgggg..',
+    '.ggggggggg..',
+    '.v.gg..gg.v.',
+    '.k.kk..kk.k.'
+  ],
+  mirejaw: [
+    '.vv......vv.',
+    'vdvv....vvdv',
+    'vkvggggggvkv',
+    'wvwvwvwvwvwv',
+    '.vgggggggv..',
+    '.dgvggvgd...',
+    '.gvvvvvvg...',
+    '.gggvvggg...',
+    '.Vgggggggv..',
+    '.v.vv..vv.v.',
+    '.k.kk..kk.k.'
+  ],
+  snowpad: [
+    '............',
+    '..c......c..',
+    '..wc....cw..',
+    '..wwwwwwww..',
+    '..wkwwwwkw..',
+    '..wwwCCwww..',
+    '..SwwwwwwS..',
+    '..wwwwwwww..',
+    '..wwwwwwww..',
+    '..Sw.ww.wS..',
+    '..k.....k...'
+  ],
+  frostmaw: [
+    '..c......c..',
+    '.cwc....cwc.',
+    '.Cwwwwwwwwc.',
+    '.wwkwwwwkww.',
+    '.wwwwCCwwww.',
+    'CSwwwwwwwwSC',
+    '.SwwwwwwwwS.',
+    '.wwwwwwwwww.',
+    '.wCwwwwwwCw.',
+    '.Sww.ww.wwS.',
+    '.k.c...c.k..'
+  ],
   scamp: [
     '....gggg....',
     '...gggggg...',
@@ -1129,16 +1233,18 @@ function drawArt(key, x, y, sc, maxRows) {
 }
 
 /* ---------- creature data (all original) ---------- */
-const TYPE_COL = { Ember:'#e2573d', Tide:'#4a90d8', Flora:'#57b04c', Spark:'#d8b23c', Gale:'#8fb0c0', Stone:'#a08858', Mystic:'#a678d4', Wild:'#96968a' };
+const TYPE_COL = { Ember:'#e2573d', Tide:'#4a90d8', Flora:'#57b04c', Spark:'#d8b23c', Gale:'#8fb0c0', Stone:'#a08858', Mystic:'#a678d4', Wild:'#96968a', Frost:'#9ad9e8', Venom:'#c0399b' };
 const CHART = {
-  Ember:{ Flora:2, Tide:.5, Stone:.5, Ember:.5 },
-  Tide:{ Ember:2, Stone:2, Flora:.5, Tide:.5 },
-  Flora:{ Tide:2, Stone:2, Ember:.5, Gale:.5, Flora:.5 },
+  Ember:{ Flora:2, Tide:.5, Stone:.5, Ember:.5, Frost:2 },
+  Tide:{ Ember:2, Stone:2, Flora:.5, Tide:.5, Frost:.5 },
+  Flora:{ Tide:2, Stone:2, Ember:.5, Gale:.5, Flora:.5, Venom:.5 },
   Spark:{ Tide:2, Gale:2, Stone:.5 },
-  Gale:{ Flora:2, Mystic:2, Spark:.5, Stone:.5 },
-  Stone:{ Ember:2, Spark:2, Gale:2, Tide:.5, Flora:.5 },
-  Mystic:{ Stone:2, Spark:2, Mystic:.5 },
-  Wild:{}
+  Gale:{ Flora:2, Mystic:2, Spark:.5, Stone:.5, Frost:.5 },
+  Stone:{ Ember:2, Spark:2, Gale:2, Tide:.5, Flora:.5, Frost:2, Venom:2 },
+  Mystic:{ Stone:2, Spark:2, Mystic:.5, Venom:2 },
+  Wild:{},
+  Frost:{ Flora:2, Gale:2, Stone:2, Ember:.5, Tide:.5, Frost:.5 },
+  Venom:{ Flora:2, Mystic:2, Stone:.5, Venom:.5 }
 };
 const MOVES = {
   'Tackle':      { type:'Wild',  pow:35, acc:100 },
@@ -1167,6 +1273,12 @@ const MOVES = {
   'Hex Pulse':   { type:'Mystic', pow:45, acc:100 },
   'Mind Lash':   { type:'Mystic', pow:75, acc:90 },
   'Astral Burst':{ type:'Mystic', pow:85, acc:85 },
+  'Frost Bite':  { type:'Frost', pow:40, acc:100 },
+  'Ice Shard':   { type:'Frost', pow:65, acc:90 },
+  'Glacier':     { type:'Frost', pow:85, acc:85 },
+  'Venom Spit':  { type:'Venom', pow:40, acc:100 },
+  'Toxic Fang':  { type:'Venom', pow:65, acc:90 },
+  'Acid Flood':  { type:'Venom', pow:85, acc:85 },
   /* move-tutor exclusives: taught only at the Boothbay Harbor tutor */
   'Starfall':    { type:'Mystic', pow:100, acc:80 },
   'Veil Rend':   { type:'Mystic', pow:95, acc:85 },
@@ -1199,7 +1311,15 @@ const MOVES = {
   'Rampage':     { type:'Wild', pow:100, acc:80 },
   'Overrun':     { type:'Wild', pow:95, acc:85 },
   'Fang Rush':   { type:'Wild', pow:90, acc:90 },
-  'Quick Jab':   { type:'Wild', pow:80, acc:100 }
+  'Quick Jab':   { type:'Wild', pow:80, acc:100 },
+  'Absolute Zero':{ type:'Frost', pow:100, acc:80 },
+  'Blizzard':    { type:'Frost', pow:95, acc:85 },
+  'Permafrost':  { type:'Frost', pow:90, acc:90 },
+  'Rime Kiss':   { type:'Frost', pow:80, acc:100 },
+  'Plague Bloom':{ type:'Venom', pow:100, acc:80 },
+  'Corrosion':   { type:'Venom', pow:95, acc:85 },
+  'Fang Venom':  { type:'Venom', pow:90, acc:90 },
+  'Spore Cloud': { type:'Venom', pow:80, acc:100 }
 };
 const SPECIES = {
   /* starter lines — evolve at 13 and 25 */
@@ -1322,7 +1442,24 @@ const SPECIES = {
   asterion:   { name:'Asterion',   type:'Wild', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, first:true, evolve:{at:36,to:'celestaur'},
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
   celestaur:  { name:'Celestaur',  type:'Wild', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, first:true,
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' }
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
+  /* ---- PARKLANDS region 3: bison (Stone), gator (Venom), snow-lynx (Frost) ---- */
+  tuftcalf:   { name:'Tuftcalf',   type:'Stone', base:{hp:54,atk:50,def:56,spd:34}, catch:.5, evolve:{at:18,to:'brumbison'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the prairie calf' },
+  brumbison:  { name:'Brumbison',  type:'Stone', base:{hp:76,atk:72,def:80,spd:42}, catch:.2, evolve:{at:36,to:'tatankron'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[14,'Pounce'],[20,'Rock Slide']], blurb:'the shaggy bull' },
+  tatankron:  { name:'Tatankron',  type:'Stone', base:{hp:102,atk:94,def:106,spd:50}, catch:.08,
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[14,'Pounce'],[20,'Rock Slide'],[38,'Slam']], blurb:'the thunder of the plains' },
+  chompling:  { name:'Chompling',  type:'Venom', base:{hp:46,atk:56,def:44,spd:40}, catch:.5, evolve:{at:18,to:'gatorush'},
+                learn:[[1,'Tackle'],[4,'Venom Spit']], blurb:'the marsh hatchling' },
+  gatorush:   { name:'Gatorush',   type:'Venom', base:{hp:64,atk:78,def:60,spd:54}, catch:.2, evolve:{at:36,to:'mirejaw'},
+                learn:[[1,'Tackle'],[4,'Venom Spit'],[14,'Toxic Fang'],[20,'Splash Jet']], blurb:'the swamp rusher' },
+  mirejaw:    { name:'Mirejaw',    type:'Venom', base:{hp:86,atk:106,def:82,spd:66}, catch:.08,
+                learn:[[1,'Tackle'],[4,'Venom Spit'],[14,'Toxic Fang'],[20,'Splash Jet'],[38,'Acid Flood']], blurb:'the king of the mire' },
+  snowpad:    { name:'Snowpad',    type:'Frost', base:{hp:44,atk:54,def:42,spd:60}, catch:.45, evolve:{at:22,to:'frostmaw'},
+                learn:[[1,'Tackle'],[3,'Frost Bite'],[8,'Pounce']], blurb:'the snow kitten' },
+  frostmaw:   { name:'Frostmaw',   type:'Frost', base:{hp:70,atk:82,def:64,spd:92}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Frost Bite'],[8,'Pounce'],[16,'Ice Shard'],[26,'Glacier']], blurb:'the blizzard lynx' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
@@ -1345,7 +1482,8 @@ const DEX_ORDER = [
   'statikit','voltcat','thunderlynx','breezel','cyclonet','tempestrel','shalecub','bouldbear','terragrizz',
   'wispurr','mystifur','oraclaw',
   'sporeling','shroombler','mycolossus','emberoc','voltalon','tidewing','sylvarch','primling',
-  'minos','asterion','celestaur'
+  'minos','asterion','celestaur',
+  'tuftcalf','brumbison','tatankron','chompling','gatorush','mirejaw','snowpad','frostmaw'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -1622,13 +1760,15 @@ const AREAS = {
       'T...................=..................T',
       'T~~~~~b~~~~~~~~~~~~~=~~~~~~b~~~~~~~~~~~T',
       'T~~~~~~~~~~~~~~~~~~~=~~~~~~~~~~~~~~~~~~T',
-      '3====================~~~~~b~~~~~~~~~~~~T',
+      '3====================5~~~~b~~~~~~~~~~~~T',
       'T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T',
       'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'
     ],
     wilds: ['bubblun','bubblun','marfin','marfin','galehoot','cyclonet','mossoak','boulderit','voltcat','wispurr'], lvl: [22, 28],
     bird: 'tidewing',
-    exits: { '3': { to:'shore', x:13, y:3 }, '4': { to:'pines', x:27, y:19 } },
+    exits: { '3': { to:'shore', x:13, y:3 }, '4': { to:'pines', x:27, y:19 },
+             '5': { to:'gateway', x:9, y:16, req:'champion2',
+                    reqMsg: ['The mainland ferry rocks at its mooring.', 'FERRYMAN: This boat runs for Harbor Champions only.', 'Best the fog isle first, then we sail.'] } },
     gate: {
       x:20, y:1, flag:'gate3', name:'MARA', art:'mara',
       intro: [
@@ -1863,7 +2003,11 @@ const AREAS = {
         'Two isles. Two crowns.',
         'YOU are the HARBOR CHAMPION of Boothbay!',
         'The whole sea will sing of you, mainlander.',
-        '(Every horizon lies open now. Keep sailing.)'
+        '...But listen. Beyond these isles lies the',
+        'MAINLAND - the GREAT PARKLANDS. Eight wild',
+        'parks, eight rangers, a Superintendent who',
+        'has never named a Warden. A ferry now runs',
+        'for you from Boothbay Harbor. Go earn it.'
       ],
       party: () => [makeMon('stratowl', 35), makeMon('terragrizz', 35), makeMon('pyrewolf', 36), makeMon('torrentide', 36), makeMon('oraclaw', 38)]
     },
@@ -1871,6 +2015,178 @@ const AREAS = {
       'SQUIRREL ISLE. The fog keeps its own counsel.',
       'The summit path climbs north.',
       'Only champions come back down.'
+    ]
+  },
+  /* ==== REGION 3: THE GREAT PARKLANDS (US National Parks) — Phase 1 ==== */
+  gateway: {
+    label: 'PARKLAND GATEWAY',
+    ground:'#a8b878', dot:'#94a468', enc:'#88985c', blade:'#5a7a3e', blade2:'#456030',
+    raw: [
+      'TTTTTTTTTTTT1TTTTTTTTTTT',
+      'T......................T',
+      'T..HHHH..........S.....T',
+      'T..HHHH................T',
+      'T......................T',
+      'T......................T',
+      'T......................T',
+      'T...........S..........T',
+      'T......................T',
+      'T......................T',
+      'T.................c....T',
+      'T......................T',
+      'T......................T',
+      'T......................T',
+      'T~~~~~~~~=~~~~~~~~~~~~~T',
+      'T~~~~~~~~=~~~~~~~~~~~~~T',
+      'T.3....................T',
+      'TTTTTTTTTTTTTTTTTTTTTTTT'
+    ],
+    wilds: ['tuftcalf'], lvl: [36, 36],   // unused: no grass in the safe hub
+    exits: { '1': { to:'yellowstone', x:16, y:18 }, '3': { to:'harbor', x:20, y:16 } },
+    sign: [
+      'WELCOME TO THE GREAT PARKLANDS.',
+      'Eight parks, eight rangers, one Superintendent.',
+      'Heal at the Visitor Center. Read the ranger board.',
+      'NORTH: Yellowstone Basin.'
+    ]
+  },
+  yellowstone: {
+    label: 'YELLOWSTONE BASIN',
+    ground:'#c8b48a', dot:'#b49e74', enc:'#a8925c', blade:'#8a7a3e', blade2:'#6e5e30',
+    raw: [
+      'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT',
+      'T..............................T',
+      'T..............................T',
+      'T..............................T',
+      'T...~~~~................~~~~...T',
+      'T...~~~~................~~~~...T',
+      'T...~~~~................~~~~...T',
+      'T..............................T',
+      'T..,,,,..................,,,,..T',
+      'T..,,,,...RRRR...........,,,,..T',
+      'T..,,,,...RRRR...........,,,,..T',
+      'T.........RRRR.................T',
+      'T..............................T',
+      'T...................RRRR.......T',
+      'T...................RRRR.......T',
+      'T............,,,,,..RRRR.......T',
+      'T....S.......,,,,,........c....T',
+      'T............,,,,,.............T',
+      'T..............................T',
+      'TTTTTTTTTTTTTTTT1TTTTTTTTTTTTTTT'
+    ],
+    wilds: ['tuftcalf','brumbison','flarepup','scorchound','rockit','boulderit','galehoot'], lvl: [38, 42],
+    exits: { '1': { to:'gateway', x:12, y:1 }, '2': { to:'everglades', x:16, y:18 } },
+    gate: {
+      x:16, y:1, flag:'badgeYELL', name:'RANGER SOLENE', art:'warden',
+      intro: [
+        'RANGER SOLENE: Hold it, greenhorn.',
+        "I'm Solene, ranger of Yellowstone Basin.",
+        'The geysers answer to no one who cannot battle.',
+        'Earn my badge and the north trail is yours!'
+      ],
+      win: [
+        'RANGER SOLENE: Well fought! The basin approves.',
+        'Take the YELLOWSTONE BADGE. The mire lies north.'
+      ],
+      party: () => [makeMon('scorchound', 40), makeMon('brumbison', 41), makeMon('cragolith', 42)]
+    },
+    sign: [
+      'YELLOWSTONE BASIN. Mind the geysers.',
+      'Bison roam the flats. Rangers patrol the trail.',
+      'NORTH: Everglades Mire (ranger on duty).'
+    ]
+  },
+  everglades: {
+    label: 'EVERGLADES MIRE',
+    ground:'#6e8a5c', dot:'#5e7a4c', enc:'#547040', blade:'#3a5a2e', blade2:'#2a4420',
+    raw: [
+      'TTTTTTTTTTTTTTTT3TTTTTTTTTTTTTTT',
+      'T..............................T',
+      'T..............................T',
+      'T.................,,,,.........T',
+      'T..~~~~~~.........,,,,.........T',
+      'T..~~~~~~.........,,,,~~~~~~~..T',
+      'T..~~~~~~.............~~~~~~~..T',
+      'T..~~~~~~.............~~~~~~~..T',
+      'T.....................~~~~~~~..T',
+      'T.....................~~~~~~~..T',
+      'T....,,,,......................T',
+      'T....,,,,......................T',
+      'T....,,,,......................T',
+      'T.........~~~~~~~.......,,,,...T',
+      'T.........~~~~~~~.......,,,,...T',
+      'T.........~~~~~~~.......,,,,...T',
+      'T...S.....~~~~~~~..............T',
+      'T..............................T',
+      'T..............................T',
+      'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT'
+    ],
+    wilds: ['chompling','gatorush','bubblun','marfin','finlet','mossoak'], lvl: [41, 45],
+    exits: { '2': { to:'yellowstone', x:16, y:2 }, '3': { to:'yosemite', x:16, y:18 } },
+    gate: {
+      x:16, y:1, flag:'badgeEVER', name:'RANGER MURK', art:'salt',
+      intro: [
+        'RANGER MURK: Careful, the mire swallows the careless.',
+        "Murk's the name. This swamp is my ward.",
+        'Poison runs deep here. Prove you can wade it!'
+      ],
+      win: [
+        'RANGER MURK: Ha! You waded through. Impressive.',
+        'The EVERGLADES BADGE is yours. Climb to Yosemite.'
+      ],
+      party: () => [makeMon('gatorush', 43), makeMon('leviafin', 44), makeMon('geyserun', 45)]
+    },
+    sign: [
+      'EVERGLADES MIRE. The water bites back.',
+      'Gators lurk. Venom is common here.',
+      'NORTH: Yosemite High (ranger on duty).'
+    ]
+  },
+  yosemite: {
+    label: 'YOSEMITE HIGH',
+    ground:'#b8bcc0', dot:'#a4a8ac', enc:'#989ca0', blade:'#7a8e5e', blade2:'#5e7048',
+    raw: [
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
+      'R...............S..............R',
+      'R..............................R',
+      'R..............................R',
+      'R..............................R',
+      'R..............................R',
+      'R..,,,,..................,,,,..R',
+      'R..,,,,..................,,,,..R',
+      'R..,,,,..................,,,,..R',
+      'R...RRRR................RRRR...R',
+      'R...RRRR................RRRR...R',
+      'R...RRRR................RRRR...R',
+      'R..............................R',
+      'R..............................R',
+      'R.............,,,,,............R',
+      'R.............,,,,,............R',
+      'R....S........,,,,,........c...R',
+      'R..............................R',
+      'R..............................R',
+      'RRRRRRRRRRRRRRRR3RRRRRRRRRRRRRRR'
+    ],
+    wilds: ['snowpad','frostmaw','cragolith','verdantis','eldermoss','mossoak'], lvl: [44, 48],
+    exits: { '3': { to:'everglades', x:16, y:2 } },
+    gate: {
+      x:16, y:5, flag:'badgeYOSE', name:'RANGER VESPERA', art:'ace',
+      intro: [
+        'RANGER VESPERA: The high granite tests everyone.',
+        'I am Vespera, ranger of Yosemite High.',
+        'Frost clings to these cliffs. Show me your steel!'
+      ],
+      win: [
+        'RANGER VESPERA: Clean and cold. Well climbed.',
+        'The YOSEMITE BADGE is yours. Three of eight!'
+      ],
+      party: () => [makeMon('frostmaw', 46), makeMon('verdantis', 47), makeMon('terragrizz', 48)]
+    },
+    sign: [
+      'YOSEMITE HIGH. Granite and snowline.',
+      'Snow-lynx prowl the ledges.',
+      'The trail north is not yet cut.'
     ]
   }
 };
@@ -1927,7 +2243,9 @@ const TUTOR_SETS = {
   Spark:  ['Stormcall', 'Arc Flash', 'Ion Fang', 'Static Net'],
   Gale:   ['Tempest', 'Jetstream', 'Talon Dive', 'Zephyr Kiss'],
   Stone:  ['Avalanche', 'Granite Ram', 'Flint Edge', 'Sandblast'],
-  Wild:   ['Rampage', 'Overrun', 'Fang Rush', 'Quick Jab']
+  Wild:   ['Rampage', 'Overrun', 'Fang Rush', 'Quick Jab'],
+  Frost:  ['Absolute Zero', 'Blizzard', 'Permafrost', 'Rime Kiss'],
+  Venom:  ['Plague Bloom', 'Corrosion', 'Fang Venom', 'Spore Cloud']
 };
 const TUTOR_INFO = ['the heaviest of songs', 'a crushing verse', 'a keen refrain', 'never misses its mark'];
 const tutorSet = m => TUTOR_SETS[SPECIES[m.sp].type] || TUTOR_SETS.Wild;
@@ -1960,6 +2278,12 @@ const tileAt = (x, y) => (x < 0 || y < 0 || x >= A.mw || y >= A.mh) ? A.map[0][0
 const IS_BETA = typeof location !== 'undefined' && location.pathname.indexOf('/beta') !== -1;
 const SAVE_KEY = IS_BETA ? 'wildling-isle-save-beta' : 'wildling-isle-save';
 let championSeen2 = false;
+let championSeen3 = false;
+/* Parklands Ranger Badges (region 3) */
+const BADGE_FLAGS = ['badgeYELL','badgeEVER','badgeYOSE','badgeDENA','badgeSAGU','badgeGLAC','badgeREDW','badgeCANY'];
+const BADGE_PARK = ['YELLOWSTONE','EVERGLADES','YOSEMITE','DENALI','SAGUARO','GLACIER','REDWOOD','CANYONLANDS'];
+const BADGE_TYPE = ['Ember','Venom','Frost','Frost','Venom','Frost','Flora','Stone'];
+const countBadges = () => BADGE_FLAGS.filter(f => flags[f]).length;
 let devAllowed = IS_BETA;
 let devIdx = 0, devPick = 0, devMsg = null;
 const DEV_OPTS = ['HEAL + 99 ORBS', 'GIVE WILDLING', 'LEAD +5 LEVELS', 'UNLOCK PROGRESS', 'RELOCK PROGRESS', 'DEX: SEE ALL', 'EXIT'];
@@ -1975,6 +2299,7 @@ function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(saveData())); } catch (e) {}
   if (flags.champion) championSeen = true;
   if (flags.champion2) championSeen2 = true;
+  if (flags.champion3) championSeen3 = true;
 }
 const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null, held: m.held || null });
 const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null, held: m.held === 'locket' ? 'locket' : null });
@@ -1997,6 +2322,7 @@ function applyData(d) {
   P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
   if (flags.champion) championSeen = true;
   if (flags.champion2) championSeen2 = true;
+  if (flags.champion3) championSeen3 = true;
   return true;
 }
 function load() {
@@ -2030,6 +2356,7 @@ try {
   const d = JSON.parse(localStorage.getItem(SAVE_KEY));
   if (d && d.flags && d.flags.champion) championSeen = true;
   if (d && d.flags && d.flags.champion2) championSeen2 = true;
+  if (d && d.flags && d.flags.champion3) championSeen3 = true;
 } catch (e) {}
 
 /* ---------- dialog ---------- */
@@ -2131,10 +2458,11 @@ function nextText() {
 const ST = {
   brn: { tag: 'BRN', col: '#e2573d' },
   shk: { tag: 'SHK', col: '#d8b23c' },
-  chl: { tag: 'ICE', col: '#5cb8e6' }
+  chl: { tag: 'ICE', col: '#5cb8e6' },
+  psn: { tag: 'PSN', col: '#c0399b' }
 };
-const INFLICT = { Ember: ['brn', 0.2], Spark: ['shk', 0.25], Tide: ['chl', 0.2] };
-const ST_MSG = { brn: 'was burned!', shk: 'is shocked!', chl: 'was put on ice!' };
+const INFLICT = { Ember: ['brn', 0.2], Spark: ['shk', 0.25], Tide: ['chl', 0.2], Frost: ['chl', 0.35], Venom: ['psn', 0.3] };
+const ST_MSG = { brn: 'was burned!', shk: 'is shocked!', chl: 'was put on ice!', psn: 'was poisoned!' };
 const effSpd = m => Math.floor(stat(m, 'spd') / (m.st === 'chl' ? 2 : 1));
 
 /* ---------- battle fx ---------- */
@@ -2178,11 +2506,16 @@ function actOnce(a, d, mvName, q) {
   if (a.st === 'shk' && Math.random() < 0.3) { q.push(`${nameOf(a)} is shocked and can't move!`); return; }
   atkStep(a, d, mvName, q);
 }
-function burnTick(m, q) {
-  if (m.st === 'brn' && m.hp > 0) {
+function dotTick(m, q) {
+  // end-of-turn damage-over-turn statuses: burn (brn) and poison (psn)
+  if (m.hp <= 0) return;
+  const side = m === battle.enemy ? 'en' : 'me';
+  if (m.st === 'brn') {
     m.hp = Math.max(0, m.hp - Math.max(1, Math.floor(maxHp(m) / 12)));
-    const side = m === battle.enemy ? 'en' : 'me';
     pushFx(q, `${nameOf(m)} is hurt by its burn!`, { kind: 'stat', side, dur: 14, dHp: { side, hp: m.hp } });
+  } else if (m.st === 'psn') {
+    m.hp = Math.max(0, m.hp - Math.max(1, Math.floor(maxHp(m) / 8)));   // poison hits harder than burn
+    pushFx(q, `${nameOf(m)} is hurt by poison!`, { kind: 'stat', side, dur: 14, dHp: { side, hp: m.hp } });
   }
 }
 function heldTick(m, q) {
@@ -2224,7 +2557,7 @@ function doRound(myMoveName) {
   for (const [a, d, mv] of order) {
     if (a.hp > 0 && d.hp > 0) actOnce(a, d, mv, q);
   }
-  burnTick(me, q); burnTick(en, q); heldTick(me, q);
+  dotTick(me, q); dotTick(en, q); heldTick(me, q);
   checkOutcome(q);
 }
 function levelUpMon(m, q) {
@@ -2334,7 +2667,7 @@ function tryCatch() {
     pushFx(q, `Oh no! ${nameOf(en)} broke free!`, { kind: 'burst', dur: 14, block: 1 });
     const me = curMon();
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
-    burnTick(me, q); burnTick(en, q); heldTick(me, q);
+    dotTick(me, q); dotTick(en, q); heldTick(me, q);
     checkOutcome(q);
   }
 }
@@ -2355,7 +2688,7 @@ function tryRun() {
     q.push("Can't escape!");
     const me = curMon(), en = battle.enemy;
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
-    burnTick(me, q); burnTick(en, q); heldTick(me, q);
+    dotTick(me, q); dotTick(en, q); heldTick(me, q);
     checkOutcome(q);
   }
 }
@@ -2378,7 +2711,7 @@ function useItem(kind) {
     pushFx(q, `${nameOf(me)} is fully restored by the Bramble Jam!`, { kind: 'stat', side: 'me', dur: 14, dHp: { side: 'me', hp: me.hp } });
   }
   actOnce(en, me, en.moves[ri(en.moves.length)], q);
-  burnTick(me, q); burnTick(en, q); heldTick(me, q);
+  dotTick(me, q); dotTick(en, q); heldTick(me, q);
   checkOutcome(q);
 }
 function switchTo(idx, forced) {
@@ -2398,7 +2731,7 @@ function switchTo(idx, forced) {
   if (!forced) {
     const me = curMon(), en = battle.enemy;
     actOnce(en, me, en.moves[ri(en.moves.length)], q);
-    burnTick(me, q); burnTick(en, q); heldTick(me, q);
+    dotTick(me, q); dotTick(en, q); heldTick(me, q);
     checkOutcome(q);
   } else {
     battle.after = 'menu';
@@ -2571,6 +2904,12 @@ function hermitGift() {
 }
 function gateChallenge() {
   const g = A.gate;
+  if (g.req && countBadges() < g.req) {
+    say(['RANGER: The Superintendent names only full Wardens.',
+         'You carry ' + countBadges() + ' of ' + g.req + ' Ranger Badges.',
+         'Return when every park has recognized you.']);
+    return;
+  }
   say(g.intro, () => startTrainerBattle({ name: g.name || 'BRIAR', party: g.party(), i: 0, flag: g.flag, win: g.win }));
 }
 function healParty(lines) {
@@ -2716,7 +3055,13 @@ function update() {
         }
       }
     }
-    if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
+    if (tap('C')) { sOk(); mode = 'badges'; }
+    else if (tap('B')) { sBack(); mode = 'world'; }
+    return;
+  }
+
+  if (mode === 'badges') {
+    if (tap('B') || tap('C') || tap('A')) { sBack(); mode = 'world'; }
     return;
   }
 
@@ -2908,14 +3253,16 @@ function update() {
           if (pendingLearns.length) { lrnIdx = 0; mode = 'learn'; }
         }
       } else if (devIdx === 3) {
-        flags.gate1 = flags.gate2 = flags.champion = flags.gate3 = flags.gate4 = flags.champion2 = true;
-        championSeen = championSeen2 = true;
-        devMsg = 'All gates + both championships granted'; save();
+        flags.gate1 = flags.gate2 = flags.champion = flags.gate3 = flags.gate4 = flags.champion2 = flags.champion3 = true;
+        BADGE_FLAGS.forEach(f => flags[f] = true);
+        championSeen = championSeen2 = championSeen3 = true;
+        devMsg = 'All gates, badges + championships granted'; save();
       } else if (devIdx === 4) {
         delete flags.gate1; delete flags.gate2; delete flags.champion; delete flags.sylvarch;
-        delete flags.gate3; delete flags.gate4; delete flags.champion2;
+        delete flags.gate3; delete flags.gate4; delete flags.champion2; delete flags.champion3;
+        BADGE_FLAGS.forEach(f => delete flags[f]);
         devMsg = 'Progress relocked'; save();
-      } else if (devIdx === 5) { DEX_ORDER.forEach(markSeen); devMsg = 'All 46 marked seen'; save(); }
+      } else if (devIdx === 5) { DEX_ORDER.forEach(markSeen); devMsg = 'All ' + DEX_ORDER.length + ' marked seen'; save(); }
       else { mode = 'world'; }
     }
     return;
@@ -2961,6 +3308,7 @@ function update() {
       }
       const t = tileAt(fx, fy);
       if (area === 'hollow' && fx === 8 && fy === 3) { hermitGift(); return; }
+      if (area === 'gateway' && fx === 12 && fy === 7) { mode = 'badges'; sOk(); return; }
       if (area === 'meadow' && fx === 3 && fy === 11 && t === 'T') {
         if (flags.sylvarch) say(['The old tree stands quiet and content.', 'Its heart travels with you now.']);
         else if (!flags.champion) say(['The old tree hums softly...', 'Something deep within is watching you.', 'It does not stir. Not yet.']);
@@ -3025,6 +3373,7 @@ function update() {
         const ch = tileAt(P.tx, P.ty);
         if (A.exits && A.exits[ch]) {
           const ex = A.exits[ch];
+          if (ex.req && !flags[ex.req]) { say(ex.reqMsg || ['The way is closed to you for now.']); return; }
           warp(ex.to, ex.x, ex.y);
           return;
         }
@@ -3721,6 +4070,31 @@ function drawDex(idx) {
   else text('#' + (idx + 1) + ' - - -', 12, 141, '#8a8570', 7);
 }
 
+function drawBadges() {
+  px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
+  text('RANGER BADGES', 12, 6, '#e8b84b');
+  text(countBadges() + '/8', 200, 6, '#8fa396', 7);
+  BADGE_FLAGS.forEach((f, i) => {
+    const cx = 26 + (i % 4) * 54, cy = 30 + Math.floor(i / 4) * 56;
+    const got = !!flags[f], col = TYPE_COL[BADGE_TYPE[i]];
+    // crest: filled hex-ish pip when earned, gray outline when not
+    if (got) {
+      px(cx, cy + 3, 24, 18, col);
+      px(cx + 3, cy, 18, 24, col);
+      px(cx + 8, cy + 6, 8, 8, '#f8f8f8');   // ranger star core
+      px(cx + 10, cy + 3, 4, 14, '#f8f8f8'); px(cx + 5, cy + 8, 14, 4, '#f8f8f8');
+    } else {
+      px(cx, cy + 3, 24, 18, '#2a3228'); px(cx + 3, cy, 18, 24, '#2a3228');
+      px(cx + 2, cy + 5, 20, 14, '#161c18'); px(cx + 5, cy + 2, 14, 20, '#161c18');
+      text('?', cx + 9, cy + 8, '#4c5c50', 7);
+    }
+    text(BADGE_PARK[i].slice(0, 8), cx - 2, cy + 26, got ? '#cfe3d2' : '#5a6a5e', 7);
+  });
+  drawBox(4, 138, 232, 18);
+  const next = BADGE_FLAGS.findIndex(f => !flags[f]);
+  text(next < 0 ? 'ALL BADGES EARNED - seek the Superintendent!' : 'Next: ' + BADGE_PARK[next], 12, 143, '#20242c', 7);
+}
+
 function drawRanch() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
   text("DOC BRAMBLE'S RANCH", 12, 6, '#e8b84b');
@@ -3799,6 +4173,7 @@ function drawTitle() {
   ctx.fillStyle = '#e8b84b'; ctx.fillText('WILDLING ISLE', 27, 45);
   if (championSeen) text('* CHAMPION *', championSeen2 ? 30 : 84, 68, '#e8b84b', 7);
   if (championSeen2) text('* HARBOR CHAMPION *', 116, 68, '#7ac0e8', 7);
+  if (championSeen3) text('* PARK WARDEN *', 78, 77, '#7fd08a', 7);
   text('CODE: load a save code', 66, 108, '#5f8a6e', 7);
   drawArt('cindret', 48, 78, 2);
   drawArt('drippet', 104, 78, 2);
@@ -3858,6 +4233,7 @@ function draw() {
   }
   else if (mode === 'info') drawInfo();
   else if (mode === 'dex') drawDex(dexIdx);
+  else if (mode === 'badges') drawBadges();
   else if (mode === 'ranch') drawRanch();
   else if (mode === 'dev') drawDev();
   else if (mode === 'devpick') drawDevPick();
