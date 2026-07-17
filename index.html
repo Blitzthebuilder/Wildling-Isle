@@ -222,6 +222,92 @@ const sCatch = () => { blip(660, .08); setTimeout(() => blip(880, .08), 90); set
 const sFaint = () => { blip(300, .1, 'triangle'); setTimeout(() => blip(180, .16, 'triangle'), 100); };
 const sEvolve = () => { blip(520, .1); setTimeout(() => blip(700, .1), 110); setTimeout(() => blip(940, .1), 220); setTimeout(() => blip(1250, .18), 330); };
 
+/* ---------- music: a tiny two-voice chiptune sequencer ----------
+   Patterns are [midiNote, sixteenthSteps] pairs (note 0 = a rest). Two voices:
+   a square-wave melody over a triangle bass. A 100ms pump schedules notes a
+   beat ahead on the WebAudio clock, so timing stays tight even when frames lag. */
+const mtof = n => 440 * Math.pow(2, (n - 69) / 12);
+const TUNES = {
+  title: { bpm: 88,
+    mel: [[72,4],[76,4],[79,4],[84,4], [83,6],[79,2],[76,4],[79,4], [81,4],[77,4],[81,4],[84,4], [79,8],[76,4],[74,4]],
+    bas: [[48,8],[43,8], [45,8],[47,8]] },
+  meadow: { bpm: 104,
+    mel: [[67,2],[71,2],[74,2],[71,2],[76,4],[74,4], [72,2],[71,2],[69,2],[71,2],[67,6],[0,2],
+          [67,2],[71,2],[74,2],[76,2],[79,4],[76,4], [78,2],[76,2],[74,2],[71,2],[74,6],[0,2]],
+    bas: [[43,4],[50,4],[43,4],[50,4], [45,4],[52,4],[47,4],[50,4]] },
+  boothbay: { bpm: 96,
+    mel: [[62,4],[65,4],[69,4],[67,2],[65,2], [64,4],[62,2],[64,2],[65,4],[62,4],
+          [62,4],[65,4],[69,4],[72,4], [71,2],[69,2],[67,2],[65,2],[62,8]],
+    bas: [[38,8],[45,8], [36,8],[43,8]] },
+  parks: { bpm: 80,
+    mel: [[65,6],[69,2],[72,8], [74,4],[72,4],[69,4],[65,4], [67,6],[70,2],[74,8], [72,4],[70,4],[65,8]],
+    bas: [[41,8],[45,8], [46,8],[43,8]] },
+  battle: { bpm: 138,
+    mel: [[69,2],[69,2],[72,2],[74,2],[76,4],[74,2],[72,2], [71,2],[71,2],[74,2],[76,2],[77,4],[76,2],[74,2],
+          [76,2],[77,2],[76,2],[74,2],[72,4],[69,4], [68,4],[71,4],[69,8]],
+    bas: [[45,2],[45,2],[52,2],[45,2],[48,2],[45,2],[52,2],[45,2],
+          [41,2],[41,2],[48,2],[41,2],[43,2],[43,2],[50,2],[43,2]] },
+  legend: { bpm: 116,
+    mel: [[64,6],[65,6],[64,4], [67,4],[65,4],[64,4],[62,4], [64,6],[71,6],[70,4], [67,4],[65,4],[64,8]],
+    bas: [[40,8],[41,8], [40,8],[38,8]] }
+};
+let tuneName = null, musTimer = null, musAt = 0;
+const musVoice = { mel: { i:0, left:0, wave:'square', vol:0.015 }, bas: { i:0, left:0, wave:'triangle', vol:0.03 } };
+function setTune(name) {
+  if (name === tuneName) return;
+  tuneName = name;
+  musVoice.mel.i = musVoice.mel.left = 0;
+  musVoice.bas.i = musVoice.bas.left = 0;
+  if (AC) musAt = AC.currentTime + 0.08;
+}
+function musNote(f, t, d, wave, vol) {
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = wave; o.frequency.value = f;
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + d);
+  o.connect(g); g.connect(AC.destination);
+  o.start(t); o.stop(t + d);
+}
+function musPump() {
+  if (!AC || muted || !tuneName) return;
+  const T = TUNES[tuneName];
+  if (!T) return;
+  const stepD = 15 / T.bpm;
+  if (musAt < AC.currentTime) musAt = AC.currentTime + 0.05;
+  while (musAt < AC.currentTime + 0.35) {
+    for (const k of ['mel', 'bas']) {
+      const v = musVoice[k], pat = T[k];
+      if (v.left <= 0) {
+        const ev = pat[v.i % pat.length]; v.i++;
+        if (ev[0]) { try { musNote(mtof(ev[0]), musAt, ev[1] * stepD * 0.92, v.wave, v.vol); } catch (e) {} }
+        v.left = ev[1];
+      }
+      v.left--;
+    }
+    musAt += stepD;
+  }
+}
+function musicKick() {
+  // browsers only allow audio after a user gesture; the first input starts the band
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    if (!musTimer && typeof setInterval !== 'undefined') musTimer = setInterval(musPump, 100);
+  } catch (e) {}
+}
+const MUS_ISLE2 = ['harbor', 'pines', 'cliffs', 'fogisle'];
+const MUS_PARKS = ['gateway', 'yellowstone', 'everglades', 'yosemite', 'denali', 'saguaro', 'glacier', 'icecave'];
+function pickTune() {
+  if (mode === 'title' || mode === 'intro' || mode === 'starter') return 'title';
+  if (mode === 'battle' && battle) {
+    const legendary = !battle.trainer && ((SPECIES[battle.enemy.sp] || {}).catch || 1) <= 0.05;
+    return legendary ? 'legend' : 'battle';
+  }
+  if (MUS_PARKS.includes(area)) return 'parks';
+  if (MUS_ISLE2.includes(area)) return 'boothbay';
+  return 'meadow';
+}
+
 /* ---------- pixel art ---------- */
 const PAL = {
   h:'#6b4a2f', f:'#f2c9a0', t:'#2e8f8a', j:'#3f4f8f', k:'#20242c', w:'#f8f8f8',
@@ -243,6 +329,20 @@ const ART = {
     '...jjjjjj...',
     '...jj..jj...',
     '...kk..kk...'
+  ],
+  doc: [
+    '....SSSS....',
+    '...SSSSSS...',
+    '...SffffS...',
+    '...SfkfkS...',
+    '....ffff....',
+    '...wwwwww...',
+    '..fwwwwwwf..',
+    '...wwwwww...',
+    '...wwwwww...',
+    '...ww..ww...',
+    '...oo..oo...',
+    '............'
   ],
   mara: [
     '....yyyy....',
@@ -1740,14 +1840,25 @@ const ART = {
     '..ww.ww.ww..'
   ]
 };
-function drawArt(key, x, y, sc, maxRows) {
+/* shiny recolor: rotate each palette color's RGB channels (r,g,b -> b,r,g).
+   Coherent whole-sprite hue shift, computed once per color and cached. */
+const SHINY_COL = {};
+function shinyOf(col) {
+  let s = SHINY_COL[col];
+  if (!s) {
+    const r = parseInt(col.slice(1, 3), 16), g = parseInt(col.slice(3, 5), 16), b = parseInt(col.slice(5, 7), 16);
+    s = SHINY_COL[col] = '#' + ((1 << 24) + (b << 16) + (r << 8) + g).toString(16).slice(1);
+  }
+  return s;
+}
+function drawArt(key, x, y, sc, maxRows, shiny) {
   const a = ART[key]; if (!a) return;
   const lim = maxRows == null ? a.length : Math.min(a.length, maxRows);
   for (let r = 0; r < lim; r++) {
     const row = a[r];
     for (let c = 0; c < row.length; c++) {
-      const col = PAL[row[c]];
-      if (col) { ctx.fillStyle = col; ctx.fillRect(x + c * sc, y + r * sc, sc, sc); }
+      let col = PAL[row[c]];
+      if (col) { ctx.fillStyle = shiny ? shinyOf(col) : col; ctx.fillRect(x + c * sc, y + r * sc, sc, sc); }
     }
   }
 }
@@ -2074,9 +2185,10 @@ function makeMon(sp, lvl) {
   const m = { sp, level: lvl, xp: 0, st: null };
   m.hp = maxHp(m);
   m.moves = movesFor(sp, lvl);
+  if (Math.random() < 0.005) m.shiny = true;   // 1-in-200: rare colors
   return m;
 }
-const nameOf = m => m.nick || SPECIES[m.sp].name;
+const nameOf = m => (m.shiny ? '*' : '') + (m.nick || SPECIES[m.sp].name);
 const xpNeed = l => l * l * 5;
 const DEX_ORDER = [
   'cindret','cinderox','pyrelisk','drippet','drizzol','torrentide','thornbud','thornvine','bramblore',
@@ -2121,7 +2233,7 @@ const AREAS = {
       'T......=............O......T',
       'T......====................T',
       'T......XHH=....F..F........T',
-      'T.......HH=..F.F.F....,,,,.T',
+      'T.......HH=.SF.F.F....,,,,.T',
       'T.....S...=...........,,,,.T',
       'T..........................T',
       'T,,,,,.........,,,,,,......T',
@@ -2516,7 +2628,7 @@ const AREAS = {
       'R.........RRRR......,,,,......RR.......R',
       'R...,,,,............,,,,...............R',
       'R...,,,,...............................R',
-      'R...,,,,.....RR........===========6~~~~R',
+      'R...,,,,.....XR........===========6~~~~R',
       'R......................................R',
       'R......RRRR.......,,,,,.......RRRR.....R',
       'R......RRRR.......,,,,,.......RRRR.....R',
@@ -2526,6 +2638,11 @@ const AREAS = {
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR'
     ],
     wilds: ['boulderit','boulderit','cragolith','voltcat','thunderlynx','galehoot','stratowl','bouldbear','terragrizz','mystifur','skydart'], lvl: [28, 34],
+    cache: { item:'charm', flag:'cacheCharm', lines: [
+      'Wedged in the rocks: a sealed ranger cache!',
+      'You found a KEEN CHARM!',
+      "The holder's fierce hits land twice as often.",
+      '(Give it from the team menu under ITEM.)'] },
     bird: 'emberoc',
     exits: { '5': { to:'pines', x:34, y:2 }, '6': { to:'fogisle', x:19, y:17 } },
     sign: [
@@ -2721,7 +2838,7 @@ const AREAS = {
       'T..............................T',
       'T..............................T',
       'T.................,,,,.........T',
-      'T..~~~~~~.........,,,,.........T',
+      'T.X~~~~~~.........,,,,.........T',
       'T..~~~~~~.........,,,,~~~~~~~..T',
       'T..~~~~~~.............~~~~~~~..T',
       'T..~~~~~~.............~~~~~~~..T',
@@ -2739,6 +2856,13 @@ const AREAS = {
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT'
     ],
     wilds: ['chompling','gatorush','bubblun','marfin','finlet','mossoak','stinglet'], lvl: [41, 45],
+    weather: 'rain',
+    cache: { item:'pendant', flag:'cachePendant', lines: [
+      'Half-sunk in the marsh: a sealed cache!',
+      'You found a GUARD PENDANT!',
+      'Once per battle its holder survives a',
+      'knockout blow with 1 HP.',
+      '(Give it from the team menu under ITEM.)'] },
     bird: 'tidewing', birdLvl: 45,
     exits: { '2': { to:'yellowstone', x:16, y:2 }, '3': { to:'yosemite', x:16, y:18 } },
     gate: {
@@ -2833,6 +2957,7 @@ const AREAS = {
       'IIIIIIIIIIIIIIII4IIIIIIIIIIIIIII'
     ],
     wilds: ['stratowl','stratowl','bouldbear','bouldbear','cragolith','cragolith','wispurr','frostpup','flurret'], lvl: [47, 51],
+    weather: 'snow',
     bird: 'voltalon', birdLvl: 51,
     exits: { '4': { to:'yosemite', x:16, y:3 }, '5': { to:'saguaro', x:16, y:18 } },
     gate: {
@@ -2880,6 +3005,7 @@ const AREAS = {
       'RRRRRRRRRRRRRRRR5RRRRRRRRRRRRRRR'
     ],
     wilds: ['rattlet','rattlet','sideviper','gilaflare','scorchound','pyrewolf','cragolith','toxitar'], lvl: [50, 54],
+    weather: 'heat',
     bird: 'emberoc', birdLvl: 54,
     exits: { '5': { to:'denali', x:16, y:2 }, '6': { to:'glacier', x:16, y:18 } },
     gate: {
@@ -2927,6 +3053,7 @@ const AREAS = {
       'RRRRRRRRRRRRRRRR6RRRRRRRRRRRRRRR'
     ],
     wilds: ['rambluff','rambluff','rambluff','terragrizz','terragrizz','geyserun','geyserun','quarrol','snarlow','glacielle'], lvl: [53, 57],
+    weather: 'snow',
     bird: 'tidewing', birdLvl: 57,
     exits: { '6': { to:'saguaro', x:16, y:2 },
              '7': { to:'icecave', x:3, y:5, req:'badgeGLAC',
@@ -3008,7 +3135,14 @@ let tmMenu = -1;              // team submenu option index (-1 = closed)
 let tmSel = -1;               // mon picked for a switch (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
 let coins = 0;
-let items = { berry: 0, jam: 0, locket: 0 };
+let items = { berry: 0, jam: 0, locket: 0, charm: 0, pendant: 0 };
+const HELD_NAME = { locket: 'Moss Locket', charm: 'Keen Charm', pendant: 'Guard Pendant' };
+const HELD_TAG = { locket: 'mends each turn', charm: 'crit up', pendant: 'endures one KO' };
+const HELD_BLURB = {
+  locket: 'It will mend a little every battle turn.',
+  charm: 'Fierce hits will land twice as often.',
+  pendant: 'Once per battle it shrugs off a KO at 1 HP.'
+};
 const SHOP = [
   { key: 'orb',   name: 'Charm Orb',   price: 10, desc: 'befriends weakened Wildlings' },
   { key: 'berry', name: 'Sweet Berry', price: 15, desc: 'restores 40 HP in battle' },
@@ -3036,6 +3170,8 @@ const TUTOR_PRICE = 150;
 let tutMv = 0, tutMon = 0;
 let restIdx = 0, shopIdx = 0, shopTop = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
 const SHOP_VIS = 4;           // shop rows visible at once; longer lists scroll
+let tvIdx = 0, tvTop = 0;     // fast-travel cursor + scroll window
+const TRAVEL_VIS = 5;
 let pendingLearns = [];       // [{m, mv}] move-learning decisions awaiting the player
 let lrnIdx = 0;               // cursor on the forget-a-move screen
 let obIdx = 0, obMv = 0, obList = [];   // obelisk: mon cursor, move cursor, relearnable moves
@@ -3084,8 +3220,8 @@ function save() {
   if (flags.champion2) championSeen2 = true;
   if (flags.champion3) championSeen3 = true;
 }
-const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null, held: m.held || null });
-const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null, held: m.held === 'locket' ? 'locket' : null });
+const packMon = m => ({ sp: m.sp, level: m.level, xp: m.xp, hp: m.hp, moves: m.moves, nick: m.nick || null, st: m.st || null, held: m.held || null, shiny: m.shiny || null });
+const unpackMon = m => ({ sp: m.sp, level: m.level, xp: m.xp || 0, hp: m.hp, moves: m.moves || movesFor(m.sp, m.level), nick: m.nick || null, st: ST[m.st] ? m.st : null, held: HELD_NAME[m.held] ? m.held : null, shiny: m.shiny ? true : undefined });
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
 function applyData(d) {
   if (!d || !d.party || !d.party.length) return false;
@@ -3099,13 +3235,24 @@ function applyData(d) {
   chosen = (d.v >= 2 && SPECIES[d.chosen]) ? d.chosen : 'cindret';
   dex = (d.v >= 3 && d.dex) ? d.dex : {};
   coins = (d.v >= 5 && d.coins != null) ? d.coins : 25;
-  items = (d.v >= 5 && d.items) ? { berry: d.items.berry | 0, jam: d.items.jam | 0 } : { berry: 1, jam: 0 };
+  items = (d.v >= 5 && d.items)
+    ? { berry: d.items.berry | 0, jam: d.items.jam | 0, locket: d.items.locket | 0, charm: d.items.charm | 0, pendant: d.items.pendant | 0 }
+    : { berry: 1, jam: 0, locket: 0, charm: 0, pendant: 0 };
   party.forEach(m => markCaught(m.sp));
   P.tx = clamp(d.tx | 0, 1, A.mw - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
   P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
   if (flags.champion) championSeen = true;
   if (flags.champion2) championSeen2 = true;
   if (flags.champion3) championSeen3 = true;
+  // older saves predate the visited-areas ledger: infer it from progression flags
+  flags.vis = flags.vis || {};
+  flags.vis[area] = 1;
+  [['meadow', null], ['cavern', 'gate1'], ['shore', 'gate2'], ['harbor', 'champion'],
+   ['pines', 'gate3'], ['cliffs', 'gate4'], ['fogisle', 'gate4'],
+   ['gateway', 'champion2'], ['yellowstone', 'champion2'], ['everglades', 'badgeYELL'],
+   ['yosemite', 'badgeEVER'], ['denali', 'badgeYOSE'], ['saguaro', 'badgeDENA'],
+   ['glacier', 'badgeSAGU'], ['icecave', 'badgeGLAC']
+  ].forEach(([a, f]) => { if (!f || flags[f]) flags.vis[a] = 1; });
   return true;
 }
 function load() {
@@ -3164,6 +3311,7 @@ function startBattle(enemy) {
   const ai = pickAlive();
   if (ai < 0) return;
   markSeen(enemy.sp);
+  party.forEach(pm => { pm.pendUsed = false; }); enemy.pendUsed = false;
   mode = 'battle';
   fxParts = [];
   const q = [];
@@ -3174,11 +3322,14 @@ function startBattle(enemy) {
     dispMe: party[ai].hp, dispEn: enemy.hp,
     tgtMe: party[ai].hp, tgtEn: enemy.hp
   };
+  if (A.weather) q.push(WEATHER_LINE[A.weather]);
   pushFx(q, `A wild ${nameOf(enemy)} appeared!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1 });
+  if (enemy.shiny) pushFx(q, 'It shimmers with rare colors!', { kind: 'burst', dur: 14, block: 1 });
   pushFx(q, `Go, ${nameOf(party[ai])}!`, { kind: 'sendIn', side: 'me', dur: 18, block: 1 });
   nextText();
 }
 function startTrainerBattle(tr) {
+  party.forEach(pm => { pm.pendUsed = false; });
   const ai = pickAlive();
   if (ai < 0) return;
   markSeen(tr.party[0].sp);
@@ -3246,6 +3397,9 @@ const ST = {
 };
 // Tide inflicts nothing: water trades status for reliability. Chill belongs to Frost.
 const INFLICT = { Ember: ['brn', 0.2], Spark: ['shk', 0.25], Frost: ['chl', 0.35], Venom: ['psn', 0.3] };
+// park weather: the matching element hits 20% harder while the sky rages
+const WEATHER_BOOST = { snow: 'Frost', rain: 'Tide', heat: 'Ember' };
+const WEATHER_LINE = { snow: 'Snow drifts over the battlefield...', rain: 'Rain hammers down around you...', heat: 'Heat ripples off the sand...' };
 const ST_MSG = { brn: 'was burned!', shk: 'is shocked!', chl: 'was put on ice!', psn: 'was poisoned!' };
 const effSpd = m => Math.floor(stat(m, 'spd') / (m.st === 'chl' ? 2 : 1));
 
@@ -3294,13 +3448,18 @@ function atkStep(a, d, mvName, q) {
   pushFx(q, `${nameOf(a)} used ${mvName}!`, fxo);
   const eff = (CHART[mv.type] || {})[SPECIES[d.sp].type];
   const mult = eff == null ? 1 : eff;
-  const crit = Math.random() < 0.07;           // ~1/14, in line with the classics
+  // base crit is ~1/14, in line with the classics; a Keen Charm doubles it
+  const crit = Math.random() < (a.held === 'charm' ? 0.14 : 0.07);
+  const wBoost = WEATHER_BOOST[A.weather] === mv.type ? 1.2 : 1;   // fight the storm's own element
   let dmg = ((2 * a.level / 5 + 2) * mv.pow * stat(a, 'atk') / Math.max(1, stat(d, 'def'))) / 20 + 2;
-  dmg = Math.max(1, Math.floor(dmg * mult * (crit ? 1.5 : 1) * (0.85 + Math.random() * 0.15)));
+  dmg = Math.max(1, Math.floor(dmg * mult * wBoost * (crit ? 1.5 : 1) * (0.85 + Math.random() * 0.15)));
   d.hp = Math.max(0, d.hp - dmg);
+  let clung = false;
+  if (d.hp === 0 && d.held === 'pendant' && !d.pendUsed) { d.hp = 1; d.pendUsed = true; clung = true; }
   fxo.dHp = { side: dSide, hp: d.hp };
   fxo.crit = crit;
   if (crit) pushFx(q, 'A critical hit!', { kind: 'eff', dur: 16, block: 1 });
+  if (clung) pushFx(q, `${nameOf(d)} clings on with the Guard Pendant!`, { kind: 'eff', dur: 14, block: 1 });
   if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
   if (mult < 1) q.push("It's not very effective...");
   const inf = INFLICT[mv.type];
@@ -3545,6 +3704,25 @@ function switchTo(idx, forced) {
     battle.q = q; battle.phase = 'text'; nextText();
   }
 }
+function campSpots() {
+  // every campfire/cabin the player could stand under, across all VISITED areas
+  const out = [];
+  for (const k in AREAS) {
+    if (!(flags.vis || {})[k]) continue;
+    const ar = AREAS[k];
+    let n = 0;
+    for (let y = 0; y < ar.mh - 1; y++) for (let x = 0; x < ar.mw; x++) {
+      const t = ar.map[y][x];
+      if (t !== 'c' && t !== 'H') continue;
+      if (t === 'H' && (ar.huts || []).find(h => x >= h.x0 && x <= h.x1 && y >= h.y0 && y <= h.y1)) continue;
+      if (SOLID.includes(ar.map[y + 1][x])) continue;
+      if ((ar.trainers || []).find(tr => tr.x === x && tr.y === y + 1)) continue;
+      n++;
+      out.push({ area: k, x, y: y + 1, label: ar.label + (n > 1 ? ' ' + n : '') });
+    }
+  }
+  return out;
+}
 function nearestHeal() {
   // closest standing spot beside a campfire or cabin in the current area
   let best = null, bd = 1e9;
@@ -3580,8 +3758,11 @@ function endBattle() {
         ? ['Doc Bramble patched everyone up.', 'Take it slow out there, kiddo!']
         : ['You are carried inside and patched up.', 'Take it slow out there!']);
   } else if (kind === 'win' && tr) {
+    const firstWin = tr.flag && !flags[tr.flag];
     if (tr.flag) flags[tr.flag] = true;
-    say(tr.win);
+    say(firstWin
+      ? tr.win.concat(['(Milestone! Rest at any campfire and', 'pick BACKUP SAVE to keep a rescue code.)'])
+      : tr.win);
   }
   save();
   if (pendingLearns.length) { lrnIdx = 0; mode = 'learn'; }
@@ -3599,6 +3780,7 @@ addEventListener('keydown', e => {
   const k = KEYMAP[e.key.toLowerCase()];
   if (!k) return;
   e.preventDefault();
+  musicKick();
   if (!held.has(k)) taps.push(k);
   held.add(k);
 });
@@ -3608,7 +3790,7 @@ addEventListener('keyup', e => {
 });
 document.querySelectorAll('[data-k]').forEach(btn => {
   const k = btn.dataset.k;
-  const down = e => { e.preventDefault(); if (!held.has(k)) taps.push(k); held.add(k); };
+  const down = e => { e.preventDefault(); musicKick(); if (!held.has(k)) taps.push(k); held.add(k); };
   const up = e => { e.preventDefault(); held.delete(k); };
   btn.addEventListener('pointerdown', down);
   btn.addEventListener('pointerup', up);
@@ -3641,9 +3823,49 @@ const trainerAt = (x, y) => (A.trainers || []).find(t => t.x === x && t.y === y)
 const hutAt = (x, y) => (A.huts || []).find(h => x >= h.x0 && x <= h.x1 && y >= h.y0 && y <= h.y1);
 function warp(toArea, tx, ty) {
   area = toArea; A = AREAS[area];
+  (flags.vis = flags.vis || {})[toArea] = 1;   // remember everywhere we've been (fast travel)
   P.tx = tx; P.ty = ty; P.px = tx * 16; P.py = ty * 16; P.moving = false;
   banner = { text: A.label, until: frame + 150 };
   save();
+}
+function docReport() {
+  // Doc Bramble the collector: staged rewards as the field dex fills in
+  const total = DEX_ORDER.length;
+  let seen = 0, caught = 0;
+  DEX_ORDER.forEach(sp => { const v = dex[sp] || 0; if (v >= 1) seen++; if (v >= 2) caught++; });
+  const tiers = [
+    { flag: 'dexR1', need: 30, give: () => { coins += 300; },
+      msg: ['Thirty seen already! Here - 300 coins', 'for field supplies.'] },
+    { flag: 'dexR2', need: 60, give: () => { coins += 500; items.jam += 3; },
+      msg: ['SIXTY seen! Take 500 coins and', 'three jars of my best Bramble Jam.'] },
+    { flag: 'dexR3', need: 90, give: () => { coins += 1000; items.jam += 5; },
+      msg: ['Ninety! My hands are shaking.', 'A thousand coins and five jams - yours.'] }
+  ];
+  for (const t of tiers) {
+    if (seen >= t.need && !flags[t.flag]) {
+      flags[t.flag] = true; t.give(); sCatch(); save();
+      say(['DOC BRAMBLE: Let me see that dex...'].concat(t.msg, ['Keep at it, field assistant!']));
+      return;
+    }
+  }
+  if (seen >= total && !flags.dexChampion) {
+    flags.dexChampion = true;
+    const gift = makeMon('wispurr', 20); gift.shiny = true; gift.nick = 'Sage';
+    (party.length < 6 ? party : ranch).push(gift);
+    markCaught('wispurr'); sEvolve(); save();
+    say(['DOC BRAMBLE: Every last Wildling... SEEN!',
+         'You are the finest field assistant',
+         'these isles have ever known.',
+         'Meet SAGE - my own shiny Wispurr.',
+         'A one-of-a-kind, for a one-of-a-kind.']);
+    return;
+  }
+  say(['DOC BRAMBLE: The field dex shows ' + seen + ' of ' + total,
+       'Wildlings seen, ' + caught + ' befriended.',
+       seen < 30 ? 'See 30 kinds and I will reward you!' :
+       seen < 60 ? 'See 60 kinds for the next reward!' :
+       seen < 90 ? 'See 90 kinds for the next reward!' :
+       seen < total ? 'See them ALL for my finest gift!' : 'You have seen it all, old friend.']);
 }
 function eldonTalk() {
   if (flags.primling) {
@@ -3730,6 +3952,7 @@ function healParty(lines) {
 function update() {
   const tapped = taps; taps = [];
   const tap = k => tapped.includes(k);
+  setTune(pickTune());
 
   if (dlg) {
     const auto = held.has('A') && frame % 8 === 0;
@@ -3868,6 +4091,12 @@ function update() {
   }
 
   if (mode === 'badges') {
+    if (tap('C')) { sOk(); mode = 'map'; }
+    else if (tap('B') || tap('A')) { sBack(); mode = 'world'; }
+    return;
+  }
+
+  if (mode === 'map') {
     if (tap('B') || tap('C') || tap('A')) { sBack(); mode = 'world'; }
     return;
   }
@@ -3969,8 +4198,8 @@ function update() {
   }
 
   if (mode === 'rest') {
-    if (tap('up')) { restIdx = (restIdx + 2) % 3; sMove(); }
-    if (tap('down')) { restIdx = (restIdx + 1) % 3; sMove(); }
+    if (tap('up')) { restIdx = (restIdx + 4) % 5; sMove(); }
+    if (tap('down')) { restIdx = (restIdx + 1) % 5; sMove(); }
     if (tap('B')) { sBack(); mode = 'world'; }
     else if (tap('A')) {
       sOk();
@@ -3980,7 +4209,31 @@ function update() {
           ? ['Doc Bramble welcomes you in.', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']
           : ['You rest by the crackling campfire...', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']);
       } else if (restIdx === 1) { shopIdx = 0; shopTop = 0; shopMsg = null; mode = 'shop'; }
-      else mode = 'world';
+      else if (restIdx === 2) { tvIdx = 0; tvTop = 0; mode = 'travel'; }
+      else if (restIdx === 3) {
+        mode = 'world';
+        exportCode();
+        say(['Your rescue code is ready - screenshot it', 'or paste it somewhere safe.',
+             'On the title screen, CODE brings it all back.']);
+      } else mode = 'world';
+    }
+    return;
+  }
+
+  if (mode === 'travel') {
+    const spots = campSpots();
+    if (!spots.length) { mode = 'rest'; return; }
+    if (tap('up')) { tvIdx = (tvIdx + spots.length - 1) % spots.length; sMove(); }
+    if (tap('down')) { tvIdx = (tvIdx + 1) % spots.length; sMove(); }
+    if (tvIdx < tvTop) tvTop = tvIdx;
+    if (tvIdx >= tvTop + TRAVEL_VIS) tvTop = tvIdx - TRAVEL_VIS + 1;
+    if (tap('B') || tap('C')) { sBack(); mode = 'rest'; }
+    else if (tap('A')) {
+      const sp = spots[tvIdx];
+      sOk();
+      mode = 'world';
+      warp(sp.area, sp.x, sp.y);
+      save();
     }
     return;
   }
@@ -4008,8 +4261,8 @@ function update() {
   }
 
   if (mode === 'teamitem') {
-    if (tap('up')) { tiIdx = (tiIdx + 3) % 4; sMove(); }
-    if (tap('down')) { tiIdx = (tiIdx + 1) % 4; sMove(); }
+    if (tap('up')) { tiIdx = (tiIdx + 5) % 6; sMove(); }
+    if (tap('down')) { tiIdx = (tiIdx + 1) % 6; sMove(); }
     if (tap('B')) { sBack(); mode = 'team'; }
     else if (tap('A')) {
       sOk();
@@ -4022,16 +4275,20 @@ function update() {
         if (items.jam <= 0) say(['No Bramble Jam left!']);
         else if (m.hp >= maxHp(m) && !m.st) say(['It would have no effect!']);
         else { items.jam--; m.hp = maxHp(m); m.st = null; sCatch(); save(); say([nameOf(m) + ' is fully restored by the Bramble Jam!']); }
-      } else if (tiIdx === 2) {
-        if (m.held === 'locket') {
-          m.held = null; items.locket = (items.locket || 0) + 1;
-          save(); say([nameOf(m) + ' handed back the Moss Locket.']);
-        } else if ((items.locket || 0) <= 0) {
-          say(['No Moss Lockets to give.', 'They say an old supply box near a cabin', 'never runs empty...']);
+      } else if (tiIdx >= 2 && tiIdx <= 4) {
+        const key = ['locket', 'charm', 'pendant'][tiIdx - 2], nm = HELD_NAME[key];
+        if (m.held === key) {
+          m.held = null; items[key] = (items[key] || 0) + 1;
+          save(); say([nameOf(m) + ' handed back the ' + nm + '.']);
+        } else if ((items[key] || 0) <= 0) {
+          say(key === 'locket'
+            ? ['No Moss Lockets to give.', 'They say an old supply box near a cabin', 'never runs empty...']
+            : ['No ' + nm + ' in the bag.', 'Rumor places sealed caches out in the wilds...']);
         } else {
-          items.locket--; m.held = 'locket';
+          if (m.held) items[m.held] = (items[m.held] || 0) + 1;   // swap the old one back
+          items[key]--; m.held = key;
           sCatch(); save();
-          say([nameOf(m) + ' now holds the Moss Locket!', 'It will mend a little every battle turn.']);
+          say([nameOf(m) + ' now holds the ' + nm + '!', HELD_BLURB[key]]);
         }
       }
       mode = 'team';
@@ -4116,6 +4373,7 @@ function update() {
       }
       const t = tileAt(fx, fy);
       if (area === 'hollow' && fx === 8 && fy === 3) { hermitGift(); return; }
+      if (area === 'meadow' && fx === 12 && fy === 16) { docReport(); return; }
       if (area === 'gateway' && fx === 12 && fy === 7) { mode = 'badges'; sOk(); return; }
       if (area === 'icecave' && fx === 8 && fy === 4) {
         if (flags.mammorime) say(['The great ice stands hollow and calm.', 'Its walker roams at your side now.']);
@@ -4149,6 +4407,15 @@ function update() {
         return;
       }
       if (t === 'X') {
+        const ca = A.cache;
+        if (ca) {   // one-of-a-kind sealed caches out in the wilds
+          if (flags[ca.flag]) { say(['The cache sits empty.', 'Its treasure is already yours.']); return; }
+          flags[ca.flag] = true;
+          items[ca.item] = (items[ca.item] || 0) + 1;
+          sCatch(); save();
+          say(ca.lines);
+          return;
+        }
         items.locket = (items.locket || 0) + 1;
         sCatch(); save();
         say(['The old supply box creaks open...',
@@ -4482,6 +4749,33 @@ function drawDialog(lines, i) {
   if (Math.floor(frame / 25) % 2 === 0) text('v', 224, 146, '#a34537');
 }
 
+/* park weather: stateless ambient overlays driven by the frame counter,
+   so they cost nothing and never desync with the sim */
+function drawWeather() {
+  const w = A.weather;
+  if (!w) return;
+  if (w === 'snow') {
+    for (let i = 0; i < 24; i++) {
+      const x = (i * 89 + Math.floor(frame * (0.2 + (i % 3) * 0.15))) % 240;
+      const y = (i * 53 + Math.floor(frame * (0.5 + (i % 5) * 0.12))) % 160;
+      px(x, y, 2, 2, 'rgba(248,250,252,0.75)');
+    }
+  } else if (w === 'rain') {
+    px(0, 0, 240, 160, 'rgba(28,52,80,0.12)');
+    for (let i = 0; i < 26; i++) {
+      const x = (i * 83 + 480 - Math.floor(frame * 1.3)) % 240;
+      const y = (i * 47 + Math.floor(frame * 4.2)) % 160;
+      px(x, y, 1, 5, 'rgba(168,206,242,0.55)');
+    }
+  } else if (w === 'heat') {
+    px(0, 0, 240, 160, 'rgba(238,160,64,0.08)');
+    for (let i = 0; i < 12; i++) {
+      const x = (i * 101 + Math.floor(frame * 0.4)) % 240;
+      const y = 158 - ((i * 61 + Math.floor(frame * 0.9)) % 160);
+      px(x, y, 1, 3, 'rgba(255,224,160,0.28)');
+    }
+  }
+}
 function drawWorld() {
   const camx = clamp(P.px - 112, 0, A.mw * 16 - 240);
   const camy = clamp(P.py - 72, 0, A.mh * 16 - 160);
@@ -4493,6 +4787,7 @@ function drawWorld() {
   if (g && !flags[g.flag]) drawArt(g.art || 'rival', g.x * 16 - camx + 2, g.y * 16 - camy + 2, 1);
   for (const t of A.trainers || []) drawArt(t.art, t.x * 16 - camx + 2, t.y * 16 - camy + 2, 1);
   if (area === 'hollow') drawArt('warden', 8 * 16 - camx + 2, 3 * 16 - camy + 2, 1);
+  if (area === 'meadow') drawArt('doc', 12 * 16 - camx + 2, 16 * 16 - camy + 2, 1);
   for (const h of A.huts || []) {
     // roof emblem marks each specialist building
     const ex = ((h.x0 + h.x1 + 1) / 2) * 16 - camx;
@@ -4520,6 +4815,7 @@ function drawWorld() {
     drawArt('hero', P.px - camx + 2, P.py - camy + 2 + bob, 1);
   }
 
+  drawWeather();
   if (party.length) {
     const lead = party[0];
     px(3, 3, 118, 31, 'rgba(20,28,22,.78)');
@@ -4662,8 +4958,8 @@ function drawBattle() {
   ctx.beginPath(); ctx.ellipse(178 + shx, 66 + shy, 44, 12, 0, 0, 7); ctx.fill();
   ctx.beginPath(); ctx.ellipse(62 + shx, 104 + shy, 48, 13, 0, 0, 7); ctx.fill();
 
-  if (!hideEn && eScale > 0) drawArt(b.enemy.sp, 178 - 6 * eScale + exo + shx, 44 - 6 * eScale + eyo + shy, eScale, eRows);
-  if (!hideMe) drawArt(curMon().sp, 38 + mxo + shx, 62 + myo + shy, 3, mRows);
+  if (!hideEn && eScale > 0) drawArt(b.enemy.sp, 178 - 6 * eScale + exo + shx, 44 - 6 * eScale + eyo + shy, eScale, eRows, b.enemy.shiny);
+  if (!hideMe) drawArt(curMon().sp, 38 + mxo + shx, 62 + myo + shy, 3, mRows, curMon().shiny);
   fxParts.forEach(pt => px(pt.x, pt.y, pt.w || 2, pt.h || 2, pt.col));
   if (orb) drawOrb(orb.x, orb.y, orb.tilt);
   if (b.flash) px(0, 0, 240, 160, 'rgba(248,248,248,0.30)');   // critical-hit flash
@@ -4686,14 +4982,27 @@ function drawBattle() {
   } else if (b.phase === 'moves') {
     drawBox(4, 112, 232, 44);
     const mv = curMon().moves;
+    // field knowledge pays off: once a species is in your dex, moves show +/- matchups
+    const foeKnown = (dex[b.enemy.sp] || 0) >= 1;
+    const effOf = m => { const e = (CHART[MOVES[m].type] || {})[SPECIES[b.enemy.sp].type]; return e == null ? 1 : e; };
     mv.forEach((m, i) => {
       const ox = 18 + (i % 2) * 112, oy = 118 + Math.floor(i / 2) * 13;
       if (i === b.vi) text('>', ox - 9, oy, '#a34537');
       text(m, ox, oy, '#20242c', 7);
+      if (foeKnown) {
+        const e = effOf(m);
+        if (e > 1) text('+', ox + 90, oy, '#2e8a3c', 7);
+        else if (e < 1) text('-', ox + 90, oy, '#a34537', 7);
+      }
     });
     const sel = MOVES[mv[b.vi]];
     px(6, 144, 228, 10, '#e6e0cc');
-    text(sel.type + '  PWR ' + sel.pow + '  ACC ' + sel.acc, 14, 145, TYPE_COL[sel.type] || '#20242c', 7);
+    let mvInfo = sel.type + '  PWR ' + sel.pow + '  ACC ' + sel.acc;
+    if (foeKnown) {
+      const e = effOf(mv[b.vi]);
+      mvInfo += e > 1 ? '  STRONG here' : e < 1 ? '  weak here' : '';
+    }
+    text(mvInfo, 14, 145, TYPE_COL[sel.type] || '#20242c', 7);
   } else if (b.phase === 'bag') {
     drawBox(4, 112, 232, 44);
     const rows = ['Charm Orb  x' + orbs, 'Sweet Berry  x' + items.berry, 'Bramble Jam  x' + items.jam, 'BACK'];
@@ -4726,7 +5035,7 @@ function drawTeamList(idx, inBattle) {
     const y = 22 + i * 22;
     if (i === idx) { px(4, y - 2, 232, 20, 'rgba(232,184,75,.18)'); text('>', 6, y + 4, '#e8b84b'); }
     if (!inBattle && i === tmSel) { px(4, y - 2, 232, 20, 'rgba(74,144,216,.22)'); text('*', 6, y + 4, '#4a90d8'); }
-    drawArt(m.sp, 14, y - 2, 1.5);
+    drawArt(m.sp, 14, y - 2, 1.5, null, m.shiny);
     if (m.held) px(34, y + 3, 3, 3, '#8fd07a');
     text(nameOf(m) + '  L' + m.level, 40, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66');
     drawBar(40, y + 11, 60, m.hp / maxHp(m));
@@ -4750,13 +5059,14 @@ function drawTeamList(idx, inBattle) {
 
 function drawTeamItemBox() {
   const m = party[teamIdx];
-  const my = clamp(22 + teamIdx * 22, 14, 94);
-  drawBox(130, my, 102, 62);
-  const lk = m && m.held === 'locket' ? 'Take Locket back' : 'Moss Locket x' + (items.locket || 0);
-  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam, lk, 'BACK'].forEach((o, i) => {
+  const my = clamp(22 + teamIdx * 22, 8, 68);
+  drawBox(128, my, 108, 90);
+  const heldRow = k => m && m.held === k ? 'Return ' + HELD_NAME[k].split(' ')[1] : HELD_NAME[k] + ' x' + (items[k] || 0);
+  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam,
+   heldRow('locket'), heldRow('charm'), heldRow('pendant'), 'BACK'].forEach((o, i) => {
     const oy = my + 7 + i * 13;
-    if (i === tiIdx) text('>', 136, oy, '#a34537', 7);
-    text(o, 146, oy, '#20242c', 7);
+    if (i === tiIdx) text('>', 133, oy, '#a34537', 7);
+    text(o, 143, oy, '#20242c', 7);
   });
 }
 
@@ -4798,14 +5108,30 @@ function drawObeliskMove() {
 
 function drawRest() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
-  drawBox(50, 34, 140, 78);
-  text(restSpot === 'camp' ? 'CAMPFIRE' : (A.inn || "DOC BRAMBLE'S CABIN"), 62, 41, '#20242c', 7);
-  ['REST (free)', 'SHOP', 'LEAVE'].forEach((o, i) => {
-    const oy = 58 + i * 15;
+  drawBox(50, 22, 140, 116);
+  text(restSpot === 'camp' ? 'CAMPFIRE' : (A.inn || "DOC BRAMBLE'S CABIN"), 62, 29, '#20242c', 7);
+  ['REST (free)', 'SHOP', 'TRAVEL', 'BACKUP SAVE', 'LEAVE'].forEach((o, i) => {
+    const oy = 46 + i * 15;
     if (i === restIdx) text('>', 64, oy, '#a34537', 7);
     text(o, 76, oy, '#20242c', 7);
   });
-  text('Coins: ' + coins, 62, 100, '#4c5c50', 7);
+  text('Coins: ' + coins, 62, 124, '#4c5c50', 7);
+}
+
+function drawTravel() {
+  const spots = campSpots();
+  px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
+  drawBox(18, 22, 204, 116);
+  text('FAST TRAVEL - fires you know', 30, 29, '#20242c', 7);
+  const end = Math.min(spots.length, tvTop + TRAVEL_VIS);
+  for (let i = tvTop; i < end; i++) {
+    const oy = 46 + (i - tvTop) * 15;
+    if (i === tvIdx) text('>', 30, oy, '#a34537', 7);
+    text(spots[i].label, 42, oy, spots[i].area === area ? '#7a8a7e' : '#20242c', 7);
+  }
+  if (tvTop > 0) text('^', 208, 46, '#7a8a7e', 7);
+  if (end < spots.length) text('v', 208, 46 + (TRAVEL_VIS - 1) * 15, '#7a8a7e', 7);
+  text('A: travel   B: back', 30, 124, '#4c5c50', 7);
 }
 
 function drawShop() {
@@ -4855,7 +5181,7 @@ function drawInfo() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
   text('WILDLING INFO', 12, 6, '#e8b84b');
   text('A/B: back', 186, 6, '#8fa396', 7);
-  drawArt(m.sp, 10, 22, 3);
+  drawArt(m.sp, 10, 22, 3, null, m.shiny);
   text(nameOf(m), 56, 22, '#f6f2e2');
   if (m.nick) text('(' + s.name + ')', 56, 32, '#8fa396', 7);
   text(s.type + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
@@ -4864,7 +5190,7 @@ function drawInfo() {
   text(m.hp + '/' + maxHp(m) + ' HP', 162, 61, '#cfe3d2', 7);
   if (m.st) text(ST[m.st].tag, 216, 61, ST[m.st].col, 7);
   text('ATK ' + stat(m, 'atk') + '   DEF ' + stat(m, 'def') + '   SPD ' + stat(m, 'spd'), 56, 74, '#cfe3d2', 7);
-  if (m.held === 'locket') text('Holds: Moss Locket (mends each turn)', 56, 82, '#8fd07a', 7);
+  if (m.held) text('Holds: ' + HELD_NAME[m.held] + ' (' + HELD_TAG[m.held] + ')', 56, 82, '#8fd07a', 7);
   text('MOVES', 12, 90, '#8fb69c', 7);
   m.moves.forEach((mv, i) => {
     const d = MOVES[mv], y = 102 + i * 13;
@@ -4920,6 +5246,49 @@ function drawBadges() {
   text(next < 0 ? 'ALL BADGES EARNED - seek the Superintendent!' : 'Next: ' + BADGE_PARK[next], 12, 143, '#20242c', 7);
 }
 
+/* the field map: three isles, one journey. Nodes light up as you visit;
+   the secret places don't exist until you've found them. */
+const MAP_NODES = {
+  meadow: [28, 118], cavern: [52, 102], hollow: [52, 130], shore: [28, 86],
+  harbor: [96, 118], pines: [120, 104], cliffs: [142, 88], fogisle: [118, 70],
+  gateway: [176, 140], yellowstone: [196, 126], everglades: [176, 112], yosemite: [196, 98],
+  denali: [176, 84], saguaro: [196, 70], glacier: [176, 56], icecave: [196, 42]
+};
+const MAP_LINKS = [
+  ['meadow', 'cavern'], ['cavern', 'shore'], ['meadow', 'hollow'],
+  ['shore', 'harbor'], ['harbor', 'pines'], ['pines', 'cliffs'], ['cliffs', 'fogisle'],
+  ['harbor', 'gateway'], ['gateway', 'yellowstone'], ['yellowstone', 'everglades'],
+  ['everglades', 'yosemite'], ['yosemite', 'denali'], ['denali', 'saguaro'],
+  ['saguaro', 'glacier'], ['glacier', 'icecave']
+];
+function drawMap() {
+  px(0, 0, 240, 160, '#1d3a52');
+  for (let i = 0; i < 40; i++) px((i * 53) % 236, 18 + (i * 31) % 132, 2, 1, '#2a4a66');
+  text('FIELD MAP', 12, 6, '#e8b84b');
+  text('THE WILDLING ISLES', 118, 6, '#8fa396', 7);
+  px(14, 78, 60, 66, '#3d6b48'); px(22, 72, 44, 10, '#3d6b48');
+  px(84, 56, 74, 74, '#4a6b3d'); px(96, 126, 40, 10, '#4a6b3d');
+  px(160, 30, 72, 122, '#57624e');
+  const vis = flags.vis || {};
+  MAP_LINKS.forEach(([a, b]) => {
+    if (!vis[a] || !vis[b]) return;
+    const [x1, y1] = MAP_NODES[a], [x2, y2] = MAP_NODES[b];
+    for (let i = 1; i < 5; i++) px(x1 + (x2 - x1) * i / 5 + 2, y1 + (y2 - y1) * i / 5 + 2, 2, 2, '#c9d2b8');
+  });
+  for (const k in MAP_NODES) {
+    const [x, y] = MAP_NODES[k], v = vis[k];
+    if (!v && (k === 'hollow' || k === 'icecave')) continue;
+    px(x, y, 6, 6, v ? '#e8e4c9' : '#243626');
+    px(x + 1, y + 1, 4, 4, v ? '#57b04c' : '#16211a');
+    if (k === area && frame % 40 < 24) {
+      px(x - 2, y - 2, 10, 2, '#e8b84b'); px(x - 2, y + 6, 10, 2, '#e8b84b');
+      px(x - 2, y, 2, 6, '#e8b84b'); px(x + 6, y, 2, 6, '#e8b84b');
+    }
+  }
+  drawBox(4, 138, 232, 18);
+  text('YOU ARE HERE: ' + A.label, 12, 143, '#20242c', 7);
+}
+
 function drawRanch() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
   text("DOC BRAMBLE'S RANCH", 12, 6, '#e8b84b');
@@ -4937,7 +5306,7 @@ function drawRanch() {
       if (i >= c.list.length) break;
       const m = c.list[i], y = 30 + r * 24;
       if (ci === rnCol && i === rnIdx) { px(c.x, y - 2, 114, 22, 'rgba(232,184,75,.2)'); text('>', c.x + 2, y + 5, '#e8b84b', 7); }
-      drawArt(m.sp, c.x + 8, y - 1, 1.5);
+      drawArt(m.sp, c.x + 8, y - 1, 1.5, null, m.shiny);
       text(nameOf(m), c.x + 30, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66', 7);
       text('L' + m.level, c.x + 30, y + 9, '#8fb69c', 7);
       drawBar(c.x + 60, y + 11, 46, m.hp / maxHp(m));
@@ -5042,6 +5411,7 @@ function draw() {
   else if (mode === 'team') drawTeamList(teamIdx, false);
   else if (mode === 'teamitem') { drawTeamList(teamIdx, false); drawTeamItemBox(); }
   else if (mode === 'rest') { drawWorld(); drawRest(); }
+  else if (mode === 'travel') { drawWorld(); drawTravel(); }
   else if (mode === 'shop') { drawWorld(); drawShop(); }
   else if (mode === 'learn') drawLearn();
   else if (mode === 'obeliskMon') {
@@ -5059,6 +5429,7 @@ function draw() {
   else if (mode === 'info') drawInfo();
   else if (mode === 'dex') drawDex(dexIdx);
   else if (mode === 'badges') drawBadges();
+  else if (mode === 'map') drawMap();
   else if (mode === 'ranch') drawRanch();
   else if (mode === 'dev') drawDev();
   else if (mode === 'devpick') drawDevPick();
@@ -5109,6 +5480,7 @@ window.DBG = {
   menu: i => { if (battle) battle.mi = i; },
   dev: v => { devAllowed = !!v; },
   fxOff: v => { fxDisabled = !!v; },
+  tune: () => tuneName,
   cheat: (c, b, j, o) => {
     if (c != null) coins = c;
     if (b != null) items.berry = b;
