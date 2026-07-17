@@ -426,6 +426,136 @@ const ART = {
     '.Sww.ww.wwS.',
     '.k.c...c.k..'
   ],
+  frostpup: [
+    '............',
+    '...s....s...',
+    '..sw....ws..',
+    '..wwwwwwww..',
+    '..wkwwwwkw..',
+    '..wwwccwww..',
+    '...wwwwww...',
+    '..wwwwwwww..',
+    '..wwwwwwww..',
+    '...ww..ww...',
+    '...ss..ss...'
+  ],
+  snarlow: [
+    '...s....s...',
+    '..sws..sws..',
+    '..wwwwwwww..',
+    '..wkwwwwkw..',
+    '..wwwccwww..',
+    '.swwwwwwwws.',
+    '.wwwwwwwwww.',
+    '..wwwwwwww..',
+    '..wswwwwsw..',
+    '..ww.ww.ww..',
+    '..ss.ss.ss..'
+  ],
+  tundralf: [
+    '..S......S..',
+    '.SwS....SwS.',
+    '.wwwwwwwwww.',
+    '.wckwwwwkcw.',
+    '.wwwwCCwwww.',
+    'Swwwwwwwwwws',
+    'wwwwwwwwwwww',
+    '.wwwwwwwwww.',
+    '.wSwwwwwwSw.',
+    '.ww.wwww.ww.',
+    '.SS.SS.SS.S.'
+  ],
+  rattlet: [
+    '............',
+    '............',
+    '...mm.......',
+    '..mkmm......',
+    '..mmmm..yy..',
+    '...mmmm.yy..',
+    '....mmmmym..',
+    '..mmmmmmmm..',
+    '.mmvmmvmmm..',
+    '.mmmmmmmm...',
+    '..mmmm......'
+  ],
+  sideviper: [
+    '............',
+    '..mm........',
+    '.mkmm....y..',
+    '.mmmm...yy..',
+    '..vmmm..ym..',
+    '...mmmm.mm..',
+    '....mmmmmm..',
+    '..mmmvmmmm..',
+    '.mmvmmmvmm..',
+    '.mmmmmmmmm..',
+    '..mmm.mmm...'
+  ],
+  diamondread: [
+    '..vv........',
+    '.vrvv....yy.',
+    '.vvvv...yyy.',
+    '..mvvv..yv..',
+    '...vvvv.vv..',
+    '....vvvvvv..',
+    '..vvVvvVvv..',
+    '.vvVmmVmvv..',
+    '.vmvvvvvmv..',
+    '.vvvvvvvvv..',
+    '..vvv.vvv...'
+  ],
+  rambluff: [
+    '..n......n..',
+    '.nnn....nnn.',
+    '.nn.NNNN.nn.',
+    '..NNNNNNNN..',
+    '..NkNNNNkN..',
+    '..NNNwwNNN..',
+    '..NNNNNNNN..',
+    '.NNNNNNNNNN.',
+    '.NNNNNNNNNN.',
+    '..NN.NN.NN..',
+    '..kk.kk.kk..'
+  ],
+  cragoram: [
+    '..n......n..',
+    '.nnn....nnn.',
+    '.nnSSSSSSnn.',
+    '.nSSSSSSSSn.',
+    '..SkSSSSkS..',
+    '..SSSwwSSS..',
+    '.cSSSSSSSSc.',
+    '.SSSSSSSSSS.',
+    '.SSccSSccSS.',
+    '..SS.SS.SS..',
+    '..kk.kk.kk..'
+  ],
+  gilaflare: [
+    '............',
+    '..mm........',
+    '.mkmm.......',
+    '.mmmmmmmmm..',
+    '.vmmOmmOmm..',
+    '..mmmmmmmmm.',
+    '..mOmmOmmOm.',
+    '..mmmmmmmm..',
+    '..mm.mm.mm..',
+    '..OO.OO.OO..',
+    '............'
+  ],
+  mammorime: [
+    '...CCCCCC...',
+    '..CnnnnnnC..',
+    '.CnnnnnnnnC.',
+    '.nnknnnnknn.',
+    'wnnnnnnnnnnw',
+    'wnnnNNNNnnnw',
+    '.wnNNNNNNnw.',
+    '.wNNNNNNNNw.',
+    '..NNNNNNNN..',
+    '..NN.NN.NN..',
+    '..nn.nn.nn..'
+  ],
   scamp: [
     '....gggg....',
     '...gggggg...',
@@ -1459,7 +1589,29 @@ const SPECIES = {
   snowpad:    { name:'Snowpad',    type:'Frost', base:{hp:44,atk:54,def:42,spd:60}, catch:.45, evolve:{at:22,to:'frostmaw'},
                 learn:[[1,'Tackle'],[3,'Frost Bite'],[8,'Pounce']], blurb:'the snow kitten' },
   frostmaw:   { name:'Frostmaw',   type:'Frost', base:{hp:70,atk:82,def:64,spd:92}, catch:.12,
-                learn:[[1,'Tackle'],[3,'Frost Bite'],[8,'Pounce'],[16,'Ice Shard'],[26,'Glacier']], blurb:'the blizzard lynx' }
+                learn:[[1,'Tackle'],[3,'Frost Bite'],[8,'Pounce'],[16,'Ice Shard'],[26,'Glacier']], blurb:'the blizzard lynx' },
+  /* ---- PARKLANDS Phase 2: wolf (Frost), rattlesnake (Venom), bighorn (Stone->Frost), gila ---- */
+  frostpup:   { name:'Frostpup',   type:'Frost', base:{hp:44,atk:56,def:42,spd:62}, catch:.5, evolve:{at:18,to:'snarlow'},
+                learn:[[1,'Tackle'],[3,'Frost Bite']], blurb:'the tundra pup' },
+  snarlow:    { name:'Snarlow',    type:'Frost', base:{hp:58,atk:74,def:56,spd:80}, catch:.2, evolve:{at:36,to:'tundralf'},
+                learn:[[1,'Tackle'],[3,'Frost Bite'],[14,'Pounce'],[20,'Ice Shard']], blurb:'the pack shadow' },
+  tundralf:   { name:'Tundralf',   type:'Frost', base:{hp:76,atk:94,def:70,spd:100}, catch:.08,
+                learn:[[1,'Tackle'],[3,'Frost Bite'],[14,'Pounce'],[20,'Ice Shard'],[38,'Glacier']], blurb:'the white silence' },
+  rattlet:    { name:'Rattlet',    type:'Venom', base:{hp:40,atk:58,def:40,spd:58}, catch:.5, evolve:{at:18,to:'sideviper'},
+                learn:[[1,'Tackle'],[4,'Venom Spit']], blurb:'the dry rattle' },
+  sideviper:  { name:'Sideviper',  type:'Venom', base:{hp:54,atk:76,def:52,spd:76}, catch:.2, evolve:{at:36,to:'diamondread'},
+                learn:[[1,'Tackle'],[4,'Venom Spit'],[14,'Toxic Fang'],[20,'Pounce']], blurb:'the sand winder' },
+  diamondread:{ name:'Diamondread',type:'Venom', base:{hp:70,atk:98,def:64,spd:94}, catch:.08,
+                learn:[[1,'Tackle'],[4,'Venom Spit'],[14,'Toxic Fang'],[20,'Pounce'],[38,'Acid Flood']], blurb:'the desert dread' },
+  rambluff:   { name:'Rambluff',   type:'Stone', base:{hp:56,atk:58,def:66,spd:44}, catch:.45, evolve:{at:30,to:'cragoram'},
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[16,'Rock Slide']], blurb:'the ledge leaper' },
+  cragoram:   { name:'Cragoram',   type:'Frost', base:{hp:78,atk:80,def:96,spd:56}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Pebble Toss'],[16,'Rock Slide'],[30,'Ice Shard'],[40,'Glacier']], blurb:'the rime-horned crag' },
+  gilaflare:  { name:'Gilaflare',  type:'Venom', base:{hp:66,atk:72,def:70,spd:50}, catch:.25,
+                learn:[[1,'Tackle'],[4,'Venom Spit'],[16,'Toxic Fang'],[24,'Singe'],[34,'Acid Flood']], blurb:'the beaded ember' },
+  /* legendary — sleeps beneath Glacier Crown */
+  mammorime:  { name:'Mammorime',  type:'Frost', base:{hp:96,atk:92,def:98,spd:60}, catch:.05,
+                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Rock Slide'],[1,'Slam']], blurb:'the glacier that walks' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
@@ -1483,7 +1635,8 @@ const DEX_ORDER = [
   'wispurr','mystifur','oraclaw',
   'sporeling','shroombler','mycolossus','emberoc','voltalon','tidewing','sylvarch','primling',
   'minos','asterion','celestaur',
-  'tuftcalf','brumbison','tatankron','chompling','gatorush','mirejaw','snowpad','frostmaw'
+  'tuftcalf','brumbison','tatankron','chompling','gatorush','mirejaw','snowpad','frostmaw',
+  'frostpup','snarlow','tundralf','rattlet','sideviper','diamondread','rambluff','cragoram','gilaflare','mammorime'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -2076,6 +2229,7 @@ const AREAS = {
       'TTTTTTTTTTTTTTTT1TTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf','brumbison','flarepup','scorchound','rockit','boulderit','galehoot'], lvl: [38, 42],
+    bird: 'emberoc', birdLvl: 42,
     exits: { '1': { to:'gateway', x:12, y:1 }, '2': { to:'everglades', x:16, y:18 } },
     gate: {
       x:16, y:1, flag:'badgeYELL', name:'RANGER SOLENE', art:'warden',
@@ -2123,6 +2277,7 @@ const AREAS = {
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT'
     ],
     wilds: ['chompling','gatorush','bubblun','marfin','finlet','mossoak'], lvl: [41, 45],
+    bird: 'tidewing', birdLvl: 45,
     exits: { '2': { to:'yellowstone', x:16, y:2 }, '3': { to:'yosemite', x:16, y:18 } },
     gate: {
       x:16, y:1, flag:'badgeEVER', name:'RANGER MURK', art:'salt',
@@ -2148,7 +2303,7 @@ const AREAS = {
     ground:'#b8bcc0', dot:'#a4a8ac', enc:'#989ca0', blade:'#7a8e5e', blade2:'#5e7048',
     raw: [
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
-      'R...............S..............R',
+      'R...............4..............R',
       'R..............................R',
       'R..............................R',
       'R..............................R',
@@ -2169,9 +2324,10 @@ const AREAS = {
       'RRRRRRRRRRRRRRRR3RRRRRRRRRRRRRRR'
     ],
     wilds: ['snowpad','frostmaw','cragolith','verdantis','eldermoss','mossoak'], lvl: [44, 48],
-    exits: { '3': { to:'everglades', x:16, y:2 } },
+    bird: 'voltalon', birdLvl: 48,
+    exits: { '3': { to:'everglades', x:16, y:2 }, '4': { to:'denali', x:16, y:18 } },
     gate: {
-      x:16, y:5, flag:'badgeYOSE', name:'RANGER VESPERA', art:'ace',
+      x:16, y:2, flag:'badgeYOSE', name:'RANGER VESPERA', art:'ace',
       intro: [
         'RANGER VESPERA: The high granite tests everyone.',
         'I am Vespera, ranger of Yosemite High.',
@@ -2186,8 +2342,173 @@ const AREAS = {
     sign: [
       'YOSEMITE HIGH. Granite and snowline.',
       'Snow-lynx prowl the ledges.',
-      'The trail north is not yet cut.'
+      'NORTH: Denali Tundra (ranger on duty).'
     ]
+  },
+  denali: {
+    label: 'DENALI TUNDRA',
+    ground:'#c8d4d0', dot:'#b4c2be', enc:'#a8b8b4', blade:'#6e8ea0', blade2:'#54707e',
+    raw: [
+      'IIIIIIIIIIIIIIII5IIIIIIIIIIIIIII',
+      'I..............................I',
+      'I..............................I',
+      'I..............................I',
+      'I...IIII................IIII...I',
+      'I...IIII................IIII...I',
+      'I...IIII................IIII...I',
+      'I.........III..................I',
+      'I.........III..................I',
+      'I..,,,,..................,,,,..I',
+      'I..,,,,..................,,,,..I',
+      'I..,,,,..................,,,,..I',
+      'I...................III........I',
+      'I............,,,,,,.III........I',
+      'I............,,,,,,............I',
+      'I............,,,,,,............I',
+      'I..............................I',
+      'I....S....................c....I',
+      'I..............................I',
+      'IIIIIIIIIIIIIIII4IIIIIIIIIIIIIII'
+    ],
+    wilds: ['frostpup','frostpup','snarlow','frostmaw','stratowl','bouldbear','wispurr'], lvl: [47, 51],
+    bird: 'voltalon', birdLvl: 51,
+    exits: { '4': { to:'yosemite', x:16, y:3 }, '5': { to:'saguaro', x:16, y:18 } },
+    gate: {
+      x:16, y:1, flag:'badgeDENA', name:'RANGER KODA', art:'bruiser',
+      intro: [
+        'RANGER KODA: The tundra does not forgive.',
+        'I am Koda. My pack and I patrol Denali.',
+        'Show me you can survive the white silence!'
+      ],
+      win: [
+        'RANGER KODA: The cold could not slow you.',
+        'The DENALI BADGE is yours. Four of eight!'
+      ],
+      party: () => [makeMon('snarlow', 49), makeMon('bouldbear', 50), makeMon('tundralf', 51)]
+    },
+    sign: [
+      'DENALI TUNDRA. Highest ground in the Parklands.',
+      'Wolf packs run the flats at dusk.',
+      'NORTH: Saguaro Wastes (ranger on duty).'
+    ]
+  },
+  saguaro: {
+    label: 'SAGUARO WASTES',
+    ground:'#d8c088', dot:'#c4ac74', enc:'#b89c60', blade:'#8a7a3e', blade2:'#6e5e30',
+    raw: [
+      'RRRRRRRRRRRRRRRR6RRRRRRRRRRRRRRR',
+      'R..............................R',
+      'R..............................R',
+      'R..............................R',
+      'R...RRR........................R',
+      'R...RRR..................RRR...R',
+      'R...RRR......,,,,,,......RRR...R',
+      'R...RRR......,,,,,,......RRR...R',
+      'R............,,,,,,......RRR...R',
+      'R..............................R',
+      'R..,,,,........................R',
+      'R..,,,,..................,,,,..R',
+      'R..,,,,..................,,,,..R',
+      'R........................,,,,..R',
+      'R.........RRR..................R',
+      'R.........RRR..................R',
+      'R.........RRR..................R',
+      'R...S......................c...R',
+      'R..............................R',
+      'RRRRRRRRRRRRRRRR5RRRRRRRRRRRRRRR'
+    ],
+    wilds: ['rattlet','rattlet','sideviper','gilaflare','scorchound','pyrewolf','cragolith'], lvl: [50, 54],
+    bird: 'emberoc', birdLvl: 54,
+    exits: { '5': { to:'denali', x:16, y:2 }, '6': { to:'glacier', x:16, y:18 } },
+    gate: {
+      x:16, y:1, flag:'badgeSAGU', name:'RANGER SIERRA', art:'ace',
+      intro: [
+        'RANGER SIERRA: Out here the sun bites and',
+        'everything else bites harder. I am Sierra.',
+        'Prove you belong in my desert!'
+      ],
+      win: [
+        'RANGER SIERRA: Tough as old leather. I like it.',
+        'The SAGUARO BADGE is yours. Five of eight!'
+      ],
+      party: () => [makeMon('sideviper', 52), makeMon('gilaflare', 53), makeMon('pyrewolf', 54), makeMon('diamondread', 54)]
+    },
+    sign: [
+      'SAGUARO WASTES. Carry water. Watch your step.',
+      'Rattles in the brush mean back away slowly.',
+      'NORTH: Glacier Crown (ranger on duty).'
+    ]
+  },
+  glacier: {
+    label: 'GLACIER CROWN',
+    ground:'#c0ccd4', dot:'#acbac2', enc:'#9cacb6', blade:'#6e8ea0', blade2:'#54707e',
+    raw: [
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
+      'RRRRRRRRRRRRRRRRSRRRRRRRRRRRRRRR',
+      'RRRRRRRRRRRRRRRR.RRRRRRRRRRRRRRR',
+      'RRRRRRRRRRRRRRRR.RRRRRRRRRRRRRRR',
+      'R..............................R',
+      'R..............................R',
+      'R...IIII................IIII...R',
+      'R...IIII................IIII...R',
+      'R...IIII................IIII...7',
+      'R............IIIIII............R',
+      'R............IIIIII............R',
+      'R..............................R',
+      'R..,,,,..................,,,,..R',
+      'R..,,,,..................,,,,..R',
+      'R..,,,,..................,,,,..R',
+      'R.............,,,,,............R',
+      'R.............,,,,,............R',
+      'R....S........,,,,,.......c....R',
+      'R..............................R',
+      'RRRRRRRRRRRRRRRR6RRRRRRRRRRRRRRR'
+    ],
+    wilds: ['rambluff','rambluff','cragoram','snarlow','terragrizz','geyserun'], lvl: [53, 57],
+    bird: 'tidewing', birdLvl: 57,
+    exits: { '6': { to:'saguaro', x:16, y:2 },
+             '7': { to:'icecave', x:3, y:5, req:'badgeGLAC',
+                    reqMsg: ['The cracked ice groans and holds fast.', 'Something vast breathes behind it.', "Only Glacier Crown's ranger badge could", 'steady your hands to pry it open.'] } },
+    gate: {
+      x:16, y:2, flag:'badgeGLAC', name:'RANGER BOREAL', art:'warden',
+      intro: [
+        'RANGER BOREAL: You stand on the crown of the world.',
+        'I keep watch over ice older than names.',
+        'Show me a fire the glacier cannot put out!'
+      ],
+      win: [
+        'RANGER BOREAL: ...The ice yields. Remarkable.',
+        'The GLACIER BADGE is yours. Six of eight!',
+        'And... listen. Deep below, the old ice walks.',
+        'The cracked wall on the east face. Go, worthy one.'
+      ],
+      party: () => [makeMon('cragoram', 55), makeMon('tundralf', 56), makeMon('frostmaw', 56), makeMon('terragrizz', 57)]
+    },
+    sign: [
+      'GLACIER CROWN. The roof of the Parklands.',
+      'The ice shifts. Respect it.',
+      'The north trail is not yet cut.'
+    ]
+  },
+  icecave: {
+    label: 'THE DEEP RIME',
+    ground:'#3e4a58', dot:'#34404c', enc:'#3e4a58', blade:'#54707e', blade2:'#3e5462',
+    raw: [
+      'RRRRRRRRRRRRRRRR',
+      'R..............R',
+      'R.....IIIII....R',
+      'R.....IIIII....R',
+      'R.....IIIII....R',
+      '8..............R',
+      'R..............R',
+      'R..............R',
+      'R..............R',
+      'R..............R',
+      'RRRRRRRRRRRRRRRR'
+    ],
+    wilds: ['rambluff'], lvl: [53, 57],   // unused: no grass in the cave
+    exits: { '8': { to:'glacier', x:30, y:8 } },
+    sign: []
   }
 };
 for (const k in AREAS) {
@@ -2196,7 +2517,7 @@ for (const k in AREAS) {
   a.map = a.raw.map(r => r.padEnd(a.mw, r[0]).slice(0, a.mw));
   a.mh = a.raw.length;
 }
-const SOLID = 'T~HSRcObLX';
+const SOLID = 'T~HSRcObLXI';
 const START = { x: 9, y: 18 };
 /* elemental bird spawns: unlocked by gate, rolled per grass encounter;
    secret — hoarding charm orbs above lureOrbs quadruples the rate */
@@ -2659,7 +2980,7 @@ function tryCatch() {
       pushFx(q, 'Caught... but your team AND the Ranch are full!', { kind: 'catchOk', dur: 20 });
       q.push(`${nameOf(en)} scampered off, orb and all.`);
     }
-    if (en.sp === 'sylvarch' && (party.includes(en) || ranch.includes(en))) flags.sylvarch = true;
+    if ((en.sp === 'sylvarch' || en.sp === 'mammorime') && (party.includes(en) || ranch.includes(en))) flags[en.sp] = true;
     battle.endKind = 'caught';
     battle.after = 'end';
     battle.q = q; battle.phase = 'text'; nextText();
@@ -3260,6 +3581,7 @@ function update() {
       } else if (devIdx === 4) {
         delete flags.gate1; delete flags.gate2; delete flags.champion; delete flags.sylvarch;
         delete flags.gate3; delete flags.gate4; delete flags.champion2; delete flags.champion3;
+        delete flags.mammorime;
         BADGE_FLAGS.forEach(f => delete flags[f]);
         devMsg = 'Progress relocked'; save();
       } else if (devIdx === 5) { DEX_ORDER.forEach(markSeen); devMsg = 'All ' + DEX_ORDER.length + ' marked seen'; save(); }
@@ -3309,6 +3631,11 @@ function update() {
       const t = tileAt(fx, fy);
       if (area === 'hollow' && fx === 8 && fy === 3) { hermitGift(); return; }
       if (area === 'gateway' && fx === 12 && fy === 7) { mode = 'badges'; sOk(); return; }
+      if (area === 'icecave' && fx === 8 && fy === 4) {
+        if (flags.mammorime) say(['The great ice stands hollow and calm.', 'Its walker roams at your side now.']);
+        else say(['The ice groans... a shape older than winter', 'shifts inside. MAMMORIME wakes!'], () => startBattle(makeMon('mammorime', 52)));
+        return;
+      }
       if (area === 'meadow' && fx === 3 && fy === 11 && t === 'T') {
         if (flags.sylvarch) say(['The old tree stands quiet and content.', 'Its heart travels with you now.']);
         else if (!flags.champion) say(['The old tree hums softly...', 'Something deep within is watching you.', 'It does not stir. Not yet.']);
@@ -3380,7 +3707,7 @@ function update() {
         if (ch === ',' && Math.random() < 0.12) {
           const birdChance = orbs > BIRD_SPAWN.lureOrbs ? BIRD_SPAWN.luredRate : BIRD_SPAWN.rate;
           if (flags[BIRD_SPAWN.gate] && A.bird && Math.random() < birdChance) {
-            startBattle(makeMon(A.bird, BIRD_SPAWN.level));
+            startBattle(makeMon(A.bird, A.birdLvl || BIRD_SPAWN.level));
           } else {
             const sp = A.wilds[ri(A.wilds.length)];
             const lvl = A.lvl[0] + ri(A.lvl[1] - A.lvl[0] + 1);
@@ -3566,6 +3893,12 @@ function drawTile(t, x, y, sx, sy) {
     px(sx, sy, 16, 16, '#565048');
     px(sx + 3, sy + 3, 10, 13, '#14100c');
     px(sx + 5, sy + 6, 6, 10, '#0a0a0a');
+  } else if (t === 'I') {
+    // ice wall: pale frozen block
+    px(sx, sy, 16, 16, '#a8cede');
+    px(sx + 1, sy + 1, 14, 3, '#d5eaf2');
+    px(sx + h % 9, sy + 6 + (h >> 2) % 7, 4, 2, '#8ab4c8');
+    px(sx + (h >> 4) % 11, sy + 12, 2, 2, '#8ab4c8');
   } else if (t === 'F') {
     const col = h % 2 ? '#e86a5f' : '#f5d67b';
     px(sx + 3, sy + 3, 3, 3, col);
