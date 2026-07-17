@@ -2840,9 +2840,9 @@ function dotTick(m, q) {
   }
 }
 function heldTick(m, q) {
-  // Moss Locket: the holder mends 20% of max HP at the end of each turn
+  // Moss Locket: the holder mends 10% of max HP at the end of each turn
   if (m.held === 'locket' && m.hp > 0 && m.hp < maxHp(m)) {
-    m.hp = Math.min(maxHp(m), m.hp + Math.max(1, Math.floor(maxHp(m) / 5)));
+    m.hp = Math.min(maxHp(m), m.hp + Math.max(1, Math.floor(maxHp(m) / 10)));
     const side = m === battle.enemy ? 'en' : 'me';
     pushFx(q, `${nameOf(m)}'s Moss Locket glows softly...`, { kind: 'stat', side, dur: 14, dHp: { side, hp: m.hp } });
   }
