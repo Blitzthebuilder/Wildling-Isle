@@ -2002,7 +2002,7 @@ const SPECIES = {
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet']], blurb:'the bubble sprite' },
   bubblun:    { name:'Bubblun',    type:'Tide',  base:{hp:55,atk:56,def:52,spd:60}, catch:.3, evolve:{at:24,to:'geyserun'},
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge']], blurb:'the twin bubble' },
-  geyserun:   { name:'Geyserun',   type:'Tide',  base:{hp:70,atk:70,def:64,spd:74}, catch:.12,
+  geyserun:   { name:'Geyserun',   type:'Tide', type2:'Ember',  base:{hp:70,atk:70,def:64,spd:74}, catch:.12,
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge'],[24,'Riptide']], blurb:'the geyser spirit' },
   /* v0.4 lines — one per type, evolve at 12 and 24 */
   flarepup:   { name:'Flarepup',   type:'Ember', base:{hp:42,atk:52,def:40,spd:56}, catch:.7, evolve:{at:12,to:'scorchound'},
@@ -2015,7 +2015,7 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[3,'Splash Jet']], blurb:'the darting fry' },
   marfin:     { name:'Marfin',     type:'Tide',  base:{hp:56,atk:60,def:56,spd:68}, catch:.3, evolve:{at:24,to:'leviafin'},
                 learn:[[1,'Tackle'],[3,'Splash Jet'],[14,'Pounce'],[18,'Tide Surge']], blurb:'the swift sail' },
-  leviafin:   { name:'Leviafin',   type:'Tide',  base:{hp:72,atk:76,def:70,spd:82}, catch:.12,
+  leviafin:   { name:'Leviafin',   type:'Tide', type2:'Frost',  base:{hp:72,atk:76,def:70,spd:82}, catch:.12,
                 learn:[[1,'Tackle'],[3,'Splash Jet'],[14,'Pounce'],[18,'Tide Surge'],[24,'Riptide']], blurb:'the deep current' },
   petalit:    { name:'Petalit',    type:'Flora', base:{hp:42,atk:44,def:44,spd:50}, catch:.75, evolve:{at:12,to:'thistlash'},
                 learn:[[1,'Tackle'],[3,'Leaf Flick']], blurb:'the stray petal' },
@@ -2033,7 +2033,7 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[3,'Wing Flick']], blurb:'the breeze chick' },
   cyclonet:   { name:'Cyclonet',   type:'Gale',  base:{hp:52,atk:60,def:50,spd:80}, catch:.3, evolve:{at:24,to:'tempestrel'},
                 learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force']], blurb:'the whirlwind' },
-  tempestrel: { name:'Tempestrel', type:'Gale',  base:{hp:64,atk:74,def:60,spd:96}, catch:.12,
+  tempestrel: { name:'Tempestrel', type:'Gale', type2:'Spark',  base:{hp:64,atk:74,def:60,spd:96}, catch:.12,
                 learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force'],[24,'Slam']], blurb:'the tempest rider' },
   shalecub:   { name:'Shalecub',   type:'Stone', base:{hp:52,atk:50,def:56,spd:28}, catch:.7, evolve:{at:12,to:'bouldbear'},
                 learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the shale cub' },
@@ -2046,34 +2046,34 @@ const SPECIES = {
                 learn:[[1,'Hex Pulse'],[5,'Pounce']], blurb:'the will-o-cat' },
   mystifur:   { name:'Mystifur',   type:'Mystic', base:{hp:52,atk:68,def:50,spd:80}, catch:.15, evolve:{at:28,to:'oraclaw'},
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash']], blurb:'the veiled seer' },
-  oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08,
+  oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08, cov:['Frost'],
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' },
   /* mushroom line */
-  sporeling:  { name:'Sporeling',  type:'Flora', base:{hp:46,atk:44,def:50,spd:32}, catch:.75, evolve:{at:12,to:'shroombler'},
+  sporeling:  { name:'Sporeling',  type:'Flora', type2:'Venom', base:{hp:46,atk:44,def:50,spd:32}, catch:.75, evolve:{at:12,to:'shroombler'},
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick']], blurb:'the shy spore' },
-  shroombler: { name:'Shroombler', type:'Flora', base:{hp:60,atk:58,def:66,spd:40}, catch:.3, evolve:{at:24,to:'mycolossus'},
+  shroombler: { name:'Shroombler', type:'Flora', type2:'Venom', base:{hp:60,atk:58,def:66,spd:40}, catch:.3, evolve:{at:24,to:'mycolossus'},
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap']], blurb:'the toadstool twins' },
-  mycolossus: { name:'Mycolossus', type:'Flora', base:{hp:80,atk:72,def:84,spd:48}, catch:.12,
+  mycolossus: { name:'Mycolossus', type:'Flora', type2:'Venom', base:{hp:80,atk:72,def:84,spd:48}, catch:.12,
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap'],[24,'Thorn Storm']], blurb:'the fungal titan' },
   /* elemental birds — pseudo-legendaries, rare mid-game spawns after gate 1 */
-  emberoc:    { name:'Emberoc',    type:'Ember', base:{hp:78,atk:84,def:72,spd:92}, catch:.17,
+  emberoc:    { name:'Emberoc',    type:'Ember', type2:'Gale', base:{hp:78,atk:84,def:72,spd:92}, catch:.17,
                 learn:[[1,'Singe'],[1,'Wing Flick'],[1,'Flame Burst'],[26,'Inferno']], blurb:'the cinder roc' },
-  voltalon:   { name:'Voltalon',   type:'Spark', base:{hp:74,atk:86,def:70,spd:96}, catch:.17,
+  voltalon:   { name:'Voltalon',   type:'Spark', type2:'Gale', base:{hp:74,atk:86,def:70,spd:96}, catch:.17,
                 learn:[[1,'Static Zap'],[1,'Wing Flick'],[1,'Volt Storm'],[26,'Slam']], blurb:'the storm talon' },
-  tidewing:   { name:'Tidewing',   type:'Tide',  base:{hp:82,atk:80,def:76,spd:90}, catch:.17,
+  tidewing:   { name:'Tidewing',   type:'Tide', type2:'Gale',  base:{hp:82,atk:80,def:76,spd:90}, catch:.17,
                 learn:[[1,'Splash Jet'],[1,'Wing Flick'],[1,'Tide Surge'],[26,'Riptide']], blurb:'the wave rider' },
   /* legendary — found only by those who know where to look */
-  sylvarch:   { name:'Sylvarch',   type:'Mystic', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
+  sylvarch:   { name:'Sylvarch',   type:'Mystic', type2:'Flora', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
                 learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' },
   /* legendary — the only Wild-type: no element to exploit, none to fear */
-  primling:   { name:'Primling',   type:'Wild', base:{hp:94,atk:88,def:84,spd:86}, catch:.05,
+  primling:   { name:'Primling',   type:'Wild', type2:'Mystic', base:{hp:94,atk:88,def:84,spd:86}, catch:.05,
                 learn:[[1,'Tackle'],[1,'Pounce'],[15,'Slam']], blurb:'the first wildling' },
   /* Minotaur line — Wild-type physical juggernaut; always strikes first */
-  minos:      { name:'Minos',      type:'Wild', base:{hp:60,atk:70,def:68,spd:64}, catch:.06, first:true, evolve:{at:22,to:'asterion'},
+  minos:      { name:'Minos',      type:'Wild', type2:'Stone', base:{hp:60,atk:70,def:68,spd:64}, catch:.06, first:true, evolve:{at:22,to:'asterion'},
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam']], blurb:'the caged beast, ever first to strike' },
-  asterion:   { name:'Asterion',   type:'Wild', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, first:true, evolve:{at:36,to:'celestaur'},
+  asterion:   { name:'Asterion',   type:'Wild', type2:'Stone', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, first:true, evolve:{at:36,to:'celestaur'},
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
-  celestaur:  { name:'Celestaur',  type:'Wild', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, first:true,
+  celestaur:  { name:'Celestaur',  type:'Wild', type2:'Mystic', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, cov:['Stone'], first:true,
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
   /* ---- PARKLANDS region 3: bison (Stone), gator (Venom), snow-lynx (Frost) ---- */
   tuftcalf:   { name:'Tuftcalf',   type:'Stone', base:{hp:54,atk:50,def:56,spd:34}, catch:.5, evolve:{at:18,to:'brumbison'},
@@ -2107,19 +2107,19 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[4,'Venom Spit'],[14,'Toxic Fang'],[20,'Pounce'],[38,'Acid Flood']], blurb:'the desert dread' },
   rambluff:   { name:'Rambluff',   type:'Stone', base:{hp:56,atk:58,def:66,spd:44}, catch:.45, evolve:{at:30,to:'cragoram'},
                 learn:[[1,'Tackle'],[3,'Pebble Toss'],[16,'Rock Slide']], blurb:'the ledge leaper' },
-  cragoram:   { name:'Cragoram',   type:'Frost', base:{hp:78,atk:80,def:96,spd:56}, catch:.12,
-                learn:[[1,'Tackle'],[3,'Pebble Toss'],[16,'Rock Slide'],[30,'Ice Shard'],[40,'Glacier']], blurb:'the rime-horned crag' },
-  gilaflare:  { name:'Gilaflare',  type:'Venom', base:{hp:66,atk:72,def:70,spd:50}, catch:.25,
+  cragoram:   { name:'Cragoram',   type:'Frost', type2:'Stone', base:{hp:78,atk:80,def:96,spd:56}, catch:.12,
+                learn:[[1,'Tackle'],[3,'Frost Bite'],[16,'Slam'],[30,'Ice Shard'],[40,'Glacier']], blurb:'the rime-horned crag' },
+  gilaflare:  { name:'Gilaflare',  type:'Venom', type2:'Ember', base:{hp:66,atk:72,def:70,spd:50}, catch:.25,
                 learn:[[1,'Tackle'],[4,'Venom Spit'],[16,'Toxic Fang'],[24,'Singe'],[34,'Acid Flood']], blurb:'the beaded ember' },
   /* legendary — sleeps beneath Glacier Crown */
-  mammorime:  { name:'Mammorime',  type:'Frost', base:{hp:96,atk:92,def:98,spd:60}, catch:.05,
-                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Rock Slide'],[1,'Slam']], blurb:'the glacier that walks' },
+  mammorime:  { name:'Mammorime',  type:'Frost', type2:'Stone', base:{hp:96,atk:92,def:98,spd:60}, catch:.05, cov:['Tide'],
+                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Undertow'],[1,'Slam']], blurb:'the glacier that walks' },
   /* ---- UX update: one new line per type, spread across all three regions ---- */
   kindlit:    { name:'Kindlit',    type:'Ember', base:{hp:42,atk:52,def:40,spd:54}, catch:.7, evolve:{at:12,to:'pyrepard'},
                 learn:[[1,'Tackle'],[4,'Singe']], blurb:'the struck spark' },
   pyrepard:   { name:'Pyrepard',   type:'Ember', base:{hp:56,atk:68,def:52,spd:72}, catch:.3, evolve:{at:24,to:'infernyx'},
                 learn:[[1,'Tackle'],[4,'Singe'],[14,'Pounce'],[18,'Flame Burst']], blurb:'the burning spots' },
-  infernyx:   { name:'Infernyx',   type:'Ember', base:{hp:70,atk:86,def:64,spd:90}, catch:.12,
+  infernyx:   { name:'Infernyx',   type:'Ember', type2:'Venom', base:{hp:70,atk:86,def:64,spd:90}, catch:.12,
                 learn:[[1,'Tackle'],[4,'Singe'],[14,'Pounce'],[18,'Flame Burst'],[26,'Inferno']], blurb:'the wildfire lynx' },
   seedle:     { name:'Seedle',     type:'Flora', base:{hp:46,atk:44,def:48,spd:40}, catch:.7, evolve:{at:12,to:'thornmaw'},
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick']], blurb:'the wandering seed' },
@@ -2137,7 +2137,7 @@ const SPECIES = {
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet']], blurb:'the chattering stream' },
   cascadon:   { name:'Cascadon',   type:'Tide', base:{hp:60,atk:68,def:60,spd:74}, catch:.25, evolve:{at:26,to:'abyssurge'},
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[16,'Tide Surge']], blurb:'the falling water' },
-  abyssurge:  { name:'Abyssurge',  type:'Tide', base:{hp:78,atk:86,def:74,spd:90}, catch:.1,
+  abyssurge:  { name:'Abyssurge',  type:'Tide', type2:'Venom', base:{hp:78,atk:86,def:74,spd:90}, catch:.1,
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[16,'Tide Surge'],[28,'Riptide']], blurb:'the deep come calling' },
   driftling:  { name:'Driftling',  type:'Gale', base:{hp:44,atk:50,def:44,spd:62}, catch:.6, evolve:{at:14,to:'skydart'},
                 learn:[[1,'Wing Flick'],[5,'Tackle']], blurb:'the loose feather' },
@@ -2147,27 +2147,27 @@ const SPECIES = {
                 learn:[[1,'Wing Flick'],[5,'Tackle'],[16,'Gale Force'],[28,'Slam']], blurb:'the ship of the sky' },
   glimmoth:   { name:'Glimmoth',   type:'Mystic', base:{hp:42,atk:50,def:42,spd:60}, catch:.5, evolve:{at:14,to:'lunamoth'},
                 learn:[[1,'Hex Pulse'],[6,'Pounce']], blurb:'the lantern wing' },
-  lunamoth:   { name:'Lunamoth',   type:'Mystic', base:{hp:56,atk:68,def:54,spd:78}, catch:.2, evolve:{at:26,to:'astramoth'},
+  lunamoth:   { name:'Lunamoth',   type:'Mystic', type2:'Gale', base:{hp:56,atk:68,def:54,spd:78}, catch:.2, evolve:{at:26,to:'astramoth'},
                 learn:[[1,'Hex Pulse'],[6,'Pounce'],[18,'Mind Lash']], blurb:'the moonlit veil' },
-  astramoth:  { name:'Astramoth',  type:'Mystic', base:{hp:70,atk:86,def:66,spd:94}, catch:.09,
+  astramoth:  { name:'Astramoth',  type:'Mystic', type2:'Gale', base:{hp:70,atk:86,def:66,spd:94}, catch:.09,
                 learn:[[1,'Hex Pulse'],[6,'Pounce'],[18,'Mind Lash'],[30,'Astral Burst']], blurb:'the constellation moth' },
   joltfly:    { name:'Joltfly',    type:'Spark', base:{hp:48,atk:58,def:48,spd:62}, catch:.5, evolve:{at:20,to:'voltwasp'},
                 learn:[[1,'Static Zap'],[5,'Pounce']], blurb:'the live wire' },
   voltwasp:   { name:'Voltwasp',   type:'Spark', base:{hp:62,atk:76,def:62,spd:82}, catch:.2, evolve:{at:38,to:'stormhive'},
                 learn:[[1,'Static Zap'],[5,'Pounce'],[22,'Volt Storm']], blurb:'the charged sting' },
-  stormhive:  { name:'Stormhive',  type:'Spark', base:{hp:80,atk:94,def:78,spd:96}, catch:.08,
+  stormhive:  { name:'Stormhive',  type:'Spark', type2:'Venom', base:{hp:80,atk:94,def:78,spd:96}, catch:.08,
                 learn:[[1,'Static Zap'],[5,'Pounce'],[22,'Volt Storm'],[40,'Slam']], blurb:'the thousand-volt swarm' },
   shardling:  { name:'Shardling',  type:'Stone', base:{hp:52,atk:54,def:60,spd:38}, catch:.5, evolve:{at:20,to:'quarrol'},
                 learn:[[1,'Pebble Toss'],[5,'Tackle']], blurb:'the chipped stone' },
   quarrol:    { name:'Quarrol',    type:'Stone', base:{hp:68,atk:72,def:80,spd:46}, catch:.2, evolve:{at:38,to:'monolythe'},
                 learn:[[1,'Pebble Toss'],[5,'Tackle'],[22,'Rock Slide']], blurb:'the walking quarry' },
-  monolythe:  { name:'Monolythe',  type:'Stone', base:{hp:88,atk:90,def:102,spd:52}, catch:.08,
+  monolythe:  { name:'Monolythe',  type:'Stone', type2:'Mystic', base:{hp:88,atk:90,def:102,spd:52}, catch:.08, cov:['Spark'],
                 learn:[[1,'Pebble Toss'],[5,'Tackle'],[22,'Rock Slide'],[40,'Slam']], blurb:'the standing stone woken' },
   flurret:    { name:'Flurret',    type:'Frost', base:{hp:46,atk:54,def:46,spd:66}, catch:.5, evolve:{at:20,to:'glacielle'},
                 learn:[[1,'Frost Bite'],[5,'Pounce']], blurb:'the snow ribbon' },
   glacielle:  { name:'Glacielle',  type:'Frost', base:{hp:60,atk:72,def:60,spd:86}, catch:.2, evolve:{at:38,to:'aurorix'},
                 learn:[[1,'Frost Bite'],[5,'Pounce'],[22,'Ice Shard']], blurb:'the still cold' },
-  aurorix:    { name:'Aurorix',    type:'Frost', base:{hp:76,atk:90,def:74,spd:104}, catch:.08,
+  aurorix:    { name:'Aurorix',    type:'Frost', type2:'Mystic', base:{hp:76,atk:90,def:74,spd:104}, catch:.08,
                 learn:[[1,'Frost Bite'],[5,'Pounce'],[22,'Ice Shard'],[40,'Glacier']], blurb:'the northern lights made flesh' },
   stinglet:   { name:'Stinglet',   type:'Venom', base:{hp:44,atk:58,def:44,spd:56}, catch:.5, evolve:{at:20,to:'toxitar'},
                 learn:[[1,'Venom Spit'],[5,'Tackle']], blurb:'the first bite' },
@@ -2774,6 +2774,13 @@ const AREAS = {
       'TTTTTTTTTTTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf'], lvl: [36, 36],   // unused: no grass in the safe hub
+    trainers: [{
+      key: 'mossy', x: 5, y: 12, name: 'DOCKHAND MOSS', art: 'scamp',
+      intro: ['DOCKHAND MOSS: Fresh off the ferry? Your', 'sea legs need testing. Quick bout!'],
+      rematch: ['MOSS: Another ferry, another battle. Tradition!'],
+      win: ['MOSS: Sturdy as a bollard! Welcome to', 'the Parklands, friend.'],
+      party: () => [makeMon('finlet', 37), makeMon('bubblun', 38)]
+    }],
     exits: { '1': { to:'yellowstone', x:16, y:18 }, '3': { to:'harbor', x:20, y:16 } },
     sign: [
       'WELCOME TO THE GREAT PARKLANDS.',
@@ -2808,6 +2815,19 @@ const AREAS = {
       'TTTTTTTTTTTTTTTT1TTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf','brumbison','flarepup','scorchound','rockit','boulderit','galehoot','joltfly'], lvl: [38, 42],
+    trainers: [{
+      key: 'opal', x: 12, y: 3, name: 'GEYSER GAZER OPAL', art: 'scamp',
+      intro: ['GEYSER GAZER OPAL: Shh - the basin is about', 'to blow! While we wait... battle?'],
+      rematch: ['OPAL: The geysers never rest. Neither do I!'],
+      win: ['OPAL: Whoosh! You erupted all over my team.', 'Come watch the basin with me anytime.'],
+      party: () => [makeMon('tuftcalf', 38), makeMon('flarepup', 38)]
+    }, {
+      key: 'basalt', x: 26, y: 12, name: 'WARDEN AIDE BASALT', art: 'bruiser',
+      intro: ["WARDEN AIDE BASALT: Ranger Solene's busy.", 'You get through ME before you bother her.'],
+      rematch: ['BASALT: Round two? The bison are watching.'],
+      win: ['BASALT: Hrmph. Solid work, visitor.', 'The trail is that way.'],
+      party: () => [makeMon('brumbison', 41), makeMon('scorchound', 41), makeMon('boulderit', 42)]
+    }],
     bird: 'emberoc', birdLvl: 42,
     exits: { '1': { to:'gateway', x:12, y:1 }, '2': { to:'everglades', x:16, y:18 } },
     gate: {
@@ -2851,11 +2871,24 @@ const AREAS = {
       'T.........~~~~~~~.......,,,,...T',
       'T.........~~~~~~~.......,,,,...T',
       'T...S.....~~~~~~~..............T',
-      'T..............................T',
+      'T..........................c...T',
       'T..............................T',
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT'
     ],
     wilds: ['chompling','gatorush','bubblun','marfin','finlet','mossoak','stinglet'], lvl: [41, 45],
+    trainers: [{
+      key: 'skeet', x: 10, y: 8, name: 'MARSH ANGLER SKEET', art: 'scamp',
+      intro: ['MARSH ANGLER SKEET: Quiet! You will scare', 'the big one... aw, too late. BATTLE!'],
+      rematch: ['SKEET: The big one got away again. You will do.'],
+      win: ['SKEET: Slipperier than a mud-eel, you are.', 'Mind the gators on your way.'],
+      party: () => [makeMon('chompling', 41), makeMon('finlet', 41)]
+    }, {
+      key: 'mirelle', x: 27, y: 11, name: 'SWAMP QUEEN MIRELLE', art: 'ace',
+      intro: ['SWAMP QUEEN MIRELLE: The marsh keeps its own', 'court, and I rule it. Kneel or battle.'],
+      rematch: ['MIRELLE: Back before my court? Bold. En garde!'],
+      win: ['MIRELLE: The crown slips... this once.', 'The marsh remembers you, challenger.'],
+      party: () => [makeMon('gatorush', 44), makeMon('marfin', 44), makeMon('stinglet', 45)]
+    }],
     weather: 'rain',
     cache: { item:'pendant', flag:'cachePendant', lines: [
       'Half-sunk in the marsh: a sealed cache!',
@@ -2910,6 +2943,19 @@ const AREAS = {
       'RRRRRRRRRRRRRRRR3RRRRRRRRRRRRRRR'
     ],
     wilds: ['cragolith','cragolith','verdantis','eldermoss','mossoak','mossoak','shardling','snowpad'], lvl: [44, 48],
+    trainers: [{
+      key: 'lens', x: 8, y: 13, name: 'PHOTOGRAPHER LENS', art: 'scamp',
+      intro: ['PHOTOGRAPHER LENS: Hold that pose! The light', 'is PERFECT. Now - action shot. Battle!'],
+      rematch: ['LENS: My best shots are of your team. Again!'],
+      win: ['LENS: What composition! What drama!', 'These are going in the visitor center.'],
+      party: () => [makeMon('snowpad', 44), makeMon('mossoak', 44)]
+    }, {
+      key: 'granjo', x: 24, y: 4, name: 'CLIMBER GRANITE JO', art: 'bruiser',
+      intro: ['CLIMBER GRANITE JO: I free-climbed the half', 'wall before breakfast. Warm me up proper.'],
+      rematch: ['GRANITE JO: Chalk up. The wall waits for no one.'],
+      win: ['GRANITE JO: You climb battles the way I', 'climb granite. Respect.'],
+      party: () => [makeMon('cragolith', 47), makeMon('verdantis', 47), makeMon('shardling', 48)]
+    }],
     bird: 'voltalon', birdLvl: 48,
     exits: { '3': { to:'everglades', x:16, y:2 }, '4': { to:'denali', x:16, y:18 } },
     gate: {
@@ -2958,6 +3004,19 @@ const AREAS = {
     ],
     wilds: ['stratowl','stratowl','bouldbear','bouldbear','cragolith','cragolith','wispurr','frostpup','flurret'], lvl: [47, 51],
     weather: 'snow',
+    trainers: [{
+      key: 'tilly', x: 6, y: 7, name: 'MUSHER TILLY', art: 'scamp',
+      intro: ['MUSHER TILLY: My sled team is resting, but', 'my battle team never does. Hike!'],
+      rematch: ['TILLY: The tundra taught you nothing? Hike!'],
+      win: ['TILLY: Well mush me sideways. You win.', 'Wrap up warm out there.'],
+      party: () => [makeMon('frostpup', 47), makeMon('stratowl', 47)]
+    }, {
+      key: 'orvo', x: 24, y: 15, name: 'TRAPPER ORVO', art: 'salt',
+      intro: ['TRAPPER ORVO: Forty winters on this tundra.', 'None of them as cold as my team. Brace up.'],
+      rematch: ['ORVO: Winter never ends up here. Neither do I.'],
+      win: ['ORVO: Ha! Warm blood wins the day.', 'Take the north trail careful-like.'],
+      party: () => [makeMon('bouldbear', 50), makeMon('snarlow', 50), makeMon('cragolith', 51)]
+    }],
     bird: 'voltalon', birdLvl: 51,
     exits: { '4': { to:'yosemite', x:16, y:3 }, '5': { to:'saguaro', x:16, y:18 } },
     gate: {
@@ -3006,6 +3065,19 @@ const AREAS = {
     ],
     wilds: ['rattlet','rattlet','sideviper','gilaflare','scorchound','pyrewolf','cragolith','toxitar'], lvl: [50, 54],
     weather: 'heat',
+    trainers: [{
+      key: 'rey', x: 20, y: 4, name: 'BOTANIST REY', art: 'scamp',
+      intro: ['BOTANIST REY: This saguaro is 200 years old!', 'Disturb it and you answer to me.'],
+      rematch: ['REY: Careful of the spines. Mine especially.'],
+      win: ['REY: Prickly match! The cacti approve.', 'Stay hydrated out here.'],
+      party: () => [makeMon('rattlet', 50), makeMon('gilaflare', 51)]
+    }, {
+      key: 'cal', x: 6, y: 14, name: 'DRIFTER CAL', art: 'salt',
+      intro: ['DRIFTER CAL: Been walking this waste since', 'before the rangers came. Prove your salt.'],
+      rematch: ['CAL: Still drifting. Still dangerous. Draw.'],
+      win: ['CAL: Reckon the desert picked a favorite.', 'It was not me.'],
+      party: () => [makeMon('sideviper', 53), makeMon('scorchound', 53), makeMon('toxitar', 54)]
+    }],
     bird: 'emberoc', birdLvl: 54,
     exits: { '5': { to:'denali', x:16, y:2 }, '6': { to:'glacier', x:16, y:18 } },
     gate: {
@@ -3054,6 +3126,19 @@ const AREAS = {
     ],
     wilds: ['rambluff','rambluff','rambluff','terragrizz','terragrizz','geyserun','geyserun','quarrol','snarlow','glacielle'], lvl: [53, 57],
     weather: 'snow',
+    trainers: [{
+      key: 'noelle', x: 8, y: 5, name: 'ICE FISHER NOELLE', art: 'scamp',
+      intro: ['ICE FISHER NOELLE: Drilled all morning for', 'nothing. You will bite though. Battle!'],
+      rematch: ['NOELLE: The fish are shy. You are not. Again!'],
+      win: ['NOELLE: Reeled me right in. Nice one.', 'Mind the crevasses up top.'],
+      party: () => [makeMon('rambluff', 53), makeMon('flurret', 53)]
+    }, {
+      key: 'halvar', x: 24, y: 11, name: 'CROWN VETERAN HALVAR', art: 'warden',
+      intro: ['CROWN VETERAN HALVAR: I guarded this crown', 'before Boreal was born. Show me your worth.'],
+      rematch: ['HALVAR: The old guard never rusts. Once more.'],
+      win: ['HALVAR: Strong as the ice and twice as sharp.', 'Boreal will have their hands full.'],
+      party: () => [makeMon('cragoram', 56), makeMon('geyserun', 56), makeMon('snarlow', 57)]
+    }],
     bird: 'tidewing', birdLvl: 57,
     exits: { '6': { to:'saguaro', x:16, y:2 },
              '7': { to:'icecave', x:3, y:5, req:'badgeGLAC',
@@ -3133,6 +3218,7 @@ let ranch = [];               // stored Wildlings beyond the 6-mon team
 const RANCH_MAX = 30;
 let tmMenu = -1;              // team submenu option index (-1 = closed)
 let tmSel = -1;               // mon picked for a switch (-1 = none)
+let moIdx = 0, moSel = -1;    // move-order cursor + picked slot (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
 let coins = 0;
 let items = { berry: 0, jam: 0, locket: 0, charm: 0, pendant: 0 };
@@ -3164,10 +3250,37 @@ const TUTOR_SETS = {
   Frost:  ['Absolute Zero', 'Blizzard', 'Permafrost', 'Rime Kiss'],
   Venom:  ['Plague Bloom', 'Corrosion', 'Fang Venom', 'Spore Cloud']
 };
-const TUTOR_INFO = ['the heaviest of songs', 'a crushing verse', 'a keen refrain', 'never misses its mark'];
-const tutorSet = m => TUTOR_SETS[SPECIES[m.sp].type] || TUTOR_SETS.Wild;
+/* dual typing: damage multiplies across BOTH defender types (4x hits and
+   double-resists exist, and a second type can cancel a weakness outright) */
+const defMult = (atkT, spKey) => {
+  const s = SPECIES[spKey], row = CHART[atkT] || {};
+  const m1 = row[s.type] == null ? 1 : row[s.type];
+  const m2 = !s.type2 ? 1 : (row[s.type2] == null ? 1 : row[s.type2]);
+  return m1 * m2;
+};
+const typeLabel = spKey => SPECIES[spKey].type + (SPECIES[spKey].type2 ? '/' + SPECIES[spKey].type2 : '');
+/* move affinity: a Wildling learns both its own types, neutral Wild moves, and
+   any `cov` coverage it was born with - but NEVER a type it is weak against
+   (your own nature is always exempt: a storm bird may sing its own thunder) */
+const canLearnType = (spKey, mt) => {
+  const s = SPECIES[spKey];
+  if (mt === s.type || mt === s.type2) return true;
+  if (defMult(mt, spKey) > 1) return false;
+  return mt === 'Wild' || (s.cov || []).includes(mt);
+};
+const tutorSet = m => {
+  const s = SPECIES[m.sp];
+  const out = [];
+  for (const t of [s.type].concat(s.type2 || [], s.cov || [])) {
+    for (const mv of (TUTOR_SETS[t] || [])) {
+      if (canLearnType(m.sp, MOVES[mv].type) && !out.includes(mv)) out.push(mv);
+    }
+  }
+  return out.length ? out : TUTOR_SETS.Wild.slice();
+};
 const TUTOR_PRICE = 150;
-let tutMv = 0, tutMon = 0;
+const TUT_VIS = 4;
+let tutMv = 0, tutMon = 0, tutTop = 0;
 let restIdx = 0, shopIdx = 0, shopTop = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
 const SHOP_VIS = 4;           // shop rows visible at once; longer lists scroll
 let tvIdx = 0, tvTop = 0;     // fast-travel cursor + scroll window
@@ -3316,7 +3429,7 @@ function startBattle(enemy) {
   fxParts = [];
   const q = [];
   battle = {
-    enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
+    enemy, ai, parts: [ai], trainer: null, phase: 'text', after: 'menu', endKind: null,
     q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: enemy.hp,
@@ -3337,7 +3450,7 @@ function startTrainerBattle(tr) {
   fxParts = [];
   const q = [];
   battle = {
-    enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
+    enemy: tr.party[0], ai, parts: [ai], trainer: tr, phase: 'text', after: 'menu', endKind: null,
     q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: tr.party[0].hp,
@@ -3446,8 +3559,7 @@ function atkStep(a, d, mvName, q) {
   // contact, not the moment the whole round is computed
   const fxo = { kind: 'atk', side: aSide, type: mv.type, dur: 26, block: 1 };
   pushFx(q, `${nameOf(a)} used ${mvName}!`, fxo);
-  const eff = (CHART[mv.type] || {})[SPECIES[d.sp].type];
-  const mult = eff == null ? 1 : eff;
+  const mult = defMult(mv.type, d.sp);
   // base crit is ~1/14, in line with the classics; a Keen Charm doubles it
   const crit = Math.random() < (a.held === 'charm' ? 0.14 : 0.07);
   const wBoost = WEATHER_BOOST[A.weather] === mv.type ? 1.2 : 1;   // fight the storm's own element
@@ -3460,8 +3572,10 @@ function atkStep(a, d, mvName, q) {
   fxo.crit = crit;
   if (crit) pushFx(q, 'A critical hit!', { kind: 'eff', dur: 16, block: 1 });
   if (clung) pushFx(q, `${nameOf(d)} clings on with the Guard Pendant!`, { kind: 'eff', dur: 14, block: 1 });
-  if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
-  if (mult < 1) q.push("It's not very effective...");
+  if (mult >= 4) pushFx(q, "It's devastatingly effective!", { kind: 'eff', dur: 18, block: 1 });
+  else if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
+  if (mult > 0 && mult <= 0.25) q.push('It barely leaves a mark...');
+  else if (mult < 1) q.push("It's not very effective...");
   const inf = INFLICT[mv.type];
   if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
     d.st = inf[0];
@@ -3542,6 +3656,12 @@ function levelUpMon(m, q) {
     for (const [lv, mv] of SPECIES[m.sp].learn) {       // back-learn everything the new form should know by now
       if (lv < m.level) learnMove(m, mv, q);
     }
+    // a type-changing evolution sheds any moves the new form could never hold
+    const kept = m.moves.filter(mv => canLearnType(m.sp, MOVES[mv].type));
+    if (kept.length < m.moves.length) {
+      m.moves = kept.length ? kept : ['Tackle'];
+      if (q) q.push(`${SPECIES[m.sp].name} shed the old ways of its past form.`);
+    }
   }
   for (const [lv, mv] of SPECIES[m.sp].learn) {
     if (lv === m.level) learnMove(m, mv, q);
@@ -3549,23 +3669,30 @@ function levelUpMon(m, q) {
 }
 function learnMove(m, mv, q) {
   if (m.moves.includes(mv)) return;
+  if (!canLearnType(m.sp, MOVES[mv].type)) return;   // the hard rule: never your own bane
   if (m.moves.length < 4) { m.moves.push(mv); if (q) q.push(`${nameOf(m)} learned ${mv}!`); return; }
   if (pendingLearns.some(p => p.m === m && p.mv === mv)) return;
   pendingLearns.push({ m, mv });
   if (q) q.push(`${nameOf(m)} wants to learn ${mv}...`);
 }
 function victory(q) {
-  const me = curMon(), en = battle.enemy;
+  const en = battle.enemy;
   const gain = en.level * (battle.trainer ? 26 : 18);
-  me.xp += gain;
-  q.push(`${nameOf(me)} gained ${gain} XP!`);
+  // XP splits evenly among every Wildling that took the field against this foe
+  const parts = (battle.parts || [battle.ai]).filter(i => party[i]);
+  const share = Math.max(1, Math.floor(gain / parts.length));
+  for (const pi of parts) {
+    const m = party[pi];
+    m.xp += share;
+    q.push(`${nameOf(m)} gained ${share} XP!`);
+    while (m.xp >= xpNeed(m.level)) {
+      m.xp -= xpNeed(m.level);
+      levelUpMon(m, q);
+    }
+  }
   const pay = en.level * (battle.trainer ? 3 : 1);
   coins += pay;
   q.push(`Found ${pay} coins!`);
-  while (me.xp >= xpNeed(me.level)) {
-    me.xp -= xpNeed(me.level);
-    levelUpMon(me, q);
-  }
   const tr = battle.trainer;
   if (tr && tr.i < tr.party.length - 1) {
     tr.i++;
@@ -3587,6 +3714,7 @@ function queueFoeEntry(q) {
   const nx = battle.pendingFoe;
   battle.pendingFoe = null;
   pushFx(q, `${battle.trainer.name} sends out ${nameOf(nx)}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1, swap: nx });
+  battle.parts = [battle.ai];   // participation is tracked per foe
   battle.after = 'menu';
 }
 function tryCatch() {
@@ -3684,6 +3812,7 @@ function switchTo(idx, forced) {
   const q = [];
   if (!forced) q.push(`Enough, ${nameOf(curMon())}!`);
   battle.ai = idx;
+  if (battle.parts && !battle.parts.includes(idx)) battle.parts.push(idx);
   battle.dispMe = party[idx].hp;
   battle.tgtMe = party[idx].hp;
   pushFx(q, `Go, ${nameOf(party[idx])}!`, { kind: 'sendIn', side: 'me', dur: 18, block: 1 });
@@ -4005,16 +4134,17 @@ function update() {
   }
 
   if (mode === 'team') {
-    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / ITEM / RENAME / BACK
-      if (tap('up')) { tmMenu = (tmMenu + 4) % 5; sMove(); }
-      if (tap('down')) { tmMenu = (tmMenu + 1) % 5; sMove(); }
+    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / ITEM / MOVES / RENAME / BACK
+      if (tap('up')) { tmMenu = (tmMenu + 5) % 6; sMove(); }
+      if (tap('down')) { tmMenu = (tmMenu + 1) % 6; sMove(); }
       if (tap('B')) { sBack(); tmMenu = -1; }
       else if (tap('A')) {
         sOk();
         if (tmMenu === 0) { tmSel = teamIdx; tmMenu = -1; }
         else if (tmMenu === 1) { infoIdx = teamIdx; mode = 'info'; tmMenu = -1; }
         else if (tmMenu === 2) { tiIdx = 0; mode = 'teamitem'; tmMenu = -1; }
-        else if (tmMenu === 3) {
+        else if (tmMenu === 3) { moIdx = 0; moSel = -1; mode = 'moveorder'; tmMenu = -1; }
+        else if (tmMenu === 4) {
           const m = party[teamIdx];
           const nick = askNick('Nickname for ' + SPECIES[m.sp].name + '?', m.nick || '');
           if (nick !== undefined) { m.nick = nick; save(); }
@@ -4038,6 +4168,26 @@ function update() {
     else if (tap('B')) {
       if (tmSel >= 0) { tmSel = -1; sBack(); }
       else { sBack(); mode = 'world'; }
+    }
+    return;
+  }
+
+  if (mode === 'moveorder') {
+    const m = party[teamIdx], n = m.moves.length;
+    if (tap('up')) { moIdx = (moIdx + n - 1) % n; sMove(); }
+    if (tap('down')) { moIdx = (moIdx + 1) % n; sMove(); }
+    if (tap('B') || tap('C')) {
+      if (moSel >= 0) { moSel = -1; sBack(); }   // un-pick first, exit second
+      else { sBack(); mode = 'team'; }
+    } else if (tap('A')) {
+      if (moSel < 0) { moSel = moIdx; sOk(); }
+      else {
+        if (moSel !== moIdx) {
+          const t = m.moves[moSel]; m.moves[moSel] = m.moves[moIdx]; m.moves[moIdx] = t;
+          save();
+        }
+        moSel = -1; sOk();
+      }
     }
     return;
   }
@@ -4162,7 +4312,7 @@ function update() {
     if (tap('up')) { tutMon = (tutMon + party.length - 1) % party.length; sMove(); }
     if (tap('down')) { tutMon = (tutMon + 1) % party.length; sMove(); }
     if (tap('B') || tap('C')) { sBack(); mode = 'world'; }
-    else if (tap('A')) { sOk(); tutMv = 0; mode = 'tutorMove'; }
+    else if (tap('A')) { sOk(); tutMv = 0; tutTop = 0; mode = 'tutorMove'; }
     return;
   }
 
@@ -4170,6 +4320,8 @@ function update() {
     const set = tutorSet(party[tutMon]);
     if (tap('up')) { tutMv = (tutMv + set.length - 1) % set.length; sMove(); }
     if (tap('down')) { tutMv = (tutMv + 1) % set.length; sMove(); }
+    if (tutMv < tutTop) tutTop = tutMv;
+    if (tutMv >= tutTop + TUT_VIS) tutTop = tutMv - TUT_VIS + 1;
     if (tap('B')) { sBack(); mode = 'tutorMon'; }
     else if (tap('A')) {
       const m = party[tutMon], mv = set[tutMv];
@@ -4375,7 +4527,7 @@ function update() {
       if (area === 'hollow' && fx === 8 && fy === 3) { hermitGift(); return; }
       if (area === 'meadow' && fx === 12 && fy === 16) { docReport(); return; }
       if (area === 'gateway' && fx === 12 && fy === 7) { mode = 'badges'; sOk(); return; }
-      if (area === 'icecave' && fx === 8 && fy === 4) {
+      if (area === 'icecave' && fx >= 6 && fx <= 10 && fy >= 2 && fy <= 4) {   // the whole frozen mass wakes it
         if (flags.mammorime) say(['The great ice stands hollow and calm.', 'Its walker roams at your side now.']);
         else say(['The ice groans... a shape older than winter', 'shifts inside. MAMMORIME wakes!'], () => startBattle(makeMon('mammorime', 52)));
         return;
@@ -4984,7 +5136,7 @@ function drawBattle() {
     const mv = curMon().moves;
     // field knowledge pays off: once a species is in your dex, moves show +/- matchups
     const foeKnown = (dex[b.enemy.sp] || 0) >= 1;
-    const effOf = m => { const e = (CHART[MOVES[m].type] || {})[SPECIES[b.enemy.sp].type]; return e == null ? 1 : e; };
+    const effOf = m => defMult(MOVES[m].type, b.enemy.sp);
     mv.forEach((m, i) => {
       const ox = 18 + (i % 2) * 112, oy = 118 + Math.floor(i / 2) * 13;
       if (i === b.vi) text('>', ox - 9, oy, '#a34537');
@@ -5047,14 +5199,30 @@ function drawTeamList(idx, inBattle) {
     else if (m.st) text(ST[m.st].tag, 210, y + 2, ST[m.st].col, 7);
   });
   if (!inBattle && tmMenu >= 0) {
-    const my = clamp(22 + idx * 22, 14, 84);
-    drawBox(156, my, 76, 74);
-    ['SWITCH', 'INFO', 'ITEM', 'RENAME', 'BACK'].forEach((o, i) => {
+    const my = clamp(22 + idx * 22, 14, 70);
+    drawBox(156, my, 76, 88);
+    ['SWITCH', 'INFO', 'ITEM', 'MOVES', 'RENAME', 'BACK'].forEach((o, i) => {
       const oy = my + 7 + i * 13;
       if (i === tmMenu) text('>', 162, oy, '#a34537', 7);
       text(o, 172, oy, '#20242c', 7);
     });
   }
+}
+
+function drawMoveOrder() {
+  const m = party[teamIdx];
+  px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
+  drawBox(30, 30, 180, 100);
+  text('MOVE ORDER - ' + nameOf(m), 42, 37, '#20242c', 7);
+  m.moves.forEach((mv, i) => {
+    const oy = 52 + i * 14;
+    if (i === moIdx) text('>', 40, oy, '#a34537', 7);
+    if (i === moSel) { px(36, oy - 2, 168, 12, 'rgba(74,144,216,.22)'); text('*', 46, oy, '#4a90d8', 7); }
+    text(mv, 54, oy, '#20242c', 7);
+    const d = MOVES[mv];
+    text(d.type.slice(0, 5) + ' ' + d.pow, 158, oy, TYPE_COL[d.type] || '#4c5c50', 7);
+  });
+  text(moSel >= 0 ? 'A: place here   B: un-pick' : 'A: pick a move   B: done', 42, 116, '#4c5c50', 7);
 }
 
 function drawTeamItemBox() {
@@ -5160,16 +5328,19 @@ function drawTutor() {
   const m = party[tutMon], set = tutorSet(m);
   px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
   drawBox(8, 12, 224, 116);
-  text(SPECIES[m.sp].type.toUpperCase() + ' SONGS', 18, 19, '#20242c');
-  text('Coins: ' + coins, 160, 19, '#4c5c50', 7);
-  set.forEach((mv, i) => {
-    const d = MOVES[mv], oy = 38 + i * 22;
+  text('SONGS FOR ' + nameOf(m).toUpperCase(), 18, 19, '#20242c');
+  text('Coins: ' + coins, 164, 19, '#4c5c50', 7);
+  const end = Math.min(set.length, tutTop + TUT_VIS);
+  for (let i = tutTop; i < end; i++) {
+    const mv = set[i], d = MOVES[mv], oy = 38 + (i - tutTop) * 22;
     if (i === tutMv) text('>', 16, oy, '#a34537', 7);
     text(mv, 26, oy, m.moves.includes(mv) ? '#8a8570' : '#20242c', 7);
-    text('PWR ' + d.pow + '  ACC ' + d.acc, 108, oy, '#4c5c50', 7);
+    text('PWR ' + d.pow + '  ACC ' + d.acc, 118, oy, '#4c5c50', 7);
     text(m.moves.includes(mv) ? 'known' : TUTOR_PRICE + 'c', 198, oy, '#4c5c50', 7);
-    text(TUTOR_INFO[i], 26, oy + 9, '#8a8570', 7);
-  });
+    text(d.type + ' song', 26, oy + 9, TYPE_COL[d.type] || '#8a8570', 7);
+  }
+  if (tutTop > 0) text('^', 222, 38, '#a34537', 7);
+  if (end < set.length) text('v', 222, 104, '#a34537', 7);
   drawBox(8, 132, 224, 18);
   text('For ' + nameOf(m) + '.  A: teach  B: back', 18, 137, '#4c5c50', 7);
 }
@@ -5184,7 +5355,7 @@ function drawInfo() {
   drawArt(m.sp, 10, 22, 3, null, m.shiny);
   text(nameOf(m), 56, 22, '#f6f2e2');
   if (m.nick) text('(' + s.name + ')', 56, 32, '#8fa396', 7);
-  text(s.type + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
+  text(typeLabel(m.sp) + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
   text('L' + m.level + '   XP ' + m.xp + '/' + xpNeed(m.level), 56, m.nick ? 52 : 44, '#cfe3d2', 7);
   drawBar(56, 64, 100, m.hp / maxHp(m));
   text(m.hp + '/' + maxHp(m) + ' HP', 162, 61, '#cfe3d2', 7);
@@ -5410,6 +5581,7 @@ function draw() {
   else if (mode === 'world') drawWorld();
   else if (mode === 'team') drawTeamList(teamIdx, false);
   else if (mode === 'teamitem') { drawTeamList(teamIdx, false); drawTeamItemBox(); }
+  else if (mode === 'moveorder') { drawTeamList(teamIdx, false); drawMoveOrder(); }
   else if (mode === 'rest') { drawWorld(); drawRest(); }
   else if (mode === 'travel') { drawWorld(); drawTravel(); }
   else if (mode === 'shop') { drawWorld(); drawShop(); }
