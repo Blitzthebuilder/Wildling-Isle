@@ -5,7 +5,7 @@ release merged to the live game.
 
 ---
 
-## Unreleased (on beta)
+## Save Codes on Mobile — 2026-07-18 (PR #36)
 
 ### Fixes
 - **Save codes on mobile**: CODE used to drop the ~300+ character save
