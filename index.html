@@ -2774,6 +2774,13 @@ const AREAS = {
       'TTTTTTTTTTTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf'], lvl: [36, 36],   // unused: no grass in the safe hub
+    trainers: [{
+      key: 'mossy', x: 5, y: 12, name: 'DOCKHAND MOSS', art: 'scamp',
+      intro: ['DOCKHAND MOSS: Fresh off the ferry? Your', 'sea legs need testing. Quick bout!'],
+      rematch: ['MOSS: Another ferry, another battle. Tradition!'],
+      win: ['MOSS: Sturdy as a bollard! Welcome to', 'the Parklands, friend.'],
+      party: () => [makeMon('finlet', 37), makeMon('bubblun', 38)]
+    }],
     exits: { '1': { to:'yellowstone', x:16, y:18 }, '3': { to:'harbor', x:20, y:16 } },
     sign: [
       'WELCOME TO THE GREAT PARKLANDS.',
@@ -2808,6 +2815,19 @@ const AREAS = {
       'TTTTTTTTTTTTTTTT1TTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf','brumbison','flarepup','scorchound','rockit','boulderit','galehoot','joltfly'], lvl: [38, 42],
+    trainers: [{
+      key: 'opal', x: 12, y: 3, name: 'GEYSER GAZER OPAL', art: 'scamp',
+      intro: ['GEYSER GAZER OPAL: Shh - the basin is about', 'to blow! While we wait... battle?'],
+      rematch: ['OPAL: The geysers never rest. Neither do I!'],
+      win: ['OPAL: Whoosh! You erupted all over my team.', 'Come watch the basin with me anytime.'],
+      party: () => [makeMon('tuftcalf', 38), makeMon('flarepup', 38)]
+    }, {
+      key: 'basalt', x: 26, y: 12, name: 'WARDEN AIDE BASALT', art: 'bruiser',
+      intro: ["WARDEN AIDE BASALT: Ranger Solene's busy.", 'You get through ME before you bother her.'],
+      rematch: ['BASALT: Round two? The bison are watching.'],
+      win: ['BASALT: Hrmph. Solid work, visitor.', 'The trail is that way.'],
+      party: () => [makeMon('brumbison', 41), makeMon('scorchound', 41), makeMon('boulderit', 42)]
+    }],
     bird: 'emberoc', birdLvl: 42,
     exits: { '1': { to:'gateway', x:12, y:1 }, '2': { to:'everglades', x:16, y:18 } },
     gate: {
@@ -2851,11 +2871,24 @@ const AREAS = {
       'T.........~~~~~~~.......,,,,...T',
       'T.........~~~~~~~.......,,,,...T',
       'T...S.....~~~~~~~..............T',
-      'T..............................T',
+      'T..........................c...T',
       'T..............................T',
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT'
     ],
     wilds: ['chompling','gatorush','bubblun','marfin','finlet','mossoak','stinglet'], lvl: [41, 45],
+    trainers: [{
+      key: 'skeet', x: 10, y: 8, name: 'MARSH ANGLER SKEET', art: 'scamp',
+      intro: ['MARSH ANGLER SKEET: Quiet! You will scare', 'the big one... aw, too late. BATTLE!'],
+      rematch: ['SKEET: The big one got away again. You will do.'],
+      win: ['SKEET: Slipperier than a mud-eel, you are.', 'Mind the gators on your way.'],
+      party: () => [makeMon('chompling', 41), makeMon('finlet', 41)]
+    }, {
+      key: 'mirelle', x: 27, y: 11, name: 'SWAMP QUEEN MIRELLE', art: 'ace',
+      intro: ['SWAMP QUEEN MIRELLE: The marsh keeps its own', 'court, and I rule it. Kneel or battle.'],
+      rematch: ['MIRELLE: Back before my court? Bold. En garde!'],
+      win: ['MIRELLE: The crown slips... this once.', 'The marsh remembers you, challenger.'],
+      party: () => [makeMon('gatorush', 44), makeMon('marfin', 44), makeMon('stinglet', 45)]
+    }],
     weather: 'rain',
     cache: { item:'pendant', flag:'cachePendant', lines: [
       'Half-sunk in the marsh: a sealed cache!',
@@ -2910,6 +2943,19 @@ const AREAS = {
       'RRRRRRRRRRRRRRRR3RRRRRRRRRRRRRRR'
     ],
     wilds: ['cragolith','cragolith','verdantis','eldermoss','mossoak','mossoak','shardling','snowpad'], lvl: [44, 48],
+    trainers: [{
+      key: 'lens', x: 8, y: 13, name: 'PHOTOGRAPHER LENS', art: 'scamp',
+      intro: ['PHOTOGRAPHER LENS: Hold that pose! The light', 'is PERFECT. Now - action shot. Battle!'],
+      rematch: ['LENS: My best shots are of your team. Again!'],
+      win: ['LENS: What composition! What drama!', 'These are going in the visitor center.'],
+      party: () => [makeMon('snowpad', 44), makeMon('mossoak', 44)]
+    }, {
+      key: 'granjo', x: 24, y: 4, name: 'CLIMBER GRANITE JO', art: 'bruiser',
+      intro: ['CLIMBER GRANITE JO: I free-climbed the half', 'wall before breakfast. Warm me up proper.'],
+      rematch: ['GRANITE JO: Chalk up. The wall waits for no one.'],
+      win: ['GRANITE JO: You climb battles the way I', 'climb granite. Respect.'],
+      party: () => [makeMon('cragolith', 47), makeMon('verdantis', 47), makeMon('shardling', 48)]
+    }],
     bird: 'voltalon', birdLvl: 48,
     exits: { '3': { to:'everglades', x:16, y:2 }, '4': { to:'denali', x:16, y:18 } },
     gate: {
@@ -2958,6 +3004,19 @@ const AREAS = {
     ],
     wilds: ['stratowl','stratowl','bouldbear','bouldbear','cragolith','cragolith','wispurr','frostpup','flurret'], lvl: [47, 51],
     weather: 'snow',
+    trainers: [{
+      key: 'tilly', x: 6, y: 7, name: 'MUSHER TILLY', art: 'scamp',
+      intro: ['MUSHER TILLY: My sled team is resting, but', 'my battle team never does. Hike!'],
+      rematch: ['TILLY: The tundra taught you nothing? Hike!'],
+      win: ['TILLY: Well mush me sideways. You win.', 'Wrap up warm out there.'],
+      party: () => [makeMon('frostpup', 47), makeMon('stratowl', 47)]
+    }, {
+      key: 'orvo', x: 24, y: 15, name: 'TRAPPER ORVO', art: 'salt',
+      intro: ['TRAPPER ORVO: Forty winters on this tundra.', 'None of them as cold as my team. Brace up.'],
+      rematch: ['ORVO: Winter never ends up here. Neither do I.'],
+      win: ['ORVO: Ha! Warm blood wins the day.', 'Take the north trail careful-like.'],
+      party: () => [makeMon('bouldbear', 50), makeMon('snarlow', 50), makeMon('cragolith', 51)]
+    }],
     bird: 'voltalon', birdLvl: 51,
     exits: { '4': { to:'yosemite', x:16, y:3 }, '5': { to:'saguaro', x:16, y:18 } },
     gate: {
@@ -3006,6 +3065,19 @@ const AREAS = {
     ],
     wilds: ['rattlet','rattlet','sideviper','gilaflare','scorchound','pyrewolf','cragolith','toxitar'], lvl: [50, 54],
     weather: 'heat',
+    trainers: [{
+      key: 'rey', x: 20, y: 4, name: 'BOTANIST REY', art: 'scamp',
+      intro: ['BOTANIST REY: This saguaro is 200 years old!', 'Disturb it and you answer to me.'],
+      rematch: ['REY: Careful of the spines. Mine especially.'],
+      win: ['REY: Prickly match! The cacti approve.', 'Stay hydrated out here.'],
+      party: () => [makeMon('rattlet', 50), makeMon('gilaflare', 51)]
+    }, {
+      key: 'cal', x: 6, y: 14, name: 'DRIFTER CAL', art: 'salt',
+      intro: ['DRIFTER CAL: Been walking this waste since', 'before the rangers came. Prove your salt.'],
+      rematch: ['CAL: Still drifting. Still dangerous. Draw.'],
+      win: ['CAL: Reckon the desert picked a favorite.', 'It was not me.'],
+      party: () => [makeMon('sideviper', 53), makeMon('scorchound', 53), makeMon('toxitar', 54)]
+    }],
     bird: 'emberoc', birdLvl: 54,
     exits: { '5': { to:'denali', x:16, y:2 }, '6': { to:'glacier', x:16, y:18 } },
     gate: {
@@ -3054,6 +3126,19 @@ const AREAS = {
     ],
     wilds: ['rambluff','rambluff','rambluff','terragrizz','terragrizz','geyserun','geyserun','quarrol','snarlow','glacielle'], lvl: [53, 57],
     weather: 'snow',
+    trainers: [{
+      key: 'noelle', x: 8, y: 5, name: 'ICE FISHER NOELLE', art: 'scamp',
+      intro: ['ICE FISHER NOELLE: Drilled all morning for', 'nothing. You will bite though. Battle!'],
+      rematch: ['NOELLE: The fish are shy. You are not. Again!'],
+      win: ['NOELLE: Reeled me right in. Nice one.', 'Mind the crevasses up top.'],
+      party: () => [makeMon('rambluff', 53), makeMon('flurret', 53)]
+    }, {
+      key: 'halvar', x: 24, y: 11, name: 'CROWN VETERAN HALVAR', art: 'warden',
+      intro: ['CROWN VETERAN HALVAR: I guarded this crown', 'before Boreal was born. Show me your worth.'],
+      rematch: ['HALVAR: The old guard never rusts. Once more.'],
+      win: ['HALVAR: Strong as the ice and twice as sharp.', 'Boreal will have their hands full.'],
+      party: () => [makeMon('cragoram', 56), makeMon('geyserun', 56), makeMon('snarlow', 57)]
+    }],
     bird: 'tidewing', birdLvl: 57,
     exits: { '6': { to:'saguaro', x:16, y:2 },
              '7': { to:'icecave', x:3, y:5, req:'badgeGLAC',

@@ -17,6 +17,13 @@ release merged to the live game.
 - **Move reorder**: the team submenu gained MOVES — pick a move, pick a
   slot, and they trade places. Set your favorite opener as slot one
 
+### World
+- The Everglade Sloughs finally got a campfire (southeast corner) — no
+  more gator country without a place to rest
+- Thirteen roaming trainers settled the Parklands: two per park (one
+  easy, one tough, all replayable) plus a dockhand at the Gateway —
+  matching the two-per-area standard of the older isles
+
 ---
 
 ## The Quality of Life Update — 2026-07-18 (PR #31)
