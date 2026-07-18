@@ -33,6 +33,15 @@ release merged to the live game.
   Attack AND Defense by 50%, stackable twice per battle — unmovable,
   then unstoppable. The move menu explains buff moves in plain words
 
+### Interface
+- **Move inspection**: the Wildling info screen gained a move cursor —
+  up/down highlights each move and a description bar explains exactly
+  what it does ("+10% crit chance", "drains 50% of damage as HP",
+  "always chills the target", "25% chance to shock"...). Moves with
+  special effects glow gold in the list
+- The battle move bar and the learn-a-move prompt show compact effect
+  tags too, so nothing special hides behind a name
+
 ---
 
 ## Parklands Phase 3 — 2026-07-18 (PR #33)
