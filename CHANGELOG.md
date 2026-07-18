@@ -5,9 +5,9 @@ release merged to the live game.
 
 ---
 
-## Unreleased (on beta)
+## Parklands Phase 4: The Summit — 2026-07-18 (PR #34)
 
-### Parklands Phase 4 — the Summit
+### The Summit
 - **THE SUMMIT** crowns the region: a snowbound peak above the Great
   Rim with elite wilds (L60–64), two trainers, and the crown-stone camp
 - **SUPERINTENDENT VANCE** — the region finale. Five elite Wildlings at
