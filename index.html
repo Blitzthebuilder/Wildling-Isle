@@ -1981,6 +1981,17 @@ const MOVES = {
   'Slam':        { type:'Wild',  pow:70, acc:95 },
   'Gore':        { type:'Wild',  pow:65, acc:95 },
   'Quake Stomp': { type:'Wild',  pow:80, acc:90 },
+  /* master songs - sold only at the Gateway master tutor, one per type */
+  'Phoenix Waltz':{ type:'Ember', pow:85, acc:95, heal:.3 },
+  'Deepsong':    { type:'Tide',  pow:80, acc:100, heal:.35 },
+  'Lifebloom':   { type:'Flora', pow:75, acc:100, heal:.5 },
+  'Overcharge':  { type:'Spark', pow:0, acc:100, buff:1 },
+  'Slipstream':  { type:'Gale',  pow:70, acc:100, crit:.1 },
+  'Bulwark Hymn':{ type:'Stone', pow:0, acc:100, buff:1 },
+  'Moonlit Veil':{ type:'Mystic', pow:75, acc:100, heal:.4 },
+  'Rampart Rush':{ type:'Wild',  pow:90, acc:90, crit:.05 },
+  'Deep Freeze': { type:'Frost', pow:70, acc:90, st:'chl' },
+  'Corrode':     { type:'Venom', pow:70, acc:95, st:'psn' },
   /* legendary signatures - one apiece, never taught, never shared */
   'Divine Horns':{ type:'Wild',  pow:95, acc:90, crit:.10 },     // Celestaur: gores true
   'Verdant Reign':{ type:'Mystic', pow:85, acc:95, heal:.5 },    // Sylvarch: the forest reclaims
@@ -2310,7 +2321,8 @@ function makeMon(sp, lvl) {
   const m = { sp, level: lvl, xp: 0, st: null };
   m.hp = maxHp(m);
   m.moves = movesFor(sp, lvl);
-  if (Math.random() < 0.005) m.shiny = true;   // 1-in-200: rare colors
+  const shinyOdds = (typeof party !== 'undefined' && party.some(pm => pm && pm.held === 'prism')) ? 0.01 : 0.005;
+  if (Math.random() < shinyOdds) m.shiny = true;   // 1-in-200 (1-in-100 with a Prism Bell)
   return m;
 }
 const nameOf = m => (m.shiny ? '*' : '') + (m.nick || SPECIES[m.sp].name);
@@ -2924,15 +2936,15 @@ const AREAS = {
     raw: [
       'TTTTTTTTTTTT1TTTTTTTTTTT',
       'T......................T',
-      'T..HHHH..........S.....T',
+      'T..HHHH....F.....S.....T',
       'T..HHHH................T',
       'T......................T',
-      'T......................T',
-      'T......................T',
+      'T.HHHH....F.....HHHH...T',
+      'T.HHHH..........HHHH...T',
       'T...........S..........T',
+      'T......F........F......T',
       'T......................T',
-      'T......................T',
-      'T.................c....T',
+      'T.....F...........c....T',
       'T......................T',
       'T......................T',
       'T......................T',
@@ -2942,7 +2954,9 @@ const AREAS = {
       'TTTTTTTTTTTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf'], lvl: [36, 36],   // unused: no grass in the safe hub
-    huts: [{ x0:3, x1:6, y0:2, y1:3, kind:'tutor' }],
+    huts: [{ x0:3, x1:6, y0:2, y1:3, kind:'master' },
+           { x0:2, x1:5, y0:5, y1:6, kind:'store' },
+           { x0:16, x1:19, y0:5, y1:6, kind:'nursery' }],
     trainers: [{
       key: 'mossy', x: 5, y: 12, name: 'DOCKHAND MOSS', art: 'scamp',
       intro: ['DOCKHAND MOSS: Fresh off the ferry? Your', 'sea legs need testing. Quick bout!'],
@@ -2950,7 +2964,7 @@ const AREAS = {
       win: ['MOSS: Sturdy as a bollard! Welcome to', 'the Parklands, friend.'],
       party: () => [makeMon('finlet', 37), makeMon('bubblun', 38)]
     }, {
-      key: 'posty', x: 17, y: 5, name: 'POSTMASTER POSTY', art: 'scamp',
+      key: 'posty', x: 20, y: 9, name: 'POSTMASTER POSTY', art: 'scamp',
       intro: ['POSTMASTER POSTY: Mail for the rangers, every', 'day, on foot. My team keeps me safe. See?'],
       rematch: ['POSTY: Another delivery, another duel!'],
       win: ['POSTY: Signed, sealed, defeated.', 'Tell the rangers I said hello.'],
@@ -3630,13 +3644,14 @@ let moIdx = 0, moSel = -1;    // move-order cursor + picked slot (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
 let infoMv = 0;               // move cursor on the info screen (up/down to inspect)
 let coins = 0;
-let items = { berry: 0, jam: 0, locket: 0, charm: 0, pendant: 0 };
-const HELD_NAME = { locket: 'Moss Locket', charm: 'Keen Charm', pendant: 'Guard Pendant' };
-const HELD_TAG = { locket: 'mends each turn', charm: 'crit up', pendant: 'endures one KO' };
+let items = { berry: 0, jam: 0, locket: 0, charm: 0, pendant: 0, gorb: 0, salts: 0, prism: 0 };
+const HELD_NAME = { locket: 'Moss Locket', charm: 'Keen Charm', pendant: 'Guard Pendant', prism: 'Prism Bell' };
+const HELD_TAG = { locket: 'mends each turn', charm: 'crit up', pendant: 'endures one KO', prism: 'shiny luck x2' };
 const HELD_BLURB = {
   locket: 'It will mend a little every battle turn.',
   charm: 'Fierce hits will land twice as often.',
-  pendant: 'Once per battle it shrugs off a KO at 1 HP.'
+  pendant: 'Once per battle it shrugs off a KO at 1 HP.',
+  prism: 'While anyone holds it, shinies come twice as often.'
 };
 const SHOP = [
   { key: 'orb',   name: 'Charm Orb',   price: 10, desc: 'befriends weakened Wildlings' },
@@ -3644,7 +3659,16 @@ const SHOP = [
   { key: 'jam',   name: 'Bramble Jam', price: 60, desc: 'full heal + cures any status' }
 ];
 const BIKE = { key: 'bike', name: 'Bramble Bike', price: 150, desc: 'ride fast! hop on/off with B' };
-const shopList = () => flags.bike ? SHOP : SHOP.concat(BIKE);
+/* the Ranger General Store at Gateway Basecamp: premium goods, premium prices */
+const SHOP_STORE = [
+  { key: 'gorb',  name: 'Golden Orb',    price: 120,  desc: 'double-charm catch odds' },
+  { key: 'salts', name: 'Cinder Salts',  price: 250,  desc: 'revives a fainted friend' },
+  { key: 'repel', name: 'Repel Whistle', price: 150,  desc: 'blown at once: no ambush 150 steps' },
+  { key: 'prism', name: 'Prism Bell',    price: 7500, desc: 'held: shinies come twice as often' }
+];
+let shopKind = 'basic';
+let repelSteps = 0;
+const shopList = () => shopKind === 'store' ? SHOP_STORE : (flags.bike ? SHOP : SHOP.concat(BIKE));
 let riding = false;           // on the bike right now (ownership lives in flags.bike)
 /* Boothbay Harbor specialists */
 const TUTOR_SETS = {
@@ -3679,15 +3703,26 @@ const canLearnType = (spKey, mt) => {
 };
 const tutorSet = m => {
   const s = SPECIES[m.sp];
+  const book = tutKind === 'master' ? MASTER_SETS : TUTOR_SETS;
   const out = [];
   for (const t of [s.type].concat(s.type2 || [], s.cov || [])) {
-    for (const mv of (TUTOR_SETS[t] || [])) {
+    for (const mv of (book[t] || [])) {
       if (canLearnType(m.sp, MOVES[mv].type) && !out.includes(mv)) out.push(mv);
     }
   }
-  return out.length ? out : TUTOR_SETS.Wild.slice();
+  return out.length ? out : (tutKind === 'master' ? MASTER_SETS.Wild.slice() : TUTOR_SETS.Wild.slice());
 };
+const tutorPrice = () => tutKind === 'master' ? MASTER_PRICE : TUTOR_PRICE;
 const TUTOR_PRICE = 150;
+/* the Gateway master tutor: ten exclusive songs, one per type, each carrying
+   a real effect - never overlapping the Boothbay tutor's plain repertoire */
+const MASTER_SETS = {
+  Ember:  ['Phoenix Waltz'], Tide: ['Deepsong'], Flora: ['Lifebloom'],
+  Spark:  ['Overcharge'], Gale: ['Slipstream'], Stone: ['Bulwark Hymn'],
+  Mystic: ['Moonlit Veil'], Wild: ['Rampart Rush'], Frost: ['Deep Freeze'], Venom: ['Corrode']
+};
+const MASTER_PRICE = 1200;
+let tutKind = 'songs';        // 'songs' (Boothbay) or 'master' (Gateway)
 const TUT_VIS = 4;
 let tutMv = 0, tutMon = 0, tutTop = 0;
 let restIdx = 0, shopIdx = 0, shopTop = 0, shopMsg = null, restSpot = 'cabin', tiIdx = 0;
@@ -3698,6 +3733,9 @@ let pendingLearns = [];       // [{m, mv}] move-learning decisions awaiting the 
 let lrnIdx = 0;               // cursor on the forget-a-move screen
 let obIdx = 0, obMv = 0, obList = [];   // obelisk: mon cursor, move cursor, relearnable moves
 let rnCol = 0, rnIdx = 0;     // ranch screen cursor: column (0 team, 1 ranch) + row
+let nursery = [], nurseryLv = [];   // the Gateway nursery: up to 2 boarders + entry levels
+let nursOn = false;                  // ranch screen opened at the nursery (3rd column shows)
+const NURSERY_MAX = 2;
 let rmsg = null;              // ranch screen notice { t, until }
 const markSeen = sp => { if (!dex[sp]) dex[sp] = 1; };
 const markCaught = sp => { dex[sp] = 2; };
@@ -3731,9 +3769,10 @@ const DEV_OPTS = ['HEAL + 99 ORBS', 'GIVE WILDLING', 'LEAD +5 LEVELS', 'UNLOCK P
 let championSeen = false;
 function saveData() {
   return {
-    v: 5, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex, coins, items,
+    v: 5, area, orbs, tx: P.tx, ty: P.ty, chosen, flags, dex, coins, items, rp: repelSteps,
     party: party.map(packMon),
-    ranch: ranch.map(packMon)
+    ranch: ranch.map(packMon),
+    nursery: nursery.map(packMon), nlv: nurseryLv
   };
 }
 function save() {
@@ -3758,8 +3797,12 @@ function applyData(d) {
   dex = (d.v >= 3 && d.dex) ? d.dex : {};
   coins = (d.v >= 5 && d.coins != null) ? d.coins : 25;
   items = (d.v >= 5 && d.items)
-    ? { berry: d.items.berry | 0, jam: d.items.jam | 0, locket: d.items.locket | 0, charm: d.items.charm | 0, pendant: d.items.pendant | 0 }
-    : { berry: 1, jam: 0, locket: 0, charm: 0, pendant: 0 };
+    ? { berry: d.items.berry | 0, jam: d.items.jam | 0, locket: d.items.locket | 0, charm: d.items.charm | 0, pendant: d.items.pendant | 0,
+        gorb: d.items.gorb | 0, salts: d.items.salts | 0, prism: d.items.prism | 0 }
+    : { berry: 1, jam: 0, locket: 0, charm: 0, pendant: 0, gorb: 0, salts: 0, prism: 0 };
+  repelSteps = d.rp | 0;
+  nursery = (Array.isArray(d.nursery) ? d.nursery.filter(m => m && SPECIES[m.sp]).map(unpackMon) : []);
+  nurseryLv = Array.isArray(d.nlv) && d.nlv.length === nursery.length ? d.nlv : nursery.map(m => m.level);
   party.forEach(m => markCaught(m.sp));
   P.tx = clamp(d.tx | 0, 1, A.mw - 2); P.ty = clamp(d.ty | 0, 1, A.mh - 2);
   P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
@@ -4139,6 +4182,10 @@ function victory(q) {
       levelUpMon(m, q);
     }
   }
+  nursery.forEach(nm => {   // boarders learn by osmosis: a quarter share each
+    nm.xp += Math.max(1, Math.floor(gain / 4));
+    while (nm.xp >= xpNeed(nm.level)) { nm.xp -= xpNeed(nm.level); levelUpMon(nm, null); }
+  });
   const pay = en.level * (battle.trainer ? 3 : 1);
   coins += pay;
   q.push(`Found ${pay} coins!`);
@@ -4166,7 +4213,7 @@ function queueFoeEntry(q) {
   battle.parts = [battle.ai];   // participation is tracked per foe
   battle.after = 'menu';
 }
-function tryCatch() {
+function tryCatch(golden) {
   const q = [];
   if (battle.trainer) {
     q.push("You can't catch another trainer's Wildling!");
@@ -4175,17 +4222,19 @@ function tryCatch() {
     return;
   }
   const en = battle.enemy;
-  if (orbs <= 0) {
-    q.push('You are out of Charm Orbs!', 'Rest at the cabin or a campfire to restock.');
+  if (golden ? (items.gorb || 0) <= 0 : orbs <= 0) {
+    q.push(golden ? 'No Golden Orbs left!' : 'You are out of Charm Orbs!',
+           golden ? 'The Gateway store sells them.' : 'Rest at the cabin or a campfire to restock.');
     battle.after = 'menu';
     battle.q = q; battle.phase = 'text'; nextText();
     return;
   }
-  orbs--;
-  const chance = SPECIES[en.sp].catch * (1 - 0.7 * en.hp / maxHp(en)) + 0.05;
+  if (golden) items.gorb--; else orbs--;
+  const base = SPECIES[en.sp].catch * (1 - 0.7 * en.hp / maxHp(en)) + 0.05;
+  const chance = golden ? Math.min(0.95, base * 2) : base;
   const ok = Math.random() < chance;
   const w = ok ? 3 : 1 + ri(2);            // caught = 3 wobbles; escapes break out after 1-2
-  pushFx(q, 'You toss a Charm Orb...', { kind: 'toss', w, dur: 52 + w * 34, block: 1 });
+  pushFx(q, golden ? 'You toss a gleaming Golden Orb...' : 'You toss a Charm Orb...', { kind: 'toss', w, dur: 52 + w * 34, block: 1 });
   if (ok) {
     if (party.length < 6) {
       party.push(en);
@@ -4239,6 +4288,19 @@ function useItem(kind) {
   const me = curMon(), en = battle.enemy;
   const q = [];
   const noTurn = () => { battle.after = 'menu'; battle.q = q; battle.phase = 'text'; nextText(); };
+  if (kind === 'salts') {
+    const downed = party.find(m => m.hp <= 0);
+    if ((items.salts || 0) <= 0) { q.push('No Cinder Salts left!'); return noTurn(); }
+    if (!downed) { q.push('No one has fainted!'); return noTurn(); }
+    items.salts--;
+    downed.hp = Math.floor(maxHp(downed) / 2);
+    sCatch();
+    pushFx(q, `${nameOf(downed)} rose again, half-mended!`, { kind: 'stat', side: 'me', dur: 14 });
+    actOnce(en, me, en.moves[ri(en.moves.length)], q);
+    dotTick(me, q); dotTick(en, q); heldTick(me, q);
+    checkOutcome(q);
+    return;
+  }
   if (kind === 'berry') {
     if (items.berry <= 0) { q.push('No Sweet Berries left!'); return noTurn(); }
     if (me.hp >= maxHp(me)) { q.push('It would have no effect!'); return noTurn(); }
@@ -4567,7 +4629,7 @@ function update() {
       dex = {};
       ranch = [];
       coins = 30;
-      items = { berry: 2, jam: 0 };
+      items = { berry: 2, jam: 0, locket: 0, charm: 0, pendant: 0, gorb: 0, salts: 0, prism: 0 };
       markCaught(sp);
       area = 'meadow'; A = AREAS.meadow;
       P.tx = START.x; P.ty = START.y; P.px = P.tx * 16; P.py = P.ty * 16; P.moving = false;
@@ -4656,21 +4718,51 @@ function update() {
     if (tap('right')) { dexIdx = (dexIdx + 1) % DEX_ORDER.length; sMove(); }
     if (tap('up')) { dexIdx = (dexIdx + DEX_ORDER.length - 8) % DEX_ORDER.length; sMove(); }
     if (tap('down')) { dexIdx = (dexIdx + 8) % DEX_ORDER.length; sMove(); }
-    if (tap('C')) { rnCol = 0; rnIdx = 0; rmsg = null; mode = 'ranch'; sOk(); }
+    if (tap('C')) { nursOn = false; rnCol = 0; rnIdx = 0; rmsg = null; mode = 'ranch'; sOk(); }
     else if (tap('B')) { sBack(); mode = 'world'; }
     return;
   }
 
   if (mode === 'ranch') {
-    const lists = [party, ranch];
+    const lists = nursOn ? [party, ranch, nursery] : [party, ranch];
     const cur = lists[rnCol];
     if (tap('left') || tap('right')) {
-      const other = 1 - rnCol;
-      if (lists[other].length) { rnCol = other; rnIdx = Math.min(rnIdx, lists[other].length - 1); sMove(); }
+      const step = tap('right') ? 1 : lists.length - 1;
+      for (let s = 1; s < lists.length; s++) {
+        const c2 = (rnCol + step * s) % lists.length;
+        if (lists[c2].length) { rnCol = c2; rnIdx = Math.min(rnIdx, lists[c2].length - 1); sMove(); break; }
+      }
     }
     if (tap('up') && cur.length) { rnIdx = (rnIdx + cur.length - 1) % cur.length; sMove(); }
     if (tap('down') && cur.length) { rnIdx = (rnIdx + 1) % cur.length; sMove(); }
-    if (tap('A') && cur.length) {
+    if (tap('A') && cur.length && nursOn) {
+      if (rnCol === 2) {   // pick up a boarder: fee scales with levels gained
+        const nm = nursery[rnIdx];
+        const fee = 100 + 50 * Math.max(0, nm.level - (nurseryLv[rnIdx] != null ? nurseryLv[rnIdx] : nm.level));
+        if (coins < fee) rmsg = { t: 'Pickup costs ' + fee + 'c - not enough!', until: frame + 150 };
+        else {
+          coins -= fee;
+          nursery.splice(rnIdx, 1); nurseryLv.splice(rnIdx, 1);
+          (party.length < 6 ? party : ranch).push(nm);
+          rnIdx = Math.min(rnIdx, Math.max(0, nursery.length - 1));
+          if (!nursery.length) rnCol = 0;
+          rmsg = { t: nameOf(nm) + ' picked up for ' + fee + 'c!', until: frame + 150 };
+          sOk(); save();
+        }
+      } else if (nursery.length >= NURSERY_MAX) {
+        rmsg = { t: 'The nursery pens are full!', until: frame + 150 };
+      } else if (rnCol === 0 && party.length <= 1) {
+        rmsg = { t: 'You need at least one partner!', until: frame + 150 };
+      } else {
+        const srcList = lists[rnCol];
+        const nm = srcList.splice(rnIdx, 1)[0];
+        nursery.push(nm); nurseryLv.push(nm.level);
+        rnIdx = Math.min(rnIdx, Math.max(0, srcList.length - 1));
+        if (!srcList.length) rnCol = 0;
+        rmsg = { t: nameOf(nm) + ' settles into the nursery.', until: frame + 150 };
+        sOk(); save();
+      }
+    } else if (tap('A') && cur.length) {
       if (rnCol === 0) {
         if (party.length <= 1) rmsg = { t: 'You need at least one partner!', until: frame + 150 };
         else if (ranch.length >= RANCH_MAX) rmsg = { t: 'The Ranch is full!', until: frame + 150 };
@@ -4689,8 +4781,8 @@ function update() {
         }
       }
     }
-    if (tap('C')) { sOk(); mode = 'badges'; }
-    else if (tap('B')) { sBack(); mode = 'world'; }
+    if (tap('C')) { nursOn = false; sOk(); mode = 'badges'; }
+    else if (tap('B')) { nursOn = false; sBack(); mode = 'world'; }
     return;
   }
 
@@ -4782,12 +4874,12 @@ function update() {
       if (m.moves.includes(mv)) {
         sBack(); mode = 'world';
         say([nameOf(m) + ' already knows ' + mv + '.']);
-      } else if (coins < TUTOR_PRICE) {
+      } else if (coins < tutorPrice()) {
         sBack(); mode = 'world';
-        say(['TUTOR: My fee is ' + TUTOR_PRICE + ' coins per song.']);
+        say(['TUTOR: My fee is ' + tutorPrice() + ' coins per song.']);
       } else {
         sOk();
-        coins -= TUTOR_PRICE;
+        coins -= tutorPrice();
         if (m.moves.length < 4) {
           m.moves.push(mv);
           save();
@@ -4814,7 +4906,7 @@ function update() {
         healParty(restSpot === 'cabin'
           ? ['Doc Bramble welcomes you in.', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']
           : ['You rest by the crackling campfire...', 'Your team is fully rested and cured!', 'Charm Orbs restocked to 5.']);
-      } else if (restIdx === 1) { shopIdx = 0; shopTop = 0; shopMsg = null; mode = 'shop'; }
+      } else if (restIdx === 1) { shopKind = 'basic'; shopIdx = 0; shopTop = 0; shopMsg = null; mode = 'shop'; }
       else if (restIdx === 2) { tvIdx = 0; tvTop = 0; mode = 'travel'; }
       else if (restIdx === 3) {
         mode = 'world';
@@ -4850,12 +4942,13 @@ function update() {
     if (tap('down')) { shopIdx = (shopIdx + 1) % list.length; sMove(); }
     if (shopIdx < shopTop) shopTop = shopIdx;
     if (shopIdx >= shopTop + SHOP_VIS) shopTop = shopIdx - SHOP_VIS + 1;
-    if (tap('B') || tap('C')) { sBack(); mode = 'rest'; }
+    if (tap('B') || tap('C')) { sBack(); mode = shopKind === 'store' ? 'world' : 'rest'; }
     else if (tap('A')) {
       const it = list[shopIdx];
       if (coins >= it.price) {
         coins -= it.price;
         if (it.key === 'bike') { flags.bike = true; shopIdx = 0; shopTop = 0; shopMsg = 'Bike bought! Press B to ride.'; }
+        else if (it.key === 'repel') { repelSteps += 150; shopMsg = 'The whistle sounds... the wilds go quiet.'; }
         else {
           if (it.key === 'orb') orbs++; else items[it.key]++;
           shopMsg = 'Bought ' + it.name + '!';
@@ -4867,8 +4960,8 @@ function update() {
   }
 
   if (mode === 'teamitem') {
-    if (tap('up')) { tiIdx = (tiIdx + 5) % 6; sMove(); }
-    if (tap('down')) { tiIdx = (tiIdx + 1) % 6; sMove(); }
+    if (tap('up')) { tiIdx = (tiIdx + 7) % 8; sMove(); }
+    if (tap('down')) { tiIdx = (tiIdx + 1) % 8; sMove(); }
     if (tap('B')) { sBack(); mode = 'team'; }
     else if (tap('A')) {
       sOk();
@@ -4881,15 +4974,21 @@ function update() {
         if (items.jam <= 0) say(['No Bramble Jam left!']);
         else if (m.hp >= maxHp(m) && !m.st) say(['It would have no effect!']);
         else { items.jam--; m.hp = maxHp(m); m.st = null; sCatch(); save(); say([nameOf(m) + ' is fully restored by the Bramble Jam!']); }
-      } else if (tiIdx >= 2 && tiIdx <= 4) {
-        const key = ['locket', 'charm', 'pendant'][tiIdx - 2], nm = HELD_NAME[key];
+      } else if (tiIdx === 2) {
+        if ((items.salts || 0) <= 0) say(['No Cinder Salts in the bag.', 'The Gateway store keeps them in stock.']);
+        else if (m.hp > 0) say(['It would have no effect!']);
+        else { items.salts--; m.hp = Math.floor(maxHp(m) / 2); sCatch(); save(); say([nameOf(m) + ' rose again, half-mended!']); }
+      } else if (tiIdx >= 3 && tiIdx <= 6) {
+        const key = ['locket', 'charm', 'pendant', 'prism'][tiIdx - 3], nm = HELD_NAME[key];
         if (m.held === key) {
           m.held = null; items[key] = (items[key] || 0) + 1;
           save(); say([nameOf(m) + ' handed back the ' + nm + '.']);
         } else if ((items[key] || 0) <= 0) {
           say(key === 'locket'
             ? ['No Moss Lockets to give.', 'They say an old supply box near a cabin', 'never runs empty...']
-            : ['No ' + nm + ' in the bag.', 'Rumor places sealed caches out in the wilds...']);
+            : key === 'prism'
+              ? ['No Prism Bell in the bag.', 'The Gateway store sells them... dearly.']
+              : ['No ' + nm + ' in the bag.', 'Rumor places sealed caches out in the wilds...']);
         } else {
           if (m.held) items[m.held] = (items[m.held] || 0) + 1;   // swap the old one back
           items[key]--; m.held = key;
@@ -5002,7 +5101,10 @@ function update() {
         const hu = t === 'H' && hutAt(fx, fy);
         if (hu) {
           if (hu.kind === 'elder') eldonTalk();
-          else if (hu.kind === 'tutor') { tutMon = 0; mode = 'tutorMon'; sOk(); }
+          else if (hu.kind === 'tutor') { tutKind = 'songs'; tutMon = 0; mode = 'tutorMon'; sOk(); }
+          else if (hu.kind === 'master') { tutKind = 'master'; tutMon = 0; mode = 'tutorMon'; sOk(); }
+          else if (hu.kind === 'store') { shopKind = 'store'; shopIdx = 0; shopTop = 0; shopMsg = null; mode = 'shop'; sOk(); }
+          else if (hu.kind === 'nursery') { nursOn = true; rnCol = 0; rnIdx = 0; rmsg = null; mode = 'ranch'; sOk(); }
           else say(['The warehouse is locked tight.', 'A note reads: "Gone fishing. Back never. - E."']);
           return;
         }
@@ -5069,7 +5171,10 @@ function update() {
           warp(ex.to, ex.x, ex.y);
           return;
         }
-        if (ch === ',' && Math.random() < 0.12) {
+        if (repelSteps > 0) {
+          repelSteps--;
+          if (repelSteps === 0) say(["The Repel Whistle's charm fades away."]);
+        } else if (ch === ',' && Math.random() < 0.12) {
           const birdChance = orbs > BIRD_SPAWN.lureOrbs ? BIRD_SPAWN.luredRate : BIRD_SPAWN.rate;
           if (flags[BIRD_SPAWN.gate] && A.bird && Math.random() < birdChance) {
             startBattle(makeMon(A.bird, A.birdLvl || BIRD_SPAWN.level));
@@ -5134,14 +5239,16 @@ function update() {
       return;
     }
     if (b.phase === 'bag') {
-      if (tap('up')) { b.bi = (b.bi + 3) % 4; sMove(); }
-      if (tap('down')) { b.bi = (b.bi + 1) % 4; sMove(); }
+      if (tap('up')) { b.bi = (b.bi + 5) % 6; sMove(); }
+      if (tap('down')) { b.bi = (b.bi + 1) % 6; sMove(); }
       if (tap('B')) { sBack(); b.phase = 'menu'; }
       else if (tap('A')) {
         sOk();
         if (b.bi === 0) tryCatch();
-        else if (b.bi === 1) useItem('berry');
-        else if (b.bi === 2) useItem('jam');
+        else if (b.bi === 1) tryCatch(true);
+        else if (b.bi === 2) useItem('berry');
+        else if (b.bi === 3) useItem('jam');
+        else if (b.bi === 4) useItem('salts');
         else b.phase = 'menu';
       }
       return;
@@ -5624,14 +5731,15 @@ function drawBattle() {
     }
     text(mvInfo, 14, 145, TYPE_COL[sel.type] || '#20242c', 7);
   } else if (b.phase === 'bag') {
-    drawBox(4, 112, 232, 44);
-    const rows = ['Charm Orb  x' + orbs, 'Sweet Berry  x' + items.berry, 'Bramble Jam  x' + items.jam, 'BACK'];
+    drawBox(4, 104, 232, 52);
+    const rows = ['Charm Orb  x' + orbs, 'Golden Orb  x' + (items.gorb || 0), 'Sweet Berry  x' + items.berry,
+                  'Bramble Jam  x' + items.jam, 'Cinder Salts  x' + (items.salts || 0), 'BACK'];
     rows.forEach((r, i) => {
-      const oy = 116 + i * 10;
+      const oy = 108 + i * 8;
       if (i === b.bi) text('>', 12, oy, '#a34537', 7);
       text(r, 22, oy, '#20242c', 7);
     });
-    text(['toss to befriend', 'restores 40 HP', 'full heal + cure', ''][b.bi], 140, 116 + b.bi * 10, '#4c5c50', 7);
+    text(['toss to befriend', 'double-charm toss', 'restores 40 HP', 'full heal + cure', 'revive at half HP', ''][b.bi], 140, 108 + b.bi * 8, '#4c5c50', 7);
   } else if (b.phase === 'askSwap') {
     drawBox(4, 106, 232, 50);
     text('Swap in a different Wildling?', 14, 114, '#20242c', 7);
@@ -5695,12 +5803,12 @@ function drawMoveOrder() {
 
 function drawTeamItemBox() {
   const m = party[teamIdx];
-  const my = clamp(22 + teamIdx * 22, 8, 68);
-  drawBox(128, my, 108, 90);
+  const my = clamp(22 + teamIdx * 22, 6, 52);
+  drawBox(128, my, 108, 104);
   const heldRow = k => m && m.held === k ? 'Return ' + HELD_NAME[k].split(' ')[1] : HELD_NAME[k] + ' x' + (items[k] || 0);
-  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam,
-   heldRow('locket'), heldRow('charm'), heldRow('pendant'), 'BACK'].forEach((o, i) => {
-    const oy = my + 7 + i * 13;
+  ['Sweet Berry x' + items.berry, 'Bramble Jam x' + items.jam, 'Cinder Salts x' + (items.salts || 0),
+   heldRow('locket'), heldRow('charm'), heldRow('pendant'), heldRow('prism'), 'BACK'].forEach((o, i) => {
+    const oy = my + 6 + i * 12;
     if (i === tiIdx) text('>', 133, oy, '#a34537', 7);
     text(o, 143, oy, '#20242c', 7);
   });
@@ -5796,7 +5904,7 @@ function drawTutor() {
   const m = party[tutMon], set = tutorSet(m);
   px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
   drawBox(8, 12, 224, 116);
-  text('SONGS FOR ' + nameOf(m).toUpperCase(), 18, 19, '#20242c');
+  text((tutKind === 'master' ? 'MASTER SONGS FOR ' : 'SONGS FOR ') + nameOf(m).toUpperCase(), 18, 19, '#20242c');
   text('Coins: ' + coins, 164, 19, '#4c5c50', 7);
   const end = Math.min(set.length, tutTop + TUT_VIS);
   for (let i = tutTop; i < end; i++) {
@@ -5804,7 +5912,7 @@ function drawTutor() {
     if (i === tutMv) text('>', 16, oy, '#a34537', 7);
     text(mv, 26, oy, m.moves.includes(mv) ? '#8a8570' : '#20242c', 7);
     text('PWR ' + d.pow + '  ACC ' + d.acc, 118, oy, '#4c5c50', 7);
-    text(m.moves.includes(mv) ? 'known' : TUTOR_PRICE + 'c', 198, oy, '#4c5c50', 7);
+    text(m.moves.includes(mv) ? 'known' : tutorPrice() + 'c', 198, oy, '#4c5c50', 7);
     text(d.type + ' song', 26, oy + 9, TYPE_COL[d.type] || '#8a8570', 7);
   }
   if (tutTop > 0) text('^', 222, 38, '#a34537', 7);
@@ -5939,28 +6047,34 @@ function drawMap() {
 
 function drawRanch() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
-  text("DOC BRAMBLE'S RANCH", 12, 6, '#e8b84b');
+  text(nursOn ? 'GATEWAY NURSERY' : "DOC BRAMBLE'S RANCH", 12, 6, '#e8b84b');
   text('A:move B:back', 164, 6, '#8fa396', 7);
-  const cols = [
-    { list: party, x: 4, label: 'TEAM ' + party.length + '/6' },
-    { list: ranch, x: 122, label: 'RANCH ' + ranch.length + '/' + RANCH_MAX }
+  const cols = nursOn ? [
+    { list: party, x: 2, w: 76, label: 'TEAM' },
+    { list: ranch, x: 82, w: 76, label: 'RANCH' },
+    { list: nursery, x: 162, w: 76, label: 'NURSERY ' + nursery.length + '/' + NURSERY_MAX }
+  ] : [
+    { list: party, x: 4, w: 114, label: 'TEAM ' + party.length + '/6' },
+    { list: ranch, x: 122, w: 114, label: 'RANCH ' + ranch.length + '/' + RANCH_MAX }
   ];
   cols.forEach((c, ci) => {
     text(c.label, c.x + 4, 18, ci === rnCol ? '#e8b84b' : '#8fa396', 7);
     const scroll = (ci === rnCol) ? clamp(rnIdx - 4, 0, Math.max(0, c.list.length - 5)) : 0;
-    if (c.list.length > 5) text('...' + (scroll + 1) + '+', c.x + 84, 18, '#4c5c50', 7);
+    if (c.list.length > 5) text('..' + (scroll + 1) + '+', c.x + c.w - 26, 18, '#4c5c50', 7);
     for (let r = 0; r < 5; r++) {
       const i = r + scroll;
       if (i >= c.list.length) break;
       const m = c.list[i], y = 30 + r * 24;
-      if (ci === rnCol && i === rnIdx) { px(c.x, y - 2, 114, 22, 'rgba(232,184,75,.2)'); text('>', c.x + 2, y + 5, '#e8b84b', 7); }
-      drawArt(m.sp, c.x + 8, y - 1, 1.5, null, m.shiny);
-      text(nameOf(m), c.x + 30, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66', 7);
-      text('L' + m.level, c.x + 30, y + 9, '#8fb69c', 7);
-      drawBar(c.x + 60, y + 11, 46, m.hp / maxHp(m));
+      if (ci === rnCol && i === rnIdx) { px(c.x, y - 2, c.w, 22, 'rgba(232,184,75,.2)'); text('>', c.x + 1, y + 5, '#e8b84b', 7); }
+      drawArt(m.sp, c.x + 7, y - 1, 1.5, null, m.shiny);
+      const nm = nursOn ? nameOf(m).slice(0, 8) : nameOf(m);
+      text(nm, c.x + 28, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66', 7);
+      text('L' + m.level, c.x + 28, y + 9, '#8fb69c', 7);
+      drawBar(c.x + (nursOn ? 48 : 60), y + 11, nursOn ? 24 : 46, m.hp / maxHp(m));
     }
-    if (!c.list.length) text('(empty)', c.x + 34, 60, '#4c5c50', 7);
+    if (!c.list.length) text('(empty)', c.x + Math.floor(c.w / 2) - 14, 60, '#4c5c50', 7);
   });
+  if (nursOn && !rmsg) text('Boarders earn XP from your battles. Pickup fee applies.', 8, 150, '#8fb69c', 7);
   if (rmsg) {
     if (frame < rmsg.until) { drawBox(4, 142, 232, 16); text(rmsg.t, 12, 146, '#a34537', 7); }
     else rmsg = null;
@@ -6130,6 +6244,7 @@ window.DBG = {
   dev: v => { devAllowed = !!v; },
   fxOff: v => { fxDisabled = !!v; },
   tune: () => tuneName,
+  nursery: () => JSON.parse(JSON.stringify(nursery)),
   cheat: (c, b, j, o) => {
     if (c != null) coins = c;
     if (b != null) items.berry = b;

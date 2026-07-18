@@ -28,6 +28,24 @@ Picnicker Berry in the meadow (you stepped on her blanket) to
 Crownstone Keeper Frost at the summit. All replayable; total roster
 now fifty
 
+### Gateway Basecamp — the hub becomes a village
+- **The Ranger General Store**: Golden Orbs (double-charm catch odds),
+  Cinder Salts (the game's first revive), Repel Whistles (150 quiet
+  steps), and the Prism Bell (7,500c held item — shinies come twice as
+  often while anyone carries it)
+- **The Nursery**: board up to two Wildlings; they earn a quarter share
+  of XP from every battle you win while boarding. The building opens
+  the full storage screen — team, ranch, and nursery side by side, one
+  press to move anyone between them. Pickup fee scales with levels
+  gained
+- **The Master Tutor** (the old visitor lodge): ten exclusive songs —
+  one per type, each with a real effect (draining Lifebloom, guaranteed
+  chill Deep Freeze, the Bulwark Hymn stance...) at 1,200c apiece.
+  Zero overlap with the Boothbay tutor
+- The hub itself became a village: lodge row, store, nursery pens,
+  flower plaza around the ranger board, and the postmaster now does his
+  rounds by the south lawn
+
 ---
 
 ## Parklands Phase 4: The Summit — 2026-07-18 (PR #34)
