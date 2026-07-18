@@ -101,6 +101,40 @@
   .help summary::-webkit-details-marker{ display:none; }
   .help[open] summary{ color:var(--ink); }
   .help p{ margin:12px 0 0; }
+  .code-overlay{
+    position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+    background:rgba(10,16,12,.72); padding:18px;
+  }
+  .code-overlay[hidden]{ display:none; }
+  .code-box{
+    width:min(480px, 100%); background:var(--shell-b); border:1px solid rgba(255,255,255,.14);
+    border-radius:16px; padding:18px 18px 16px; box-shadow:0 18px 44px rgba(0,0,0,.5);
+  }
+  .code-title{
+    font-family:Consolas, ui-monospace, monospace; font-size:12px; letter-spacing:.24em;
+    color:var(--led); margin-bottom:10px;
+  }
+  .code-text{
+    width:100%; height:120px; resize:none; box-sizing:border-box;
+    font-family:Consolas, ui-monospace, monospace; font-size:13px; line-height:1.5;
+    word-break:break-all; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.16);
+    background:#0e1410; color:#e8f0e8;
+  }
+  .code-text[readonly]{ color:#cfe3d2; }
+  .code-msg{ min-height:16px; margin-top:8px; font-size:12px; color:var(--label); }
+  .code-btns{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+  .code-btns button{
+    flex:1; min-width:96px; background:var(--pill); border:none; color:var(--label); cursor:pointer;
+    font-family:Consolas, ui-monospace, monospace; font-size:11px; letter-spacing:.16em;
+    padding:12px 10px; border-radius:10px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 2px 0 rgba(0,0,0,.4);
+  }
+  .code-btns button:active{ transform:translateY(1px); }
+  .code-btns .code-primary{ background:var(--btn-face-2); color:#f6ddd0; }
+  @media (max-width:560px){
+    .code-text{ height:150px; font-size:14px; }
+    .code-btns button{ padding:14px 10px; font-size:12px; }
+  }
   @media (max-width:560px){
     .page{ padding:10px 4px 32px; }
     .shell{ padding:12px 10px 20px; border-radius:20px 20px 32px 32px; }
@@ -164,6 +198,19 @@
       Explorers whisper that some cave walls are not as solid as they seem...
     </p>
   </details>
+</div>
+
+<div id="codeOverlay" class="code-overlay" hidden>
+  <div class="code-box">
+    <div id="codeTitle" class="code-title">YOUR SAVE CODE</div>
+    <textarea id="codeText" class="code-text" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+    <div id="codeMsg" class="code-msg"></div>
+    <div class="code-btns">
+      <button id="codeCopyBtn" class="code-primary">COPY</button>
+      <button id="codeImportBtn" class="code-primary" hidden>LOAD</button>
+      <button id="codeCloseBtn">CLOSE</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -3826,26 +3873,70 @@ function load() {
 function exportCode() {
   try {
     const code = btoa(unescape(encodeURIComponent(JSON.stringify(saveData()))));
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText)
-        navigator.clipboard.writeText(code).catch(() => {});
-    } catch (e) {}
     banner = { text: 'SAVE CODE READY', until: frame + 150 };
-    try { window.prompt('Your save code - copy it and keep it safe:', code); } catch (e) {}
+    openCodeModal('export', code);
   } catch (e) {}
 }
 function importCode() {
-  let c = null;
-  try { c = window.prompt('Paste your save code:', ''); } catch (e) {}
-  if (!c) return;
+  openCodeModal('import', '');
+}
+function applyImportedCode(raw) {
+  const c = (raw || '').trim();
+  if (!c) { codeMsg.textContent = 'Paste a code first.'; return; }
   try {
-    const d = JSON.parse(decodeURIComponent(escape(atob(c.trim()))));
+    const d = JSON.parse(decodeURIComponent(escape(atob(c))));
     if (applyData(d)) {
+      closeCodeModal();
       mode = 'world';
       save();
       say(['Save code accepted!', 'Welcome back, field assistant.']);
-    } else say(['That code did not look right...']);
-  } catch (e) { say(['That code did not look right...']); }
+    } else codeMsg.textContent = 'That code did not look right...';
+  } catch (e) { codeMsg.textContent = 'That code did not look right...'; }
+}
+/* the save-code copy on mobile browsers: window.prompt's tiny single-line
+   field made select-all on a multi-hundred-character string unusable, so
+   this is a real overlay with its own explicit COPY/LOAD buttons */
+let codeModalOpen = false;
+function tryCopyText(text) {
+  return new Promise(resolve => {
+    const fallback = () => {
+      try {
+        codeText.focus(); codeText.select(); codeText.setSelectionRange(0, text.length);
+        resolve(document.execCommand('copy'));
+      } catch (e) { resolve(false); }
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => resolve(true)).catch(fallback);
+      } else fallback();
+    } catch (e) { fallback(); }
+  });
+}
+function openCodeModal(kind, prefill) {
+  codeModalOpen = true;
+  codeOverlay.hidden = false;
+  codeText.value = prefill;
+  if (kind === 'export') {
+    codeTitle.textContent = 'YOUR SAVE CODE';
+    codeText.readOnly = true;
+    codeCopyBtn.hidden = false;
+    codeImportBtn.hidden = true;
+    codeMsg.textContent = 'Tap COPY, then paste it somewhere safe.';
+    codeText.focus(); codeText.select();
+    tryCopyText(prefill).then(ok => { if (ok) codeMsg.textContent = 'Copied to clipboard!'; });
+  } else {
+    codeTitle.textContent = 'PASTE YOUR SAVE CODE';
+    codeText.readOnly = false;
+    codeCopyBtn.hidden = true;
+    codeImportBtn.hidden = false;
+    codeMsg.textContent = 'Paste your code below, then tap LOAD.';
+    codeText.focus();
+  }
+}
+function closeCodeModal() {
+  codeModalOpen = false;
+  codeOverlay.hidden = true;
+  codeText.blur();
 }
 try {
   const d = JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -4417,6 +4508,10 @@ const KEYMAP = {
   c:'C', v:'V', '0':'D'
 };
 addEventListener('keydown', e => {
+  if (codeModalOpen) {   // let the code textarea type/paste freely; only Escape closes
+    if (e.key === 'Escape') closeCodeModal();
+    return;
+  }
   const k = KEYMAP[e.key.toLowerCase()];
   if (!k) return;
   e.preventDefault();
@@ -4456,6 +4551,20 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     location.reload();
   }
 });
+const codeOverlay = document.getElementById('codeOverlay');
+const codeTitle = document.getElementById('codeTitle');
+const codeText = document.getElementById('codeText');
+const codeMsg = document.getElementById('codeMsg');
+const codeCopyBtn = document.getElementById('codeCopyBtn');
+const codeImportBtn = document.getElementById('codeImportBtn');
+const codeCloseBtn = document.getElementById('codeCloseBtn');
+codeCopyBtn.addEventListener('click', () => {
+  tryCopyText(codeText.value).then(ok => {
+    codeMsg.textContent = ok ? 'Copied to clipboard!' : 'Copy failed - the text is selected, copy it manually.';
+  });
+});
+codeImportBtn.addEventListener('click', () => applyImportedCode(codeText.value));
+codeCloseBtn.addEventListener('click', closeCodeModal);
 
 /* ---------- world helpers ---------- */
 function walkable(x, y) { return !SOLID.includes(tileAt(x, y)); }
@@ -4911,8 +5020,6 @@ function update() {
       else if (restIdx === 3) {
         mode = 'world';
         exportCode();
-        say(['Your rescue code is ready - screenshot it', 'or paste it somewhere safe.',
-             'On the title screen, CODE brings it all back.']);
       } else mode = 'world';
     }
     return;
@@ -6245,6 +6352,17 @@ window.DBG = {
   fxOff: v => { fxDisabled = !!v; },
   tune: () => tuneName,
   nursery: () => JSON.parse(JSON.stringify(nursery)),
+  exportCode: () => exportCode(),
+  importCode: () => importCode(),
+  setCodeText: v => { codeText.value = v; },
+  clickCodeCopy: () => tryCopyText(codeText.value),
+  clickCodeLoad: () => applyImportedCode(codeText.value),
+  closeCodeModal: () => closeCodeModal(),
+  codeModal: () => ({
+    open: codeModalOpen, hidden: codeOverlay.hidden, title: codeTitle.textContent,
+    text: codeText.value, readOnly: !!codeText.readOnly,
+    copyHidden: !!codeCopyBtn.hidden, importHidden: !!codeImportBtn.hidden, msg: codeMsg.textContent
+  }),
   cheat: (c, b, j, o) => {
     if (c != null) coins = c;
     if (b != null) items.berry = b;
