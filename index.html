@@ -1981,7 +1981,13 @@ const MOVES = {
   'Slam':        { type:'Wild',  pow:70, acc:95 },
   'Gore':        { type:'Wild',  pow:65, acc:95 },
   'Quake Stomp': { type:'Wild',  pow:80, acc:90 },
-  'Divine Horns':{ type:'Wild',  pow:95, acc:90, crit:.10 },   // Celestaur's signature: gores true
+  /* legendary signatures - one apiece, never taught, never shared */
+  'Divine Horns':{ type:'Wild',  pow:95, acc:90, crit:.10 },     // Celestaur: gores true
+  'Verdant Reign':{ type:'Mystic', pow:85, acc:95, heal:.5 },    // Sylvarch: the forest reclaims
+  'Glacial March':{ type:'Frost', pow:80, acc:95, st:'chl' },    // Mammorime: the cold is not optional
+  'Stooping Gale':{ type:'Gale',  pow:90, acc:100, crit:.05 },   // Skywarden: the dive never misses
+  'First Law':   { type:'Wild',  pow:110, acc:80 },              // Primling: the oldest word
+  'Titan Stance':{ type:'Wild',  pow:0, acc:100, buff:1 },       // Minos line: unmovable, then unstoppable
   'Singe':       { type:'Ember', pow:40, acc:100 },
   'Flame Burst': { type:'Ember', pow:65, acc:90 },
   'Inferno':     { type:'Ember', pow:85, acc:85 },
@@ -2162,17 +2168,17 @@ const SPECIES = {
                 learn:[[1,'Splash Jet'],[1,'Wing Flick'],[1,'Tide Surge'],[26,'Riptide']], blurb:'the wave rider' },
   /* legendary — found only by those who know where to look */
   sylvarch:   { name:'Sylvarch',   type:'Mystic', type2:'Flora', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
-                learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' },
+                learn:[[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst'],[1,'Verdant Reign']], blurb:'the elder heart of the isle' },
   /* legendary — the only Wild-type: no element to exploit, none to fear */
   primling:   { name:'Primling',   type:'Wild', type2:'Mystic', base:{hp:94,atk:88,def:84,spd:86}, catch:.05,
-                learn:[[1,'Tackle'],[1,'Pounce'],[15,'Slam']], blurb:'the first wildling' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[15,'Slam'],[1,'First Law']], blurb:'the first wildling' },
   /* Minotaur line — Wild-type physical juggernaut; always strikes first */
   minos:      { name:'Minos',      type:'Wild', type2:'Stone', base:{hp:60,atk:70,def:68,spd:64}, catch:.06, first:true, evolve:{at:22,to:'asterion'},
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam']], blurb:'the caged beast, ever first to strike' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[14,'Titan Stance'],[16,'Slam']], blurb:'the caged beast, ever first to strike' },
   asterion:   { name:'Asterion',   type:'Wild', type2:'Stone', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, first:true, evolve:{at:36,to:'celestaur'},
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[14,'Titan Stance'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
   celestaur:  { name:'Celestaur',  type:'Wild', type2:'Mystic', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, cov:['Stone'], first:true,
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[14,'Titan Stance'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
   /* ---- PARKLANDS region 3: bison (Stone), gator (Venom), snow-lynx (Frost) ---- */
   tuftcalf:   { name:'Tuftcalf',   type:'Stone', base:{hp:54,atk:50,def:56,spd:34}, catch:.5, evolve:{at:18,to:'brumbison'},
                 learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the prairie calf' },
@@ -2211,7 +2217,7 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[4,'Venom Spit'],[16,'Toxic Fang'],[24,'Singe'],[34,'Acid Flood']], blurb:'the beaded ember' },
   /* legendary — sleeps beneath Glacier Crown */
   mammorime:  { name:'Mammorime',  type:'Frost', type2:'Stone', base:{hp:96,atk:92,def:98,spd:60}, catch:.05, cov:['Tide'],
-                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Undertow'],[1,'Slam']], blurb:'the glacier that walks' },
+                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Undertow'],[1,'Glacial March']], blurb:'the glacier that walks' },
   /* ---- UX update: one new line per type, spread across all three regions ---- */
   kindlit:    { name:'Kindlit',    type:'Ember', base:{hp:42,atk:52,def:40,spd:54}, catch:.7, evolve:{at:12,to:'pyrepard'},
                 learn:[[1,'Tackle'],[4,'Singe']], blurb:'the struck spark' },
@@ -2288,12 +2294,17 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[6,'Wing Flick'],[20,'Hex Pulse'],[30,'Gale Force'],[40,'Mind Lash']], blurb:'the voice in the dark rim' },
   /* legendary — circles above the great rim */
   skywarden:  { name:'Skywarden',  type:'Gale', type2:'Mystic', base:{hp:92,atk:94,def:84,spd:110}, catch:.05,
-                learn:[[1,'Tempest'],[1,'Talon Dive'],[1,'Veil Rend'],[1,'Slam']], blurb:'the wind that watches' }
+                learn:[[1,'Tempest'],[1,'Talon Dive'],[1,'Veil Rend'],[1,'Stooping Gale']], blurb:'the wind that watches' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
 function maxHp(m) { return Math.floor(SPECIES[m.sp].base.hp * m.level / 18) + m.level + 8; }
-function stat(m, k) { return Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4; }
+function stat(m, k) {
+  const raw = Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4;
+  // Titan Stance stages: +50% attack and defense per use, two uses max
+  const b = (k === 'atk' || k === 'def') ? 1 + 0.5 * (m.buffLv || 0) : 1;
+  return Math.floor(raw * b);
+}
 function movesFor(sp, lvl) { return SPECIES[sp].learn.filter(l => l[0] <= lvl).map(l => l[1]).slice(-4); }
 function makeMon(sp, lvl) {
   const m = { sp, level: lvl, xp: 0, st: null };
@@ -3719,7 +3730,7 @@ function startBattle(enemy) {
   const ai = pickAlive();
   if (ai < 0) return;
   markSeen(enemy.sp);
-  party.forEach(pm => { pm.pendUsed = false; }); enemy.pendUsed = false;
+  party.forEach(pm => { pm.pendUsed = false; pm.buffLv = 0; }); enemy.pendUsed = false; enemy.buffLv = 0;
   mode = 'battle';
   fxParts = [];
   const q = [];
@@ -3737,7 +3748,8 @@ function startBattle(enemy) {
   nextText();
 }
 function startTrainerBattle(tr) {
-  party.forEach(pm => { pm.pendUsed = false; });
+  party.forEach(pm => { pm.pendUsed = false; pm.buffLv = 0; });
+  tr.party.forEach(tm => { tm.buffLv = 0; });
   const ai = pickAlive();
   if (ai < 0) return;
   markSeen(tr.party[0].sp);
@@ -3845,6 +3857,12 @@ function atkStep(a, d, mvName, q) {
   const mv = MOVES[mvName];
   const aSide = a === battle.enemy ? 'en' : 'me';
   const dSide = d === battle.enemy ? 'en' : 'me';
+  if (mv.buff) {   // self-buff: no target, no accuracy roll
+    pushFx(q, `${nameOf(a)} used ${mvName}!`, { kind: 'stat', side: aSide, type: mv.type, dur: 14 });
+    if ((a.buffLv || 0) >= 2) q.push(`${nameOf(a)}'s power can rise no further!`);
+    else { a.buffLv = (a.buffLv || 0) + 1; q.push(`${nameOf(a)}'s Attack and Defense rose!`); }
+    return;
+  }
   if (ri(100) >= mv.acc) {
     pushFx(q, `${nameOf(a)} used ${mvName}!`, { kind: 'atk', side: aSide, type: mv.type, whiff: 1, dur: 22, block: 1 });
     q.push('The attack missed!');
@@ -3872,10 +3890,19 @@ function atkStep(a, d, mvName, q) {
   else if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
   if (mult > 0 && mult <= 0.25) q.push('It barely leaves a mark...');
   else if (mult < 1) q.push("It's not very effective...");
-  const inf = INFLICT[mv.type];
-  if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
-    d.st = inf[0];
+  if (mv.heal && dmg > 0 && a.hp > 0) {   // drain: the strike feeds the striker
+    a.hp = Math.min(maxHp(a), a.hp + Math.max(1, Math.floor(dmg * mv.heal)));
+    pushFx(q, `${nameOf(a)} drew strength from the strike!`, { kind: 'stat', side: aSide, type: mv.type, dur: 12, dHp: { side: aSide, hp: a.hp } });
+  }
+  if (mv.st && !d.st && d.hp > 0) {   // signature moves may inflict without fail
+    d.st = mv.st;
     pushFx(q, `${nameOf(d)} ${ST_MSG[d.st]}`, { kind: 'stat', side: dSide, type: mv.type, dur: 14 });
+  } else if (!mv.st) {
+    const inf = INFLICT[mv.type];
+    if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
+      d.st = inf[0];
+      pushFx(q, `${nameOf(d)} ${ST_MSG[d.st]}`, { kind: 'stat', side: dSide, type: mv.type, dur: 14 });
+    }
   }
 }
 function actOnce(a, d, mvName, q) {
@@ -5452,8 +5479,8 @@ function drawBattle() {
     });
     const sel = MOVES[mv[b.vi]];
     px(6, 144, 228, 10, '#e6e0cc');
-    let mvInfo = sel.type + '  PWR ' + sel.pow + '  ACC ' + sel.acc;
-    if (foeKnown) {
+    let mvInfo = sel.type + (sel.buff ? '  raises ATK + DEF' : '  PWR ' + sel.pow + '  ACC ' + sel.acc);
+    if (foeKnown && !sel.buff) {
       const e = effOf(mv[b.vi]);
       mvInfo += e > 1 ? '  STRONG here' : e < 1 ? '  weak here' : '';
     }

@@ -20,6 +20,18 @@ release merged to the live game.
 ### Battle
 - **Divine Horns** (Celestaur's signature) now gores true: +10% critical
   hit chance on top of the base rate — and it stacks with the Keen Charm
+- **Every legendary now carries a one-of-a-kind signature move:**
+  - *Verdant Reign* (Sylvarch, Mystic 85): drains half the damage dealt
+    back as HP — the forest reclaims
+  - *Glacial March* (Mammorime, Frost 80): chills without fail — the
+    cold is not optional
+  - *Stooping Gale* (Skywarden, Gale 90): never misses and carries a
+    +5% crit edge — the dive is true
+  - *First Law* (Primling, Wild 110): the hardest-hitting move in the
+    game — the oldest word
+- **Titan Stance** (the Minos line, learned at 14): raises the user's
+  Attack AND Defense by 50%, stackable twice per battle — unmovable,
+  then unstoppable. The move menu explains buff moves in plain words
 
 ---
 
