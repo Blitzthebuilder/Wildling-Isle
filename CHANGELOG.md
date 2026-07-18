@@ -25,6 +25,15 @@ release merged to the live game.
 - **The Gateway visitor lodge is now a Move Tutor** — full song access
   without sailing back to Boothbay
 
+### Fixes
+- Rangers Vespera (Yosemite) and Sequoia (Redwood) could be walked
+  around via the open row beside their gates — the passes are now true
+  chokepoints, and a permanent test guarantees every gatekeeper
+  actually blocks a road
+- Entering the Great Rim from Redwood dropped you at the top of the
+  park, face-to-face with Ranger Talus — arrivals now land at the
+  south entrance like every other park
+
 ---
 
 ## The Battle & World Update — 2026-07-18 (PR #32)

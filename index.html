@@ -3038,7 +3038,7 @@ const AREAS = {
     ground:'#b8bcc0', dot:'#a4a8ac', enc:'#989ca0', blade:'#7a8e5e', blade2:'#5e7048',
     raw: [
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
-      'R...............4..............R',
+      'RRRRRRRRRRRRRRRR4RRRRRRRRRRRRRRR',
       'R..............................R',
       'R..............................R',
       'R..............................R',
@@ -3286,7 +3286,7 @@ const AREAS = {
     ground:'#5e8a4f', dot:'#4f7a42', enc:'#47723c', blade:'#2e5a30', blade2:'#1f4626',
     raw: [
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT',
-      'T..............................T',
+      'TTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTT',
       'T..............................T',
       'T...TT..................TT.....T',
       'T..TTTT.......,,,,.....TTTT....T',
@@ -3321,7 +3321,7 @@ const AREAS = {
       win: ['CEDAR: Strong roots, stronger heart.', 'The rim road is north, when you dare.'],
       party: () => [makeMon('mossgrizz', 59), makeMon('eldermoss', 59), makeMon('terragrizz', 60)]
     }],
-    exits: { '1': { to:'glacier', x:16, y:2 }, '2': { to:'canyon', x:16, y:2 } },
+    exits: { '1': { to:'glacier', x:16, y:3 }, '2': { to:'canyon', x:16, y:18 } },
     gate: {
       x:16, y:2, flag:'badgeREDW', name:'RANGER SEQUOIA', art:'warden',
       intro: [
@@ -3380,7 +3380,7 @@ const AREAS = {
       win: ['VEX: So the echoes lied. Fascinating.', 'Something circles the high aerie. Listen.'],
       party: () => [makeMon('echowing', 62), makeMon('monolythe', 62), makeMon('condorge', 63)]
     }],
-    exits: { '1': { to:'redwood', x:16, y:2 } },
+    exits: { '1': { to:'redwood', x:16, y:1 } },
     gate: {
       x:16, y:2, flag:'badgeCANY', name:'RANGER TALUS', art:'bruiser',
       intro: [
