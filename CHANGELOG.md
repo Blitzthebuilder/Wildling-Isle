@@ -5,6 +5,58 @@ release merged to the live game.
 
 ---
 
+## The World Update — 2026-07-18 (PR #35)
+
+### The character pass — no more squares
+Six parks were rebuilt from the same mirror-box template into places
+with real shape:
+- **Yellowstone Basin**: terraced hot-spring pools behind two ridge
+  walls with offset gaps — wind through the terraces
+- **Everglade Sloughs**: mostly open water now, crossed by a creaking
+  boardwalk ring with grass islands — rain on the planks
+- **Yosemite Heights**: three sheer wall bands with offset breaks — an
+  honest switchback climb to Vespera's gate
+- **Denali Tundra**: braided ribbons of ice snake across the tundra
+- **Saguaro Wastes**: scattered saguaro cacti (a brand-new tile) among
+  dune mounds
+- **Glacier Crown**: jagged crevasse lines to thread on the way to the
+  cracked ice
+
+### More rivals on the road
+Seventeen new roaming trainers — every area now fields one more, from
+Picnicker Berry in the meadow (you stepped on her blanket) to
+Crownstone Keeper Frost at the summit. All replayable; total roster
+now fifty
+
+### Gateway Basecamp — the hub becomes a village
+- **The Ranger General Store**: Golden Orbs (double-charm catch odds),
+  Cinder Salts (the game's first revive), Repel Whistles (150 quiet
+  steps), and the Prism Bell (7,500c held item — shinies come twice as
+  often while anyone carries it)
+- **The Nursery**: board up to two Wildlings; they earn a quarter share
+  of XP from every battle you win while boarding. The building opens
+  the full storage screen — team, ranch, and nursery side by side, one
+  press to move anyone between them. Pickup fee scales with levels
+  gained
+- **The Master Tutor** (the old visitor lodge): ten exclusive songs —
+  one per type, each with a real effect (draining Lifebloom, guaranteed
+  chill Deep Freeze, the Bulwark Hymn stance...) at 1,200c apiece.
+  Zero overlap with the Boothbay tutor
+- The hub itself became a village: lodge row, store, nursery pens,
+  flower plaza around the ranger board, and the postmaster now does his
+  rounds by the south lawn
+
+### Balance
+- **Stooping Gale buffed** (95 pow, was 90; +15% crit, was +5%): the
+  new Master Tutor's Slipstream (Gale, +10% crit) was mathematically
+  outcritting Skywarden's own signature move despite being purchasable
+  by anyone. Stooping Gale now clearly leads its type on both power and
+  crit, and a permanent regression test checks every legendary
+  signature against every master song so no future addition can quietly
+  outclass one again
+
+---
+
 ## Parklands Phase 4: The Summit — 2026-07-18 (PR #34)
 
 ### The Summit
