@@ -2002,7 +2002,7 @@ const SPECIES = {
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet']], blurb:'the bubble sprite' },
   bubblun:    { name:'Bubblun',    type:'Tide',  base:{hp:55,atk:56,def:52,spd:60}, catch:.3, evolve:{at:24,to:'geyserun'},
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge']], blurb:'the twin bubble' },
-  geyserun:   { name:'Geyserun',   type:'Tide',  base:{hp:70,atk:70,def:64,spd:74}, catch:.12,
+  geyserun:   { name:'Geyserun',   type:'Tide', type2:'Ember',  base:{hp:70,atk:70,def:64,spd:74}, catch:.12,
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[14,'Tide Surge'],[24,'Riptide']], blurb:'the geyser spirit' },
   /* v0.4 lines — one per type, evolve at 12 and 24 */
   flarepup:   { name:'Flarepup',   type:'Ember', base:{hp:42,atk:52,def:40,spd:56}, catch:.7, evolve:{at:12,to:'scorchound'},
@@ -2015,7 +2015,7 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[3,'Splash Jet']], blurb:'the darting fry' },
   marfin:     { name:'Marfin',     type:'Tide',  base:{hp:56,atk:60,def:56,spd:68}, catch:.3, evolve:{at:24,to:'leviafin'},
                 learn:[[1,'Tackle'],[3,'Splash Jet'],[14,'Pounce'],[18,'Tide Surge']], blurb:'the swift sail' },
-  leviafin:   { name:'Leviafin',   type:'Tide',  base:{hp:72,atk:76,def:70,spd:82}, catch:.12, cov:['Frost'],
+  leviafin:   { name:'Leviafin',   type:'Tide', type2:'Frost',  base:{hp:72,atk:76,def:70,spd:82}, catch:.12,
                 learn:[[1,'Tackle'],[3,'Splash Jet'],[14,'Pounce'],[18,'Tide Surge'],[24,'Riptide']], blurb:'the deep current' },
   petalit:    { name:'Petalit',    type:'Flora', base:{hp:42,atk:44,def:44,spd:50}, catch:.75, evolve:{at:12,to:'thistlash'},
                 learn:[[1,'Tackle'],[3,'Leaf Flick']], blurb:'the stray petal' },
@@ -2033,7 +2033,7 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[3,'Wing Flick']], blurb:'the breeze chick' },
   cyclonet:   { name:'Cyclonet',   type:'Gale',  base:{hp:52,atk:60,def:50,spd:80}, catch:.3, evolve:{at:24,to:'tempestrel'},
                 learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force']], blurb:'the whirlwind' },
-  tempestrel: { name:'Tempestrel', type:'Gale',  base:{hp:64,atk:74,def:60,spd:96}, catch:.12,
+  tempestrel: { name:'Tempestrel', type:'Gale', type2:'Spark',  base:{hp:64,atk:74,def:60,spd:96}, catch:.12,
                 learn:[[1,'Tackle'],[3,'Wing Flick'],[14,'Pounce'],[18,'Gale Force'],[24,'Slam']], blurb:'the tempest rider' },
   shalecub:   { name:'Shalecub',   type:'Stone', base:{hp:52,atk:50,def:56,spd:28}, catch:.7, evolve:{at:12,to:'bouldbear'},
                 learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the shale cub' },
@@ -2049,31 +2049,31 @@ const SPECIES = {
   oraclaw:    { name:'Oraclaw',    type:'Mystic', base:{hp:66,atk:86,def:60,spd:96}, catch:.08, cov:['Frost'],
                 learn:[[1,'Hex Pulse'],[5,'Pounce'],[16,'Mind Lash'],[28,'Astral Burst']], blurb:'the all-seeing' },
   /* mushroom line */
-  sporeling:  { name:'Sporeling',  type:'Flora', base:{hp:46,atk:44,def:50,spd:32}, catch:.75, evolve:{at:12,to:'shroombler'},
+  sporeling:  { name:'Sporeling',  type:'Flora', type2:'Venom', base:{hp:46,atk:44,def:50,spd:32}, catch:.75, evolve:{at:12,to:'shroombler'},
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick']], blurb:'the shy spore' },
-  shroombler: { name:'Shroombler', type:'Flora', base:{hp:60,atk:58,def:66,spd:40}, catch:.3, evolve:{at:24,to:'mycolossus'},
+  shroombler: { name:'Shroombler', type:'Flora', type2:'Venom', base:{hp:60,atk:58,def:66,spd:40}, catch:.3, evolve:{at:24,to:'mycolossus'},
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap']], blurb:'the toadstool twins' },
-  mycolossus: { name:'Mycolossus', type:'Flora', base:{hp:80,atk:72,def:84,spd:48}, catch:.12,
+  mycolossus: { name:'Mycolossus', type:'Flora', type2:'Venom', base:{hp:80,atk:72,def:84,spd:48}, catch:.12,
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick'],[14,'Vine Snap'],[24,'Thorn Storm']], blurb:'the fungal titan' },
   /* elemental birds — pseudo-legendaries, rare mid-game spawns after gate 1 */
-  emberoc:    { name:'Emberoc',    type:'Ember', base:{hp:78,atk:84,def:72,spd:92}, catch:.17, cov:['Gale'],
+  emberoc:    { name:'Emberoc',    type:'Ember', type2:'Gale', base:{hp:78,atk:84,def:72,spd:92}, catch:.17,
                 learn:[[1,'Singe'],[1,'Wing Flick'],[1,'Flame Burst'],[26,'Inferno']], blurb:'the cinder roc' },
-  voltalon:   { name:'Voltalon',   type:'Spark', base:{hp:74,atk:86,def:70,spd:96}, catch:.17, cov:['Gale'],
+  voltalon:   { name:'Voltalon',   type:'Spark', type2:'Gale', base:{hp:74,atk:86,def:70,spd:96}, catch:.17,
                 learn:[[1,'Static Zap'],[1,'Wing Flick'],[1,'Volt Storm'],[26,'Slam']], blurb:'the storm talon' },
-  tidewing:   { name:'Tidewing',   type:'Tide',  base:{hp:82,atk:80,def:76,spd:90}, catch:.17, cov:['Gale'],
+  tidewing:   { name:'Tidewing',   type:'Tide', type2:'Gale',  base:{hp:82,atk:80,def:76,spd:90}, catch:.17,
                 learn:[[1,'Splash Jet'],[1,'Wing Flick'],[1,'Tide Surge'],[26,'Riptide']], blurb:'the wave rider' },
   /* legendary — found only by those who know where to look */
-  sylvarch:   { name:'Sylvarch',   type:'Mystic', base:{hp:90,atk:90,def:85,spd:85}, catch:.05, cov:['Flora'],
+  sylvarch:   { name:'Sylvarch',   type:'Mystic', type2:'Flora', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
                 learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' },
   /* legendary — the only Wild-type: no element to exploit, none to fear */
-  primling:   { name:'Primling',   type:'Wild', base:{hp:94,atk:88,def:84,spd:86}, catch:.05, cov:['Mystic'],
+  primling:   { name:'Primling',   type:'Wild', type2:'Mystic', base:{hp:94,atk:88,def:84,spd:86}, catch:.05,
                 learn:[[1,'Tackle'],[1,'Pounce'],[15,'Slam']], blurb:'the first wildling' },
   /* Minotaur line — Wild-type physical juggernaut; always strikes first */
-  minos:      { name:'Minos',      type:'Wild', base:{hp:60,atk:70,def:68,spd:64}, catch:.06, cov:['Stone'], first:true, evolve:{at:22,to:'asterion'},
+  minos:      { name:'Minos',      type:'Wild', type2:'Stone', base:{hp:60,atk:70,def:68,spd:64}, catch:.06, first:true, evolve:{at:22,to:'asterion'},
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam']], blurb:'the caged beast, ever first to strike' },
-  asterion:   { name:'Asterion',   type:'Wild', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, cov:['Stone'], first:true, evolve:{at:36,to:'celestaur'},
+  asterion:   { name:'Asterion',   type:'Wild', type2:'Stone', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, first:true, evolve:{at:36,to:'celestaur'},
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
-  celestaur:  { name:'Celestaur',  type:'Wild', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, cov:['Stone','Mystic'], first:true,
+  celestaur:  { name:'Celestaur',  type:'Wild', type2:'Mystic', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, cov:['Stone'], first:true,
                 learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
   /* ---- PARKLANDS region 3: bison (Stone), gator (Venom), snow-lynx (Frost) ---- */
   tuftcalf:   { name:'Tuftcalf',   type:'Stone', base:{hp:54,atk:50,def:56,spd:34}, catch:.5, evolve:{at:18,to:'brumbison'},
@@ -2107,19 +2107,19 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[4,'Venom Spit'],[14,'Toxic Fang'],[20,'Pounce'],[38,'Acid Flood']], blurb:'the desert dread' },
   rambluff:   { name:'Rambluff',   type:'Stone', base:{hp:56,atk:58,def:66,spd:44}, catch:.45, evolve:{at:30,to:'cragoram'},
                 learn:[[1,'Tackle'],[3,'Pebble Toss'],[16,'Rock Slide']], blurb:'the ledge leaper' },
-  cragoram:   { name:'Cragoram',   type:'Frost', base:{hp:78,atk:80,def:96,spd:56}, catch:.12,
+  cragoram:   { name:'Cragoram',   type:'Frost', type2:'Stone', base:{hp:78,atk:80,def:96,spd:56}, catch:.12,
                 learn:[[1,'Tackle'],[3,'Frost Bite'],[16,'Slam'],[30,'Ice Shard'],[40,'Glacier']], blurb:'the rime-horned crag' },
-  gilaflare:  { name:'Gilaflare',  type:'Venom', base:{hp:66,atk:72,def:70,spd:50}, catch:.25, cov:['Ember'],
+  gilaflare:  { name:'Gilaflare',  type:'Venom', type2:'Ember', base:{hp:66,atk:72,def:70,spd:50}, catch:.25,
                 learn:[[1,'Tackle'],[4,'Venom Spit'],[16,'Toxic Fang'],[24,'Singe'],[34,'Acid Flood']], blurb:'the beaded ember' },
   /* legendary — sleeps beneath Glacier Crown */
-  mammorime:  { name:'Mammorime',  type:'Frost', base:{hp:96,atk:92,def:98,spd:60}, catch:.05, cov:['Tide'],
+  mammorime:  { name:'Mammorime',  type:'Frost', type2:'Stone', base:{hp:96,atk:92,def:98,spd:60}, catch:.05, cov:['Tide'],
                 learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Undertow'],[1,'Slam']], blurb:'the glacier that walks' },
   /* ---- UX update: one new line per type, spread across all three regions ---- */
   kindlit:    { name:'Kindlit',    type:'Ember', base:{hp:42,atk:52,def:40,spd:54}, catch:.7, evolve:{at:12,to:'pyrepard'},
                 learn:[[1,'Tackle'],[4,'Singe']], blurb:'the struck spark' },
   pyrepard:   { name:'Pyrepard',   type:'Ember', base:{hp:56,atk:68,def:52,spd:72}, catch:.3, evolve:{at:24,to:'infernyx'},
                 learn:[[1,'Tackle'],[4,'Singe'],[14,'Pounce'],[18,'Flame Burst']], blurb:'the burning spots' },
-  infernyx:   { name:'Infernyx',   type:'Ember', base:{hp:70,atk:86,def:64,spd:90}, catch:.12, cov:['Venom'],
+  infernyx:   { name:'Infernyx',   type:'Ember', type2:'Venom', base:{hp:70,atk:86,def:64,spd:90}, catch:.12,
                 learn:[[1,'Tackle'],[4,'Singe'],[14,'Pounce'],[18,'Flame Burst'],[26,'Inferno']], blurb:'the wildfire lynx' },
   seedle:     { name:'Seedle',     type:'Flora', base:{hp:46,atk:44,def:48,spd:40}, catch:.7, evolve:{at:12,to:'thornmaw'},
                 learn:[[1,'Moss Wrap'],[4,'Leaf Flick']], blurb:'the wandering seed' },
@@ -2137,7 +2137,7 @@ const SPECIES = {
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet']], blurb:'the chattering stream' },
   cascadon:   { name:'Cascadon',   type:'Tide', base:{hp:60,atk:68,def:60,spd:74}, catch:.25, evolve:{at:26,to:'abyssurge'},
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[16,'Tide Surge']], blurb:'the falling water' },
-  abyssurge:  { name:'Abyssurge',  type:'Tide', base:{hp:78,atk:86,def:74,spd:90}, catch:.1, cov:['Venom'],
+  abyssurge:  { name:'Abyssurge',  type:'Tide', type2:'Venom', base:{hp:78,atk:86,def:74,spd:90}, catch:.1,
                 learn:[[1,'Bubble Pop'],[4,'Splash Jet'],[16,'Tide Surge'],[28,'Riptide']], blurb:'the deep come calling' },
   driftling:  { name:'Driftling',  type:'Gale', base:{hp:44,atk:50,def:44,spd:62}, catch:.6, evolve:{at:14,to:'skydart'},
                 learn:[[1,'Wing Flick'],[5,'Tackle']], blurb:'the loose feather' },
@@ -2147,27 +2147,27 @@ const SPECIES = {
                 learn:[[1,'Wing Flick'],[5,'Tackle'],[16,'Gale Force'],[28,'Slam']], blurb:'the ship of the sky' },
   glimmoth:   { name:'Glimmoth',   type:'Mystic', base:{hp:42,atk:50,def:42,spd:60}, catch:.5, evolve:{at:14,to:'lunamoth'},
                 learn:[[1,'Hex Pulse'],[6,'Pounce']], blurb:'the lantern wing' },
-  lunamoth:   { name:'Lunamoth',   type:'Mystic', base:{hp:56,atk:68,def:54,spd:78}, catch:.2, evolve:{at:26,to:'astramoth'},
+  lunamoth:   { name:'Lunamoth',   type:'Mystic', type2:'Gale', base:{hp:56,atk:68,def:54,spd:78}, catch:.2, evolve:{at:26,to:'astramoth'},
                 learn:[[1,'Hex Pulse'],[6,'Pounce'],[18,'Mind Lash']], blurb:'the moonlit veil' },
-  astramoth:  { name:'Astramoth',  type:'Mystic', base:{hp:70,atk:86,def:66,spd:94}, catch:.09,
+  astramoth:  { name:'Astramoth',  type:'Mystic', type2:'Gale', base:{hp:70,atk:86,def:66,spd:94}, catch:.09,
                 learn:[[1,'Hex Pulse'],[6,'Pounce'],[18,'Mind Lash'],[30,'Astral Burst']], blurb:'the constellation moth' },
   joltfly:    { name:'Joltfly',    type:'Spark', base:{hp:48,atk:58,def:48,spd:62}, catch:.5, evolve:{at:20,to:'voltwasp'},
                 learn:[[1,'Static Zap'],[5,'Pounce']], blurb:'the live wire' },
   voltwasp:   { name:'Voltwasp',   type:'Spark', base:{hp:62,atk:76,def:62,spd:82}, catch:.2, evolve:{at:38,to:'stormhive'},
                 learn:[[1,'Static Zap'],[5,'Pounce'],[22,'Volt Storm']], blurb:'the charged sting' },
-  stormhive:  { name:'Stormhive',  type:'Spark', base:{hp:80,atk:94,def:78,spd:96}, catch:.08, cov:['Venom'],
+  stormhive:  { name:'Stormhive',  type:'Spark', type2:'Venom', base:{hp:80,atk:94,def:78,spd:96}, catch:.08,
                 learn:[[1,'Static Zap'],[5,'Pounce'],[22,'Volt Storm'],[40,'Slam']], blurb:'the thousand-volt swarm' },
   shardling:  { name:'Shardling',  type:'Stone', base:{hp:52,atk:54,def:60,spd:38}, catch:.5, evolve:{at:20,to:'quarrol'},
                 learn:[[1,'Pebble Toss'],[5,'Tackle']], blurb:'the chipped stone' },
   quarrol:    { name:'Quarrol',    type:'Stone', base:{hp:68,atk:72,def:80,spd:46}, catch:.2, evolve:{at:38,to:'monolythe'},
                 learn:[[1,'Pebble Toss'],[5,'Tackle'],[22,'Rock Slide']], blurb:'the walking quarry' },
-  monolythe:  { name:'Monolythe',  type:'Stone', base:{hp:88,atk:90,def:102,spd:52}, catch:.08, cov:['Spark'],
+  monolythe:  { name:'Monolythe',  type:'Stone', type2:'Mystic', base:{hp:88,atk:90,def:102,spd:52}, catch:.08, cov:['Spark'],
                 learn:[[1,'Pebble Toss'],[5,'Tackle'],[22,'Rock Slide'],[40,'Slam']], blurb:'the standing stone woken' },
   flurret:    { name:'Flurret',    type:'Frost', base:{hp:46,atk:54,def:46,spd:66}, catch:.5, evolve:{at:20,to:'glacielle'},
                 learn:[[1,'Frost Bite'],[5,'Pounce']], blurb:'the snow ribbon' },
   glacielle:  { name:'Glacielle',  type:'Frost', base:{hp:60,atk:72,def:60,spd:86}, catch:.2, evolve:{at:38,to:'aurorix'},
                 learn:[[1,'Frost Bite'],[5,'Pounce'],[22,'Ice Shard']], blurb:'the still cold' },
-  aurorix:    { name:'Aurorix',    type:'Frost', base:{hp:76,atk:90,def:74,spd:104}, catch:.08, cov:['Mystic'],
+  aurorix:    { name:'Aurorix',    type:'Frost', type2:'Mystic', base:{hp:76,atk:90,def:74,spd:104}, catch:.08,
                 learn:[[1,'Frost Bite'],[5,'Pounce'],[22,'Ice Shard'],[40,'Glacier']], blurb:'the northern lights made flesh' },
   stinglet:   { name:'Stinglet',   type:'Venom', base:{hp:44,atk:58,def:44,spd:56}, catch:.5, evolve:{at:20,to:'toxitar'},
                 learn:[[1,'Venom Spit'],[5,'Tackle']], blurb:'the first bite' },
@@ -3250,17 +3250,28 @@ const TUTOR_SETS = {
   Frost:  ['Absolute Zero', 'Blizzard', 'Permafrost', 'Rime Kiss'],
   Venom:  ['Plague Bloom', 'Corrosion', 'Fang Venom', 'Spore Cloud']
 };
-/* move affinity: a Wildling learns its own type, neutral Wild moves, and any
-   `cov` coverage types it was born with - but NEVER a type it is weak against */
+/* dual typing: damage multiplies across BOTH defender types (4x hits and
+   double-resists exist, and a second type can cancel a weakness outright) */
+const defMult = (atkT, spKey) => {
+  const s = SPECIES[spKey], row = CHART[atkT] || {};
+  const m1 = row[s.type] == null ? 1 : row[s.type];
+  const m2 = !s.type2 ? 1 : (row[s.type2] == null ? 1 : row[s.type2]);
+  return m1 * m2;
+};
+const typeLabel = spKey => SPECIES[spKey].type + (SPECIES[spKey].type2 ? '/' + SPECIES[spKey].type2 : '');
+/* move affinity: a Wildling learns both its own types, neutral Wild moves, and
+   any `cov` coverage it was born with - but NEVER a type it is weak against
+   (your own nature is always exempt: a storm bird may sing its own thunder) */
 const canLearnType = (spKey, mt) => {
   const s = SPECIES[spKey];
-  if ((CHART[mt] || {})[s.type] === 2) return false;
-  return mt === s.type || mt === 'Wild' || (s.cov || []).includes(mt);
+  if (mt === s.type || mt === s.type2) return true;
+  if (defMult(mt, spKey) > 1) return false;
+  return mt === 'Wild' || (s.cov || []).includes(mt);
 };
 const tutorSet = m => {
   const s = SPECIES[m.sp];
   const out = [];
-  for (const t of [s.type].concat(s.cov || [])) {
+  for (const t of [s.type].concat(s.type2 || [], s.cov || [])) {
     for (const mv of (TUTOR_SETS[t] || [])) {
       if (canLearnType(m.sp, MOVES[mv].type) && !out.includes(mv)) out.push(mv);
     }
@@ -3548,8 +3559,7 @@ function atkStep(a, d, mvName, q) {
   // contact, not the moment the whole round is computed
   const fxo = { kind: 'atk', side: aSide, type: mv.type, dur: 26, block: 1 };
   pushFx(q, `${nameOf(a)} used ${mvName}!`, fxo);
-  const eff = (CHART[mv.type] || {})[SPECIES[d.sp].type];
-  const mult = eff == null ? 1 : eff;
+  const mult = defMult(mv.type, d.sp);
   // base crit is ~1/14, in line with the classics; a Keen Charm doubles it
   const crit = Math.random() < (a.held === 'charm' ? 0.14 : 0.07);
   const wBoost = WEATHER_BOOST[A.weather] === mv.type ? 1.2 : 1;   // fight the storm's own element
@@ -3562,8 +3572,10 @@ function atkStep(a, d, mvName, q) {
   fxo.crit = crit;
   if (crit) pushFx(q, 'A critical hit!', { kind: 'eff', dur: 16, block: 1 });
   if (clung) pushFx(q, `${nameOf(d)} clings on with the Guard Pendant!`, { kind: 'eff', dur: 14, block: 1 });
-  if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
-  if (mult < 1) q.push("It's not very effective...");
+  if (mult >= 4) pushFx(q, "It's devastatingly effective!", { kind: 'eff', dur: 18, block: 1 });
+  else if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
+  if (mult > 0 && mult <= 0.25) q.push('It barely leaves a mark...');
+  else if (mult < 1) q.push("It's not very effective...");
   const inf = INFLICT[mv.type];
   if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
     d.st = inf[0];
@@ -5124,7 +5136,7 @@ function drawBattle() {
     const mv = curMon().moves;
     // field knowledge pays off: once a species is in your dex, moves show +/- matchups
     const foeKnown = (dex[b.enemy.sp] || 0) >= 1;
-    const effOf = m => { const e = (CHART[MOVES[m].type] || {})[SPECIES[b.enemy.sp].type]; return e == null ? 1 : e; };
+    const effOf = m => defMult(MOVES[m].type, b.enemy.sp);
     mv.forEach((m, i) => {
       const ox = 18 + (i % 2) * 112, oy = 118 + Math.floor(i / 2) * 13;
       if (i === b.vi) text('>', ox - 9, oy, '#a34537');
@@ -5343,7 +5355,7 @@ function drawInfo() {
   drawArt(m.sp, 10, 22, 3, null, m.shiny);
   text(nameOf(m), 56, 22, '#f6f2e2');
   if (m.nick) text('(' + s.name + ')', 56, 32, '#8fa396', 7);
-  text(s.type + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
+  text(typeLabel(m.sp) + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
   text('L' + m.level + '   XP ' + m.xp + '/' + xpNeed(m.level), 56, m.nick ? 52 : 44, '#cfe3d2', 7);
   drawBar(56, 64, 100, m.hp / maxHp(m));
   text(m.hp + '/' + maxHp(m) + ' HP', 162, 61, '#cfe3d2', 7);

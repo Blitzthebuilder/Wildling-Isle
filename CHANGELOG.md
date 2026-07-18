@@ -24,14 +24,23 @@ release merged to the live game.
   easy, one tough, all replayable) plus a dockhand at the Gateway —
   matching the two-per-area standard of the older isles
 
-### Moves
-- **Coverage affinities**: seventeen dual-natured Wildlings (legendaries,
-  the elemental birds, and select final forms) can now learn a second
-  type's songs at the Move Tutor — Sylvarch sings Flora, Mammorime
-  commands Tide, Gilaflare breathes Ember, and more
+### Types & Moves
+- **Dual types**: 24 Wildlings now carry two types, Pokemon-style —
+  Sylvarch is Mystic/Flora, Mammorime and Cragoram Frost/Stone, the
+  elemental birds ride Gale, the mushroom line is Flora/Venom, Geyserun
+  runs boiling Tide/Ember, and more. Damage multiplies across both:
+  4x hits ("It's devastatingly effective!"), double-resists ("It barely
+  leaves a mark..."), and weakness-cancelling combos all exist now
 - **The bane rule**: no Wildling can ever learn a move of a type it is
-  weak against — enforced everywhere moves are taught
-- The tutor's song list now scrolls and shows each song's type
+  weak against (combined across both types; your own nature is exempt) —
+  enforced everywhere moves are taught
+- **Coverage affinities**: a few species keep bonus off-type song access
+  at the tutor beyond their typing (Mammorime's Tide, Celestaur's Stone,
+  Monolythe's Spark, Oraclaw's Frost)
+- The tutor offers songs for both types, scrolls, and labels each song
+- Battle matchup hints and the info screen understand dual types
+- Cleaned two old violations: Cragoram and Mammorime carried Stone
+  moves while mono-Frost; type-changing evolutions shed illegal moves
 
 ---
 
