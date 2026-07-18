@@ -24,6 +24,15 @@ release merged to the live game.
   easy, one tough, all replayable) plus a dockhand at the Gateway —
   matching the two-per-area standard of the older isles
 
+### Moves
+- **Coverage affinities**: seventeen dual-natured Wildlings (legendaries,
+  the elemental birds, and select final forms) can now learn a second
+  type's songs at the Move Tutor — Sylvarch sings Flora, Mammorime
+  commands Tide, Gilaflare breathes Ember, and more
+- **The bane rule**: no Wildling can ever learn a move of a type it is
+  weak against — enforced everywhere moves are taught
+- The tutor's song list now scrolls and shows each song's type
+
 ---
 
 ## The Quality of Life Update — 2026-07-18 (PR #31)
