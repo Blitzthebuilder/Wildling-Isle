@@ -5,7 +5,7 @@ release merged to the live game.
 
 ---
 
-## Unreleased (on beta)
+## The World Update — 2026-07-18 (PR #35)
 
 ### The character pass — no more squares
 Six parks were rebuilt from the same mirror-box template into places
