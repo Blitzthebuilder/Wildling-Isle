@@ -296,7 +296,7 @@ function musicKick() {
   } catch (e) {}
 }
 const MUS_ISLE2 = ['harbor', 'pines', 'cliffs', 'fogisle'];
-const MUS_PARKS = ['gateway', 'yellowstone', 'everglades', 'yosemite', 'denali', 'saguaro', 'glacier', 'icecave', 'redwood', 'canyon'];
+const MUS_PARKS = ['gateway', 'yellowstone', 'everglades', 'yosemite', 'denali', 'saguaro', 'glacier', 'icecave', 'redwood', 'canyon', 'summit'];
 function pickTune() {
   if (mode === 'title' || mode === 'intro' || mode === 'starter') return 'title';
   if (mode === 'battle' && battle) {
@@ -1981,7 +1981,13 @@ const MOVES = {
   'Slam':        { type:'Wild',  pow:70, acc:95 },
   'Gore':        { type:'Wild',  pow:65, acc:95 },
   'Quake Stomp': { type:'Wild',  pow:80, acc:90 },
-  'Divine Horns':{ type:'Wild',  pow:95, acc:90 },
+  /* legendary signatures - one apiece, never taught, never shared */
+  'Divine Horns':{ type:'Wild',  pow:95, acc:90, crit:.10 },     // Celestaur: gores true
+  'Verdant Reign':{ type:'Mystic', pow:85, acc:95, heal:.5 },    // Sylvarch: the forest reclaims
+  'Glacial March':{ type:'Frost', pow:80, acc:95, st:'chl' },    // Mammorime: the cold is not optional
+  'Stooping Gale':{ type:'Gale',  pow:90, acc:100, crit:.05 },   // Skywarden: the dive never misses
+  'First Law':   { type:'Wild',  pow:110, acc:80 },              // Primling: the oldest word
+  'Titan Stance':{ type:'Wild',  pow:0, acc:100, buff:1 },       // Minos line: unmovable, then unstoppable
   'Singe':       { type:'Ember', pow:40, acc:100 },
   'Flame Burst': { type:'Ember', pow:65, acc:90 },
   'Inferno':     { type:'Ember', pow:85, acc:85 },
@@ -2162,17 +2168,17 @@ const SPECIES = {
                 learn:[[1,'Splash Jet'],[1,'Wing Flick'],[1,'Tide Surge'],[26,'Riptide']], blurb:'the wave rider' },
   /* legendary — found only by those who know where to look */
   sylvarch:   { name:'Sylvarch',   type:'Mystic', type2:'Flora', base:{hp:90,atk:90,def:85,spd:85}, catch:.05,
-                learn:[[1,'Slam'],[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst']], blurb:'the elder heart of the isle' },
+                learn:[[1,'Thorn Storm'],[1,'Mind Lash'],[1,'Astral Burst'],[1,'Verdant Reign']], blurb:'the elder heart of the isle' },
   /* legendary — the only Wild-type: no element to exploit, none to fear */
   primling:   { name:'Primling',   type:'Wild', type2:'Mystic', base:{hp:94,atk:88,def:84,spd:86}, catch:.05,
-                learn:[[1,'Tackle'],[1,'Pounce'],[15,'Slam']], blurb:'the first wildling' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[15,'Slam'],[1,'First Law']], blurb:'the first wildling' },
   /* Minotaur line — Wild-type physical juggernaut; always strikes first */
   minos:      { name:'Minos',      type:'Wild', type2:'Stone', base:{hp:60,atk:70,def:68,spd:64}, catch:.06, first:true, evolve:{at:22,to:'asterion'},
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam']], blurb:'the caged beast, ever first to strike' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[14,'Titan Stance'],[16,'Slam']], blurb:'the caged beast, ever first to strike' },
   asterion:   { name:'Asterion',   type:'Wild', type2:'Stone', base:{hp:78,atk:88,def:84,spd:82}, catch:.06, first:true, evolve:{at:36,to:'celestaur'},
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[14,'Titan Stance'],[16,'Slam'],[22,'Quake Stomp']], blurb:'the starlit ascendant' },
   celestaur:  { name:'Celestaur',  type:'Wild', type2:'Mystic', base:{hp:90,atk:100,def:92,spd:98}, catch:.06, cov:['Stone'], first:true,
-                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
+                learn:[[1,'Tackle'],[1,'Pounce'],[7,'Gore'],[14,'Titan Stance'],[16,'Slam'],[22,'Quake Stomp'],[36,'Divine Horns']], blurb:'the divine bull-god' },
   /* ---- PARKLANDS region 3: bison (Stone), gator (Venom), snow-lynx (Frost) ---- */
   tuftcalf:   { name:'Tuftcalf',   type:'Stone', base:{hp:54,atk:50,def:56,spd:34}, catch:.5, evolve:{at:18,to:'brumbison'},
                 learn:[[1,'Tackle'],[3,'Pebble Toss']], blurb:'the prairie calf' },
@@ -2211,7 +2217,7 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[4,'Venom Spit'],[16,'Toxic Fang'],[24,'Singe'],[34,'Acid Flood']], blurb:'the beaded ember' },
   /* legendary — sleeps beneath Glacier Crown */
   mammorime:  { name:'Mammorime',  type:'Frost', type2:'Stone', base:{hp:96,atk:92,def:98,spd:60}, catch:.05, cov:['Tide'],
-                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Undertow'],[1,'Slam']], blurb:'the glacier that walks' },
+                learn:[[1,'Ice Shard'],[1,'Glacier'],[1,'Undertow'],[1,'Glacial March']], blurb:'the glacier that walks' },
   /* ---- UX update: one new line per type, spread across all three regions ---- */
   kindlit:    { name:'Kindlit',    type:'Ember', base:{hp:42,atk:52,def:40,spd:54}, catch:.7, evolve:{at:12,to:'pyrepard'},
                 learn:[[1,'Tackle'],[4,'Singe']], blurb:'the struck spark' },
@@ -2288,12 +2294,17 @@ const SPECIES = {
                 learn:[[1,'Tackle'],[6,'Wing Flick'],[20,'Hex Pulse'],[30,'Gale Force'],[40,'Mind Lash']], blurb:'the voice in the dark rim' },
   /* legendary — circles above the great rim */
   skywarden:  { name:'Skywarden',  type:'Gale', type2:'Mystic', base:{hp:92,atk:94,def:84,spd:110}, catch:.05,
-                learn:[[1,'Tempest'],[1,'Talon Dive'],[1,'Veil Rend'],[1,'Slam']], blurb:'the wind that watches' }
+                learn:[[1,'Tempest'],[1,'Talon Dive'],[1,'Veil Rend'],[1,'Stooping Gale']], blurb:'the wind that watches' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
 function maxHp(m) { return Math.floor(SPECIES[m.sp].base.hp * m.level / 18) + m.level + 8; }
-function stat(m, k) { return Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4; }
+function stat(m, k) {
+  const raw = Math.floor(SPECIES[m.sp].base[k] * m.level / 28) + 4;
+  // Titan Stance stages: +50% attack and defense per use, two uses max
+  const b = (k === 'atk' || k === 'def') ? 1 + 0.5 * (m.buffLv || 0) : 1;
+  return Math.floor(raw * b);
+}
 function movesFor(sp, lvl) { return SPECIES[sp].learn.filter(l => l[0] <= lvl).map(l => l[1]).slice(-4); }
 function makeMon(sp, lvl) {
   const m = { sp, level: lvl, xp: 0, st: null };
@@ -3344,7 +3355,7 @@ const AREAS = {
     ground:'#c78d5a', dot:'#b57c4c', enc:'#a87244', blade:'#8a5a36', blade2:'#6e462c',
     raw: [
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
-      'RRRRRRRRRRRRRRRRSRRRRRRRRRRRRRRR',
+      'RRRRRRRRRRRRRRRR2RRRRRRRRRRRRRRR',
       'R..............................R',
       'R.........................RR...R',
       'R...RRRR................RR.....R',
@@ -3380,7 +3391,7 @@ const AREAS = {
       win: ['VEX: So the echoes lied. Fascinating.', 'Something circles the high aerie. Listen.'],
       party: () => [makeMon('echowing', 62), makeMon('monolythe', 62), makeMon('condorge', 63)]
     }],
-    exits: { '1': { to:'redwood', x:16, y:1 } },
+    exits: { '1': { to:'redwood', x:16, y:1 }, '2': { to:'summit', x:12, y:12 } },
     gate: {
       x:16, y:2, flag:'badgeCANY', name:'RANGER TALUS', art:'bruiser',
       intro: [
@@ -3388,7 +3399,7 @@ const AREAS = {
         'behind you, and me before you.',
         'The rim breaks the unworthy. Begin!'
       ],
-      win: ['RANGER TALUS: Unbroken! The CANYON BADGE', 'is yours - the eighth and last.', 'The Superintendent waits atop the summit...', 'when the trail opens.'],
+      win: ['RANGER TALUS: Unbroken! The CANYON BADGE', 'is yours - the eighth and last.', 'The Superintendent waits atop the summit.', 'The trail north stands open.'],
       rematch: ['RANGER TALUS: The rim never tires. Nor I.'],
       party: () => [makeMon('condorge', 61), makeMon('monolythe', 62), makeMon('echowing', 62), makeMon('terragrizz', 63)]
     },
@@ -3396,7 +3407,67 @@ const AREAS = {
       'THE GREAT RIM - park 8 of 8.',
       'A mile of stone drops below the railing.',
       'The high aerie is closed to the badgeless.',
-      'NORTH: Summit trail (CLOSED - opening soon).'
+      'NORTH: the Summit. The Superintendent waits.'
+    ]
+  },
+  summit: {
+    label: 'THE SUMMIT',
+    ground:'#b8c8d8', dot:'#a5b8ca', enc:'#94aabe', blade:'#6e88a0', blade2:'#546e84',
+    raw: [
+      'RRRRRRRRRRRRRRRRRRRRRRRR',
+      'R......................R',
+      'R......................R',
+      'R......................R',
+      'R...II............II...R',
+      'R......................R',
+      'R....,,,,......,,,,....R',
+      'R....,,,,......,,,,....R',
+      'R......................R',
+      'R..II...............c..R',
+      'R......................R',
+      'R....S.................R',
+      'R......................R',
+      'RRRRRRRRRRRR1RRRRRRRRRRR'
+    ],
+    wilds: ['stratowl','tundralf','aurorix','condorge','monolythe','terragrizz'], lvl: [60, 64],
+    weather: 'snow',
+    trainers: [{
+      key: 'alta', x: 4, y: 3, name: 'SUMMIT STEWARD ALTA', art: 'scamp',
+      intro: ['SUMMIT STEWARD ALTA: Few ever stand this', 'high. Fewer still stand back up. Battle!'],
+      rematch: ['ALTA: The thin air keeps me sharp. You?'],
+      win: ['ALTA: Breathless! And not from the altitude.', 'The Superintendent holds the crown stone.'],
+      party: () => [makeMon('glacielle', 60), makeMon('stratowl', 61)]
+    }, {
+      key: 'moraine', x: 19, y: 5, name: 'PEAK LEGEND MORAINE', art: 'salt',
+      intro: ['PEAK LEGEND MORAINE: I carried the first', 'survey stone up this ridge, back when.', 'Show me what the parks made of you.'],
+      rematch: ['MORAINE: The ridge remembers. Once more.'],
+      win: ['MORAINE: By the old stone... magnificent.', 'Go on. Vance is waiting.'],
+      party: () => [makeMon('tundralf', 63), makeMon('monolythe', 63), makeMon('thornelk', 64)]
+    }],
+    exits: { '1': { to:'canyon', x:16, y:2 } },
+    gate: {
+      x:12, y:2, flag:'champion3', req:8, name:'SUPT. VANCE', art:'warden',
+      intro: [
+        'SUPERINTENDENT VANCE: Eight parks. Eight',
+        'badges. Every ranger speaks your name.',
+        'But the Parklands answer to me - and I',
+        'answer to no badge. Full team. No mercy.',
+        'For the crown of the wild - BATTLE!'
+      ],
+      win: [
+        'VANCE: ...The mountain heard that, and so',
+        'did every ranger from here to the ferry.',
+        'By the authority of the Great Parklands,',
+        'I name you PARK WARDEN - keeper of the',
+        'wild places. Wear it well, warden.'
+      ],
+      rematch: ['VANCE: The warden returns! The mountain', 'demands a rematch. Full team - go!'],
+      party: () => [makeMon('gatorush', 61), makeMon('thornelk', 61), makeMon('aurorix', 62), makeMon('monolythe', 63), makeMon('condorge', 64)]
+    },
+    sign: [
+      'THE SUMMIT - roof of the Parklands.',
+      'Eight badges open the Superintendent\'s court.',
+      'The wind up here remembers every warden.'
     ]
   },
   icecave: {
@@ -3455,6 +3526,7 @@ let tmMenu = -1;              // team submenu option index (-1 = closed)
 let tmSel = -1;               // mon picked for a switch (-1 = none)
 let moIdx = 0, moSel = -1;    // move-order cursor + picked slot (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
+let infoMv = 0;               // move cursor on the info screen (up/down to inspect)
 let coins = 0;
 let items = { berry: 0, jam: 0, locket: 0, charm: 0, pendant: 0 };
 const HELD_NAME = { locket: 'Moss Locket', charm: 'Keen Charm', pendant: 'Guard Pendant' };
@@ -3599,7 +3671,7 @@ function applyData(d) {
    ['pines', 'gate3'], ['cliffs', 'gate4'], ['fogisle', 'gate4'],
    ['gateway', 'champion2'], ['yellowstone', 'champion2'], ['everglades', 'badgeYELL'],
    ['yosemite', 'badgeEVER'], ['denali', 'badgeYOSE'], ['saguaro', 'badgeDENA'],
-   ['glacier', 'badgeSAGU'], ['icecave', 'badgeGLAC'], ['redwood', 'badgeGLAC'], ['canyon', 'badgeREDW']
+   ['glacier', 'badgeSAGU'], ['icecave', 'badgeGLAC'], ['redwood', 'badgeGLAC'], ['canyon', 'badgeREDW'], ['summit', 'badgeCANY']
   ].forEach(([a, f]) => { if (!f || flags[f]) flags.vis[a] = 1; });
   return true;
 }
@@ -3659,7 +3731,7 @@ function startBattle(enemy) {
   const ai = pickAlive();
   if (ai < 0) return;
   markSeen(enemy.sp);
-  party.forEach(pm => { pm.pendUsed = false; }); enemy.pendUsed = false;
+  party.forEach(pm => { pm.pendUsed = false; pm.buffLv = 0; }); enemy.pendUsed = false; enemy.buffLv = 0;
   mode = 'battle';
   fxParts = [];
   const q = [];
@@ -3677,7 +3749,8 @@ function startBattle(enemy) {
   nextText();
 }
 function startTrainerBattle(tr) {
-  party.forEach(pm => { pm.pendUsed = false; });
+  party.forEach(pm => { pm.pendUsed = false; pm.buffLv = 0; });
+  tr.party.forEach(tm => { tm.buffLv = 0; });
   const ai = pickAlive();
   if (ai < 0) return;
   markSeen(tr.party[0].sp);
@@ -3749,6 +3822,29 @@ const INFLICT = { Ember: ['brn', 0.2], Spark: ['shk', 0.25], Frost: ['chl', 0.35
 const WEATHER_BOOST = { snow: 'Frost', rain: 'Tide', heat: 'Ember' };
 const WEATHER_LINE = { snow: 'Snow drifts over the battlefield...', rain: 'Rain hammers down around you...', heat: 'Heat ripples off the sand...' };
 const ST_MSG = { brn: 'was burned!', shk: 'is shocked!', chl: 'was put on ice!', psn: 'was poisoned!' };
+const ST_VERB = { brn: 'burn', shk: 'shock', chl: 'chill', psn: 'poison' };
+/* plain-words explanations of what a move actually does */
+function moveDesc(mvName) {
+  const d = MOVES[mvName];
+  if (d.buff) return "Raises the user's ATK and DEF. Stacks twice.";
+  const bits = [];
+  if (d.crit) bits.push('+' + Math.round(d.crit * 100) + '% crit chance');
+  if (d.heal) bits.push('drains ' + Math.round(d.heal * 100) + '% of damage as HP');
+  if (d.st) bits.push('always ' + ST_VERB[d.st] + 's the target');
+  const inf = INFLICT[d.type];
+  if (!d.st && inf) bits.push(Math.round(inf[1] * 100) + '% chance to ' + ST_VERB[inf[0]]);
+  if (!bits.length) return 'A clean hit. No added effect.';
+  const s = bits.join('; ');
+  return s.charAt(0).toUpperCase() + s.slice(1) + '.';
+}
+function moveTag(mvName) {   // compact marker for the tight battle bar
+  const d = MOVES[mvName];
+  if (d.buff || !d.pow) return '';
+  if (d.crit) return 'crit +' + Math.round(d.crit * 100) + '%';
+  if (d.heal) return 'drains';
+  if (d.st) return 'always ' + ST_VERB[d.st] + 's';
+  return '';
+}
 const effSpd = m => Math.floor(stat(m, 'spd') / (m.st === 'chl' ? 2 : 1));
 
 /* ---------- battle fx ---------- */
@@ -3785,6 +3881,12 @@ function atkStep(a, d, mvName, q) {
   const mv = MOVES[mvName];
   const aSide = a === battle.enemy ? 'en' : 'me';
   const dSide = d === battle.enemy ? 'en' : 'me';
+  if (mv.buff) {   // self-buff: no target, no accuracy roll
+    pushFx(q, `${nameOf(a)} used ${mvName}!`, { kind: 'stat', side: aSide, type: mv.type, dur: 14 });
+    if ((a.buffLv || 0) >= 2) q.push(`${nameOf(a)}'s power can rise no further!`);
+    else { a.buffLv = (a.buffLv || 0) + 1; q.push(`${nameOf(a)}'s Attack and Defense rose!`); }
+    return;
+  }
   if (ri(100) >= mv.acc) {
     pushFx(q, `${nameOf(a)} used ${mvName}!`, { kind: 'atk', side: aSide, type: mv.type, whiff: 1, dur: 22, block: 1 });
     q.push('The attack missed!');
@@ -3795,8 +3897,9 @@ function atkStep(a, d, mvName, q) {
   const fxo = { kind: 'atk', side: aSide, type: mv.type, dur: 26, block: 1 };
   pushFx(q, `${nameOf(a)} used ${mvName}!`, fxo);
   const mult = defMult(mv.type, d.sp);
-  // base crit is ~1/14, in line with the classics; a Keen Charm doubles it
-  const crit = Math.random() < (a.held === 'charm' ? 0.14 : 0.07);
+  // base crit is ~1/14, in line with the classics; a Keen Charm doubles it,
+  // and a move's own crit bonus (Divine Horns) stacks on top
+  const crit = Math.random() < ((a.held === 'charm' ? 0.14 : 0.07) + (mv.crit || 0));
   const wBoost = WEATHER_BOOST[A.weather] === mv.type ? 1.2 : 1;   // fight the storm's own element
   let dmg = ((2 * a.level / 5 + 2) * mv.pow * stat(a, 'atk') / Math.max(1, stat(d, 'def'))) / 20 + 2;
   dmg = Math.max(1, Math.floor(dmg * mult * wBoost * (crit ? 1.5 : 1) * (0.85 + Math.random() * 0.15)));
@@ -3811,10 +3914,19 @@ function atkStep(a, d, mvName, q) {
   else if (mult > 1) pushFx(q, "It's super effective!", { kind: 'eff', dur: 14, block: 1 });
   if (mult > 0 && mult <= 0.25) q.push('It barely leaves a mark...');
   else if (mult < 1) q.push("It's not very effective...");
-  const inf = INFLICT[mv.type];
-  if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
-    d.st = inf[0];
+  if (mv.heal && dmg > 0 && a.hp > 0) {   // drain: the strike feeds the striker
+    a.hp = Math.min(maxHp(a), a.hp + Math.max(1, Math.floor(dmg * mv.heal)));
+    pushFx(q, `${nameOf(a)} drew strength from the strike!`, { kind: 'stat', side: aSide, type: mv.type, dur: 12, dHp: { side: aSide, hp: a.hp } });
+  }
+  if (mv.st && !d.st && d.hp > 0) {   // signature moves may inflict without fail
+    d.st = mv.st;
     pushFx(q, `${nameOf(d)} ${ST_MSG[d.st]}`, { kind: 'stat', side: dSide, type: mv.type, dur: 14 });
+  } else if (!mv.st) {
+    const inf = INFLICT[mv.type];
+    if (inf && !d.st && d.hp > 0 && Math.random() < inf[1]) {
+      d.st = inf[0];
+      pushFx(q, `${nameOf(d)} ${ST_MSG[d.st]}`, { kind: 'stat', side: dSide, type: mv.type, dur: 14 });
+    }
   }
 }
 function actOnce(a, d, mvName, q) {
@@ -4376,7 +4488,7 @@ function update() {
       else if (tap('A')) {
         sOk();
         if (tmMenu === 0) { tmSel = teamIdx; tmMenu = -1; }
-        else if (tmMenu === 1) { infoIdx = teamIdx; mode = 'info'; tmMenu = -1; }
+        else if (tmMenu === 1) { infoIdx = teamIdx; infoMv = 0; mode = 'info'; tmMenu = -1; }
         else if (tmMenu === 2) { tiIdx = 0; mode = 'teamitem'; tmMenu = -1; }
         else if (tmMenu === 3) { moIdx = 0; moSel = -1; mode = 'moveorder'; tmMenu = -1; }
         else if (tmMenu === 4) {
@@ -4428,6 +4540,11 @@ function update() {
   }
 
   if (mode === 'info') {
+    const im = party[infoIdx];
+    if (im && im.moves.length) {
+      if (tap('up')) { infoMv = (infoMv + im.moves.length - 1) % im.moves.length; sMove(); }
+      if (tap('down')) { infoMv = (infoMv + 1) % im.moves.length; sMove(); }
+    }
     if (tap('A') || tap('B') || tap('C')) { sBack(); mode = 'team'; }
     return;
   }
@@ -5391,8 +5508,10 @@ function drawBattle() {
     });
     const sel = MOVES[mv[b.vi]];
     px(6, 144, 228, 10, '#e6e0cc');
-    let mvInfo = sel.type + '  PWR ' + sel.pow + '  ACC ' + sel.acc;
-    if (foeKnown) {
+    let mvInfo = sel.type + (sel.buff ? '  raises ATK + DEF' : '  PWR ' + sel.pow + '  ACC ' + sel.acc);
+    const selTag = moveTag(mv[b.vi]);
+    if (selTag) mvInfo += '  ' + selTag;
+    if (foeKnown && !sel.buff) {
       const e = effOf(mv[b.vi]);
       mvInfo += e > 1 ? '  STRONG here' : e < 1 ? '  weak here' : '';
     }
@@ -5487,7 +5606,7 @@ function drawLearn() {
   const nu = MOVES[pl.mv];
   text(nameOf(pl.m) + ' wants to learn', 12, 6, '#e8b84b');
   text(pl.mv, 12, 18, TYPE_COL[nu.type]);
-  text(nu.type + '  PWR ' + nu.pow + '  ACC ' + nu.acc, 100, 20, TYPE_COL[nu.type], 7);
+  text(nu.type + '  PWR ' + nu.pow + '  ACC ' + nu.acc + (moveTag(pl.mv) ? '  ' + moveTag(pl.mv) : ''), 100, 20, TYPE_COL[nu.type], 7);
   text('Forget which move?', 12, 34, '#8fa396', 7);
   pl.m.moves.forEach((mv, i) => {
     const d = MOVES[mv], y = 48 + i * 15;
@@ -5605,13 +5724,21 @@ function drawInfo() {
   text('ATK ' + stat(m, 'atk') + '   DEF ' + stat(m, 'def') + '   SPD ' + stat(m, 'spd'), 56, 74, '#cfe3d2', 7);
   if (m.held) text('Holds: ' + HELD_NAME[m.held] + ' (' + HELD_TAG[m.held] + ')', 56, 82, '#8fd07a', 7);
   text('MOVES', 12, 90, '#8fb69c', 7);
+  text('up/down: inspect', 160, 90, '#5a6a5e', 7);
+  const mvSel = Math.min(infoMv, m.moves.length - 1);
   m.moves.forEach((mv, i) => {
-    const d = MOVES[mv], y = 102 + i * 13;
-    text(mv, 16, y, '#f6f2e2', 7);
+    const d = MOVES[mv], y = 102 + i * 11;
+    const special = d.buff || d.crit || d.heal || d.st;
+    if (i === mvSel) { px(8, y - 2, 226, 11, 'rgba(232,184,75,.16)'); text('>', 9, y, '#e8b84b', 7); }
+    text(mv, 16, y, special ? '#e8b84b' : '#f6f2e2', 7);
     text(d.type, 100, y, TYPE_COL[d.type], 7);
-    text('PWR ' + d.pow, 148, y, '#cfe3d2', 7);
-    text('ACC ' + d.acc, 192, y, '#cfe3d2', 7);
+    text(d.buff ? 'BUFF' : 'PWR ' + d.pow, 148, y, '#cfe3d2', 7);
+    if (!d.buff) text('ACC ' + d.acc, 192, y, '#cfe3d2', 7);
   });
+  if (m.moves.length) {
+    px(6, 147, 228, 11, 'rgba(143,182,156,.12)');
+    text(moveDesc(m.moves[mvSel]), 12, 149, '#8fd07a', 7);
+  }
 }
 
 function drawDex(idx) {
@@ -5656,7 +5783,7 @@ function drawBadges() {
   });
   drawBox(4, 138, 232, 18);
   const next = BADGE_FLAGS.findIndex(f => !flags[f]);
-  text(next < 0 ? 'ALL BADGES EARNED - seek the Superintendent!' : 'Next: ' + BADGE_PARK[next], 12, 143, '#20242c', 7);
+  text(next < 0 ? (flags.champion3 ? 'PARK WARDEN of the Great Parklands' : 'ALL BADGES EARNED - seek the Superintendent!') : 'Next: ' + BADGE_PARK[next], 12, 143, '#20242c', 7);
 }
 
 /* the field map: three isles, one journey. Nodes light up as you visit;
@@ -5666,14 +5793,14 @@ const MAP_NODES = {
   harbor: [96, 118], pines: [120, 104], cliffs: [142, 88], fogisle: [118, 70],
   gateway: [176, 140], yellowstone: [196, 126], everglades: [176, 112], yosemite: [196, 98],
   denali: [176, 88], saguaro: [196, 76], glacier: [176, 64], icecave: [162, 56],
-  redwood: [196, 52], canyon: [176, 40]
+  redwood: [196, 52], canyon: [176, 40], summit: [196, 28]
 };
 const MAP_LINKS = [
   ['meadow', 'cavern'], ['cavern', 'shore'], ['meadow', 'hollow'],
   ['shore', 'harbor'], ['harbor', 'pines'], ['pines', 'cliffs'], ['cliffs', 'fogisle'],
   ['harbor', 'gateway'], ['gateway', 'yellowstone'], ['yellowstone', 'everglades'],
   ['everglades', 'yosemite'], ['yosemite', 'denali'], ['denali', 'saguaro'],
-  ['saguaro', 'glacier'], ['glacier', 'icecave'], ['glacier', 'redwood'], ['redwood', 'canyon']
+  ['saguaro', 'glacier'], ['glacier', 'icecave'], ['glacier', 'redwood'], ['redwood', 'canyon'], ['canyon', 'summit']
 ];
 function drawMap() {
   px(0, 0, 240, 160, '#1d3a52');
@@ -5682,7 +5809,7 @@ function drawMap() {
   text('THE WILDLING ISLES', 118, 6, '#8fa396', 7);
   px(14, 78, 60, 66, '#3d6b48'); px(22, 72, 44, 10, '#3d6b48');
   px(84, 56, 74, 74, '#4a6b3d'); px(96, 126, 40, 10, '#4a6b3d');
-  px(160, 30, 72, 122, '#57624e');
+  px(160, 22, 72, 130, '#57624e');
   const vis = flags.vis || {};
   MAP_LINKS.forEach(([a, b]) => {
     if (!vis[a] || !vis[b]) return;

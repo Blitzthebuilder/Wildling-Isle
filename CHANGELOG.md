@@ -5,6 +5,45 @@ release merged to the live game.
 
 ---
 
+## Parklands Phase 4: The Summit — 2026-07-18 (PR #34)
+
+### The Summit
+- **THE SUMMIT** crowns the region: a snowbound peak above the Great
+  Rim with elite wilds (L60–64), two trainers, and the crown-stone camp
+- **SUPERINTENDENT VANCE** — the region finale. Five elite Wildlings at
+  L61–64, and the gate itself refuses anyone carrying fewer than all
+  eight Ranger Badges
+- Victory names you **PARK WARDEN** — the title marks your save file
+  and the badge hall
+- Ranger Talus's trail north now truly opens after the eighth badge
+
+### Battle
+- **Divine Horns** (Celestaur's signature) now gores true: +10% critical
+  hit chance on top of the base rate — and it stacks with the Keen Charm
+- **Every legendary now carries a one-of-a-kind signature move:**
+  - *Verdant Reign* (Sylvarch, Mystic 85): drains half the damage dealt
+    back as HP — the forest reclaims
+  - *Glacial March* (Mammorime, Frost 80): chills without fail — the
+    cold is not optional
+  - *Stooping Gale* (Skywarden, Gale 90): never misses and carries a
+    +5% crit edge — the dive is true
+  - *First Law* (Primling, Wild 110): the hardest-hitting move in the
+    game — the oldest word
+- **Titan Stance** (the Minos line, learned at 14): raises the user's
+  Attack AND Defense by 50%, stackable twice per battle — unmovable,
+  then unstoppable. The move menu explains buff moves in plain words
+
+### Interface
+- **Move inspection**: the Wildling info screen gained a move cursor —
+  up/down highlights each move and a description bar explains exactly
+  what it does ("+10% crit chance", "drains 50% of damage as HP",
+  "always chills the target", "25% chance to shock"...). Moves with
+  special effects glow gold in the list
+- The battle move bar and the learn-a-move prompt show compact effect
+  tags too, so nothing special hides behind a name
+
+---
+
 ## Parklands Phase 3 — 2026-07-18 (PR #33)
 
 ### The old growth and the great rim
