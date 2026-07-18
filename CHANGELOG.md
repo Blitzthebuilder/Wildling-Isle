@@ -5,9 +5,9 @@ release merged to the live game.
 
 ---
 
-## Unreleased (on beta)
+## Parklands Phase 3 — 2026-07-18 (PR #33)
 
-### Parklands Phase 3 — the old growth and the great rim
+### The old growth and the great rim
 - Two new parks extend the chain past Glacier Crown: **REDWOOD EXPANSE**
   (walk among giants) and **THE GREAT RIM** (a mile of stone below the
   railing, heat shimmering off the ledges)
