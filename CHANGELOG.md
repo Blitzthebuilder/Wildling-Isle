@@ -5,7 +5,7 @@ release merged to the live game.
 
 ---
 
-## Unreleased (on beta)
+## The Battle & World Update — 2026-07-18 (PR #32)
 
 ### Battle
 - **Participation XP**: every Wildling that takes the field against a foe
