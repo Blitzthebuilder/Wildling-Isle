@@ -3316,7 +3316,7 @@ function startBattle(enemy) {
   fxParts = [];
   const q = [];
   battle = {
-    enemy, ai, trainer: null, phase: 'text', after: 'menu', endKind: null,
+    enemy, ai, parts: [ai], trainer: null, phase: 'text', after: 'menu', endKind: null,
     q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: enemy.hp,
@@ -3337,7 +3337,7 @@ function startTrainerBattle(tr) {
   fxParts = [];
   const q = [];
   battle = {
-    enemy: tr.party[0], ai, trainer: tr, phase: 'text', after: 'menu', endKind: null,
+    enemy: tr.party[0], ai, parts: [ai], trainer: tr, phase: 'text', after: 'menu', endKind: null,
     q, cur: null, fx: null, age: 0, enGone: !fxDisabled, meGone: !fxDisabled, nickFor: null,
     mi: 0, vi: 0, ti: 0, bi: 0, forced: false,
     dispMe: party[ai].hp, dispEn: tr.party[0].hp,
@@ -3555,17 +3555,23 @@ function learnMove(m, mv, q) {
   if (q) q.push(`${nameOf(m)} wants to learn ${mv}...`);
 }
 function victory(q) {
-  const me = curMon(), en = battle.enemy;
+  const en = battle.enemy;
   const gain = en.level * (battle.trainer ? 26 : 18);
-  me.xp += gain;
-  q.push(`${nameOf(me)} gained ${gain} XP!`);
+  // XP splits evenly among every Wildling that took the field against this foe
+  const parts = (battle.parts || [battle.ai]).filter(i => party[i]);
+  const share = Math.max(1, Math.floor(gain / parts.length));
+  for (const pi of parts) {
+    const m = party[pi];
+    m.xp += share;
+    q.push(`${nameOf(m)} gained ${share} XP!`);
+    while (m.xp >= xpNeed(m.level)) {
+      m.xp -= xpNeed(m.level);
+      levelUpMon(m, q);
+    }
+  }
   const pay = en.level * (battle.trainer ? 3 : 1);
   coins += pay;
   q.push(`Found ${pay} coins!`);
-  while (me.xp >= xpNeed(me.level)) {
-    me.xp -= xpNeed(me.level);
-    levelUpMon(me, q);
-  }
   const tr = battle.trainer;
   if (tr && tr.i < tr.party.length - 1) {
     tr.i++;
@@ -3587,6 +3593,7 @@ function queueFoeEntry(q) {
   const nx = battle.pendingFoe;
   battle.pendingFoe = null;
   pushFx(q, `${battle.trainer.name} sends out ${nameOf(nx)}!`, { kind: 'sendIn', side: 'en', dur: 18, block: 1, swap: nx });
+  battle.parts = [battle.ai];   // participation is tracked per foe
   battle.after = 'menu';
 }
 function tryCatch() {
@@ -3684,6 +3691,7 @@ function switchTo(idx, forced) {
   const q = [];
   if (!forced) q.push(`Enough, ${nameOf(curMon())}!`);
   battle.ai = idx;
+  if (battle.parts && !battle.parts.includes(idx)) battle.parts.push(idx);
   battle.dispMe = party[idx].hp;
   battle.tgtMe = party[idx].hp;
   pushFx(q, `Go, ${nameOf(party[idx])}!`, { kind: 'sendIn', side: 'me', dur: 18, block: 1 });

@@ -5,6 +5,16 @@ release merged to the live game.
 
 ---
 
+## Unreleased (on beta)
+
+### Battle
+- **Participation XP**: every Wildling that takes the field against a foe
+  now splits that foe's XP evenly — swap once mid-fight and the two
+  fighters earn 50/50. Tracked per enemy in trainer battles, so only those
+  who actually faced each foe share in it
+
+---
+
 ## The Quality of Life Update — 2026-07-18 (PR #31)
 
 ### Sound & Music
