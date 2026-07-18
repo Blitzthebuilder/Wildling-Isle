@@ -296,7 +296,7 @@ function musicKick() {
   } catch (e) {}
 }
 const MUS_ISLE2 = ['harbor', 'pines', 'cliffs', 'fogisle'];
-const MUS_PARKS = ['gateway', 'yellowstone', 'everglades', 'yosemite', 'denali', 'saguaro', 'glacier', 'icecave'];
+const MUS_PARKS = ['gateway', 'yellowstone', 'everglades', 'yosemite', 'denali', 'saguaro', 'glacier', 'icecave', 'redwood', 'canyon'];
 function pickTune() {
   if (mode === 'title' || mode === 'intro' || mode === 'starter') return 'title';
   if (mode === 'battle' && battle) {
@@ -1044,6 +1044,104 @@ const ART = {
     '.kkvvvvvvkk.',
     'k.k.k..k.k.k',
     '.k.k....k.k.',
+    '............'
+  ],
+  wapituft: [
+    '.G..G..G..G.',
+    '.GG.G..G.GG.',
+    '..nnnnnnnn..',
+    '..nknnnnkn..',
+    '..nnnnnnnn..',
+    '...nNNNNn...',
+    '..nNNNNNNn..',
+    '..nNNNNNNn..',
+    '..nNNNNNNn..',
+    '...nn..nn...',
+    '...oo..oo...',
+    '............'
+  ],
+  thornelk: [
+    '.dG.dG.Gd.G.',
+    '.GGGdGGdGGG.',
+    '..GG.GG.GG..',
+    '..nnnnnnnn..',
+    '..nknnnnkn..',
+    '...nnnnnn...',
+    '..nNNNNNNn..',
+    '.nNNNNNNNNn.',
+    '.nNNNNNNNNn.',
+    '..nNNNNNNn..',
+    '...nn..nn...',
+    '...oo..oo...'
+  ],
+  scavren: [
+    '............',
+    '....ssss....',
+    '...sffffs...',
+    '...sfkfks...',
+    '....ffff....',
+    '..ssssssss..',
+    '.ssssssssss.',
+    '..ssssssss..',
+    '...ssssss...',
+    '....ssss....',
+    '....o..o....',
+    '............'
+  ],
+  condorge: [
+    '............',
+    '.....oo.....',
+    '....offo....',
+    '....okko....',
+    '...wwwwww...',
+    '.oooossoooo.',
+    'ooooossoooo.',
+    '.oooossoooo.',
+    '...osssso...',
+    '....ssss....',
+    '....o..o....',
+    '............'
+  ],
+  mossgrizz: [
+    '....nn.nn...',
+    '...nnnnnnn..',
+    '...nknnkn...',
+    '...nnnnnn...',
+    '..GnnnnnnG..',
+    '.nGnnnnnnGn.',
+    '.nnGmmmmGnn.',
+    '.nnmmmmmmnn.',
+    '.nnmmmmmmnn.',
+    '..nnnnnnnn..',
+    '..nn.nn.nn..',
+    '............'
+  ],
+  echowing: [
+    '..v......v..',
+    '..vv....vv..',
+    '...vvvvvv...',
+    '...vkvvkv...',
+    '.vvvvvvvvvv.',
+    'vvVvvvvvvVvv',
+    'vVVvvvvvvVVv',
+    '.vvvvvvvvvv.',
+    '...vvvvvv...',
+    '....v..v....',
+    '............',
+    '............'
+  ],
+  skywarden: [
+    '.....ee.....',
+    '....eCCe....',
+    '...wwCCww...',
+    '...wwkkww...',
+    '..wwwwwwww..',
+    '.CwwwwwwwwC.',
+    'CCwwwwwwwwCC',
+    '.CCwwwwwwCC.',
+    '..vCwwwwCv..',
+    '...vwwwwv...',
+    '....w..w....',
     '............'
   ],
   scamp: [
@@ -2174,7 +2272,23 @@ const SPECIES = {
   toxitar:    { name:'Toxitar',    type:'Venom', base:{hp:58,atk:76,def:58,spd:72}, catch:.2, evolve:{at:38,to:'widowmaw'},
                 learn:[[1,'Venom Spit'],[5,'Tackle'],[22,'Toxic Fang']], blurb:'the patient web' },
   widowmaw:   { name:'Widowmaw',   type:'Venom', base:{hp:74,atk:96,def:72,spd:88}, catch:.08,
-                learn:[[1,'Venom Spit'],[5,'Tackle'],[22,'Toxic Fang'],[40,'Acid Flood']], blurb:'the last thing the fly sees' }
+                learn:[[1,'Venom Spit'],[5,'Tackle'],[22,'Toxic Fang'],[40,'Acid Flood']], blurb:'the last thing the fly sees' },
+  /* ---- Parklands Phase 3: the old growth and the great rim ---- */
+  wapituft:   { name:'Wapituft',   type:'Flora', base:{hp:58,atk:60,def:56,spd:52}, catch:.45, evolve:{at:34,to:'thornelk'},
+                learn:[[1,'Tackle'],[6,'Leaf Flick'],[20,'Vine Snap'],[30,'Slam']], blurb:'the fern-antlered calf' },
+  thornelk:   { name:'Thornelk',   type:'Flora', base:{hp:76,atk:84,def:74,spd:70}, catch:.12,
+                learn:[[1,'Tackle'],[6,'Leaf Flick'],[20,'Vine Snap'],[30,'Slam'],[40,'Thorn Storm']], blurb:'the walking thicket' },
+  scavren:    { name:'Scavren',    type:'Gale', base:{hp:52,atk:60,def:50,spd:78}, catch:.4, evolve:{at:32,to:'condorge'},
+                learn:[[1,'Tackle'],[5,'Wing Flick'],[20,'Pounce'],[28,'Gale Force']], blurb:'the rim-wind glider' },
+  condorge:   { name:'Condorge',   type:'Gale', type2:'Stone', base:{hp:70,atk:82,def:72,spd:94}, catch:.1,
+                learn:[[1,'Tackle'],[5,'Wing Flick'],[20,'Pounce'],[28,'Gale Force'],[36,'Rock Slide']], blurb:'the canyon shadow' },
+  mossgrizz:  { name:'Mossgrizz',  type:'Wild', type2:'Flora', base:{hp:84,atk:86,def:78,spd:58}, catch:.15,
+                learn:[[1,'Tackle'],[8,'Pounce'],[22,'Vine Snap'],[32,'Slam'],[42,'Thorn Storm']], blurb:'the forest that growls' },
+  echowing:   { name:'Echowing',   type:'Gale', type2:'Mystic', base:{hp:60,atk:74,def:56,spd:96}, catch:.2,
+                learn:[[1,'Tackle'],[6,'Wing Flick'],[20,'Hex Pulse'],[30,'Gale Force'],[40,'Mind Lash']], blurb:'the voice in the dark rim' },
+  /* legendary — circles above the great rim */
+  skywarden:  { name:'Skywarden',  type:'Gale', type2:'Mystic', base:{hp:92,atk:94,def:84,spd:110}, catch:.05,
+                learn:[[1,'Tempest'],[1,'Talon Dive'],[1,'Veil Rend'],[1,'Slam']], blurb:'the wind that watches' }
 };
 const STARTERS = ['cindret', 'drippet', 'thornbud'];
 
@@ -2204,7 +2318,8 @@ const DEX_ORDER = [
   'kindlit','pyrepard','infernyx','seedle','thornmaw','floravore','scruff','scrapper','apexen',
   'brooklet','cascadon','abyssurge','driftling','skydart','galeon','glimmoth','lunamoth','astramoth',
   'joltfly','voltwasp','stormhive','shardling','quarrol','monolythe','flurret','glacielle','aurorix',
-  'stinglet','toxitar','widowmaw'
+  'stinglet','toxitar','widowmaw',
+  'wapituft','thornelk','scavren','condorge','mossgrizz','echowing','skywarden'
 ];
 const evoTo = sp => SPECIES[sp].evolve ? SPECIES[sp].evolve.to : sp;
 const rivalSp = () => STARTERS[(Math.max(0, STARTERS.indexOf(chosen)) + 1) % 3];
@@ -2774,6 +2889,7 @@ const AREAS = {
       'TTTTTTTTTTTTTTTTTTTTTTTT'
     ],
     wilds: ['tuftcalf'], lvl: [36, 36],   // unused: no grass in the safe hub
+    huts: [{ x0:3, x1:6, y0:2, y1:3, kind:'tutor' }],
     trainers: [{
       key: 'mossy', x: 5, y: 12, name: 'DOCKHAND MOSS', art: 'scamp',
       intro: ['DOCKHAND MOSS: Fresh off the ferry? Your', 'sea legs need testing. Quick bout!'],
@@ -3104,7 +3220,7 @@ const AREAS = {
     ground:'#c0ccd4', dot:'#acbac2', enc:'#9cacb6', blade:'#6e8ea0', blade2:'#54707e',
     raw: [
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
-      'RRRRRRRRRRRRRRRRSRRRRRRRRRRRRRRR',
+      'RRRRRRRRRRRRRRRR9RRRRRRRRRRRRRRR',
       'RRRRRRRRRRRRRRRR.RRRRRRRRRRRRRRR',
       'RRRRRRRRRRRRRRRR.RRRRRRRRRRRRRRR',
       'R..............................R',
@@ -3141,6 +3257,7 @@ const AREAS = {
     }],
     bird: 'tidewing', birdLvl: 57,
     exits: { '6': { to:'saguaro', x:16, y:2 },
+             '9': { to:'redwood', x:16, y:18 },
              '7': { to:'icecave', x:3, y:5, req:'badgeGLAC',
                     reqMsg: ['The cracked ice groans and holds fast.', 'Something vast breathes behind it.', "Only Glacier Crown's ranger badge could", 'steady your hands to pry it open.'] } },
     gate: {
@@ -3162,6 +3279,124 @@ const AREAS = {
       'GLACIER CROWN. The roof of the Parklands.',
       'The ice shifts. Respect it.',
       'The north trail is not yet cut.'
+    ]
+  },
+  redwood: {
+    label: 'REDWOOD EXPANSE',
+    ground:'#5e8a4f', dot:'#4f7a42', enc:'#47723c', blade:'#2e5a30', blade2:'#1f4626',
+    raw: [
+      'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT',
+      'T..............................T',
+      'T..............................T',
+      'T...TT..................TT.....T',
+      'T..TTTT.......,,,,.....TTTT....T',
+      'T..TTTT.......,,,,.....TTTT....T',
+      'T...TT........,,,,......TT.....T',
+      'T..............................T',
+      'T..,,,,..................,,,,..T',
+      'T..,,,,....TTTT..........,,,,..T',
+      'T..,,,,....TTTT..........,,,,..T',
+      'T...........TT.................T',
+      'T..............................T',
+      'T.....TT...........TT..........T',
+      'T....TTTT.....,,,,TTTT.........T',
+      'T....TTTT.....,,,,TTTT.........T',
+      'T.....TT......,,,,.TT.....c....T',
+      'T....S.........................T',
+      'T..............................T',
+      'TTTTTTTTTTTTTTTT1TTTTTTTTTTTTTTT'
+    ],
+    wilds: ['wapituft','wapituft','mossgrizz','eldermoss','mossoak','shroombler','mycolossus','verdantis'], lvl: [56, 60],
+    bird: 'emberoc', birdLvl: 60,
+    trainers: [{
+      key: 'fernanda', x: 8, y: 12, name: 'NATURALIST FERNANDA', art: 'scamp',
+      intro: ['NATURALIST FERNANDA: These trees were old', 'when the isles were young. Show respect -', 'and show me your team!'],
+      rematch: ['FERNANDA: The canopy whispers your name. Again!'],
+      win: ['FERNANDA: Magnificent! Like watching', 'a sapling outgrow the grove.'],
+      party: () => [makeMon('wapituft', 57), makeMon('mossoak', 57)]
+    }, {
+      key: 'cedar', x: 24, y: 7, name: 'OLD GROWTH CEDAR', art: 'salt',
+      intro: ['OLD GROWTH CEDAR: Sixty years under these', 'boughs. The forest fights through me now.'],
+      rematch: ['CEDAR: The rings of a tree remember. So do I.'],
+      win: ['CEDAR: Strong roots, stronger heart.', 'The rim road is north, when you dare.'],
+      party: () => [makeMon('mossgrizz', 59), makeMon('eldermoss', 59), makeMon('terragrizz', 60)]
+    }],
+    exits: { '1': { to:'glacier', x:16, y:2 }, '2': { to:'canyon', x:16, y:2 } },
+    gate: {
+      x:16, y:2, flag:'badgeREDW', name:'RANGER SEQUOIA', art:'warden',
+      intro: [
+        'RANGER SEQUOIA: Welcome to the oldest room',
+        'in the world. The giants watch us battle.',
+        'Show them something worth remembering!'
+      ],
+      win: ['RANGER SEQUOIA: The giants nod. I felt it.', 'The REDWOOD BADGE is yours.', 'The great rim lies north.'],
+      rematch: ['RANGER SEQUOIA: The giants want an encore!'],
+      party: () => [makeMon('thornelk', 58), makeMon('mycolossus', 59), makeMon('mossgrizz', 60)]
+    },
+    sign: [
+      'REDWOOD EXPANSE - park 7 of 8.',
+      'The giants were here first. Walk softly.',
+      'NORTH: the Great Rim. SOUTH: Glacier Crown.'
+    ]
+  },
+  canyon: {
+    label: 'THE GREAT RIM',
+    ground:'#c78d5a', dot:'#b57c4c', enc:'#a87244', blade:'#8a5a36', blade2:'#6e462c',
+    raw: [
+      'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
+      'RRRRRRRRRRRRRRRRSRRRRRRRRRRRRRRR',
+      'R..............................R',
+      'R.........................RR...R',
+      'R...RRRR................RR.....R',
+      'R...RRRR.......,,,,............R',
+      'R...RRRR.......,,,,............R',
+      'R..............,,,,............R',
+      'R..,,,,........................R',
+      'R..,,,,.....RRRRRR.......,,,,..R',
+      'R..,,,,.....RRRRRR.......,,,,..R',
+      'R...........RRRRRR.......,,,,..R',
+      'R..............................R',
+      'R......RR...........RR.........R',
+      'R......RR....,,,,...RR.........R',
+      'R............,,,,..............R',
+      'R............,,,,.........c....R',
+      'R....S.........................R',
+      'R..............................R',
+      'RRRRRRRRRRRRRRRR1RRRRRRRRRRRRRRR'
+    ],
+    wilds: ['scavren','scavren','echowing','cragolith','cragolith','monolythe','terragrizz','bouldbear'], lvl: [59, 63],
+    bird: 'voltalon', birdLvl: 63,
+    weather: 'heat',
+    trainers: [{
+      key: 'piper', x: 8, y: 12, name: 'RIM GUIDE PIPER', art: 'scamp',
+      intro: ['RIM GUIDE PIPER: Careful - the rim drops a', 'mile straight down. Battles keep my mind', 'off the edge. Help me out?'],
+      rematch: ['PIPER: Still not looking down. Battle me!'],
+      win: ['PIPER: Whew! You fight like the wind up here.', 'Watch your step past the switchbacks.'],
+      party: () => [makeMon('scavren', 60), makeMon('echowing', 60)]
+    }, {
+      key: 'vex', x: 22, y: 7, name: 'CANYON ORACLE VEX', art: 'ace',
+      intro: ['CANYON ORACLE VEX: The rim speaks in echoes.', 'It told me you were coming. It did not', 'tell me you would win.'],
+      rematch: ['VEX: The echoes asked for you again.'],
+      win: ['VEX: So the echoes lied. Fascinating.', 'Something circles the high aerie. Listen.'],
+      party: () => [makeMon('echowing', 62), makeMon('monolythe', 62), makeMon('condorge', 63)]
+    }],
+    exits: { '1': { to:'redwood', x:16, y:2 } },
+    gate: {
+      x:16, y:2, flag:'badgeCANY', name:'RANGER TALUS', art:'bruiser',
+      intro: [
+        'RANGER TALUS: Eight parks. Seven badges',
+        'behind you, and me before you.',
+        'The rim breaks the unworthy. Begin!'
+      ],
+      win: ['RANGER TALUS: Unbroken! The CANYON BADGE', 'is yours - the eighth and last.', 'The Superintendent waits atop the summit...', 'when the trail opens.'],
+      rematch: ['RANGER TALUS: The rim never tires. Nor I.'],
+      party: () => [makeMon('condorge', 61), makeMon('monolythe', 62), makeMon('echowing', 62), makeMon('terragrizz', 63)]
+    },
+    sign: [
+      'THE GREAT RIM - park 8 of 8.',
+      'A mile of stone drops below the railing.',
+      'The high aerie is closed to the badgeless.',
+      'NORTH: Summit trail (CLOSED - opening soon).'
     ]
   },
   icecave: {
@@ -3364,7 +3599,7 @@ function applyData(d) {
    ['pines', 'gate3'], ['cliffs', 'gate4'], ['fogisle', 'gate4'],
    ['gateway', 'champion2'], ['yellowstone', 'champion2'], ['everglades', 'badgeYELL'],
    ['yosemite', 'badgeEVER'], ['denali', 'badgeYOSE'], ['saguaro', 'badgeDENA'],
-   ['glacier', 'badgeSAGU'], ['icecave', 'badgeGLAC']
+   ['glacier', 'badgeSAGU'], ['icecave', 'badgeGLAC'], ['redwood', 'badgeGLAC'], ['canyon', 'badgeREDW']
   ].forEach(([a, f]) => { if (!f || flags[f]) flags.vis[a] = 1; });
   return true;
 }
@@ -3753,7 +3988,7 @@ function tryCatch() {
       pushFx(q, 'Caught... but your team AND the Ranch are full!', { kind: 'catchOk', dur: 20 });
       q.push(`${nameOf(en)} scampered off, orb and all.`);
     }
-    if ((en.sp === 'sylvarch' || en.sp === 'mammorime') && (party.includes(en) || ranch.includes(en))) flags[en.sp] = true;
+    if ((en.sp === 'sylvarch' || en.sp === 'mammorime' || en.sp === 'skywarden') && (party.includes(en) || ranch.includes(en))) flags[en.sp] = true;
     battle.endKind = 'caught';
     battle.after = 'end';
     battle.q = q; battle.phase = 'text'; nextText();
@@ -4476,7 +4711,7 @@ function update() {
       } else if (devIdx === 4) {
         delete flags.gate1; delete flags.gate2; delete flags.champion; delete flags.sylvarch;
         delete flags.gate3; delete flags.gate4; delete flags.champion2; delete flags.champion3;
-        delete flags.mammorime;
+        delete flags.mammorime; delete flags.skywarden;
         BADGE_FLAGS.forEach(f => delete flags[f]);
         devMsg = 'Progress relocked'; save();
       } else if (devIdx === 5) { DEX_ORDER.forEach(markSeen); devMsg = 'All ' + DEX_ORDER.length + ' marked seen'; save(); }
@@ -4527,6 +4762,12 @@ function update() {
       if (area === 'hollow' && fx === 8 && fy === 3) { hermitGift(); return; }
       if (area === 'meadow' && fx === 12 && fy === 16) { docReport(); return; }
       if (area === 'gateway' && fx === 12 && fy === 7) { mode = 'badges'; sOk(); return; }
+      if (area === 'canyon' && fx >= 25 && fx <= 29 && fy >= 2 && fy <= 4) {   // the high aerie
+        if (!flags.badgeCANY) { say(['The winds over the aerie scream and shove.', 'Only the rim badge could steady your climb.']); return; }
+        if (flags.skywarden) say(['The aerie stands empty and calm.', 'Its watcher rides the wind at your side.']);
+        else say(['A shadow blots out the sun. The wind itself', 'turns to look at you. SKYWARDEN descends!'], () => startBattle(makeMon('skywarden', 60)));
+        return;
+      }
       if (area === 'icecave' && fx >= 6 && fx <= 10 && fy >= 2 && fy <= 4) {   // the whole frozen mass wakes it
         if (flags.mammorime) say(['The great ice stands hollow and calm.', 'Its walker roams at your side now.']);
         else say(['The ice groans... a shape older than winter', 'shifts inside. MAMMORIME wakes!'], () => startBattle(makeMon('mammorime', 52)));
@@ -4940,6 +5181,7 @@ function drawWorld() {
   for (const t of A.trainers || []) drawArt(t.art, t.x * 16 - camx + 2, t.y * 16 - camy + 2, 1);
   if (area === 'hollow') drawArt('warden', 8 * 16 - camx + 2, 3 * 16 - camy + 2, 1);
   if (area === 'meadow') drawArt('doc', 12 * 16 - camx + 2, 16 * 16 - camy + 2, 1);
+  if (area === 'canyon' && !flags.skywarden) drawArt('skywarden', 26 * 16 - camx + 2, 2 * 16 - camy + 2, 1);
   for (const h of A.huts || []) {
     // roof emblem marks each specialist building
     const ex = ((h.x0 + h.x1 + 1) / 2) * 16 - camx;
@@ -5423,14 +5665,15 @@ const MAP_NODES = {
   meadow: [28, 118], cavern: [52, 102], hollow: [52, 130], shore: [28, 86],
   harbor: [96, 118], pines: [120, 104], cliffs: [142, 88], fogisle: [118, 70],
   gateway: [176, 140], yellowstone: [196, 126], everglades: [176, 112], yosemite: [196, 98],
-  denali: [176, 84], saguaro: [196, 70], glacier: [176, 56], icecave: [196, 42]
+  denali: [176, 88], saguaro: [196, 76], glacier: [176, 64], icecave: [162, 56],
+  redwood: [196, 52], canyon: [176, 40]
 };
 const MAP_LINKS = [
   ['meadow', 'cavern'], ['cavern', 'shore'], ['meadow', 'hollow'],
   ['shore', 'harbor'], ['harbor', 'pines'], ['pines', 'cliffs'], ['cliffs', 'fogisle'],
   ['harbor', 'gateway'], ['gateway', 'yellowstone'], ['yellowstone', 'everglades'],
   ['everglades', 'yosemite'], ['yosemite', 'denali'], ['denali', 'saguaro'],
-  ['saguaro', 'glacier'], ['glacier', 'icecave']
+  ['saguaro', 'glacier'], ['glacier', 'icecave'], ['glacier', 'redwood'], ['redwood', 'canyon']
 ];
 function drawMap() {
   px(0, 0, 240, 160, '#1d3a52');

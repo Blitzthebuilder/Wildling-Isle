@@ -5,6 +5,28 @@ release merged to the live game.
 
 ---
 
+## Unreleased (on beta)
+
+### Parklands Phase 3 — the old growth and the great rim
+- Two new parks extend the chain past Glacier Crown: **REDWOOD EXPANSE**
+  (walk among giants) and **THE GREAT RIM** (a mile of stone below the
+  railing, heat shimmering off the ledges)
+- **Rangers Sequoia and Talus** guard badges 7 and 8 — all eight Ranger
+  Badges are now earnable; the Superintendent's summit trail teases at
+  the top of the Rim
+- **SKYWARDEN**, the Gale/Mystic legendary — "the wind that watches" —
+  circles the Rim's high aerie. The perch only answers to the eighth
+  badge, and the whole aerie responds (lesson learned from Mammorime)
+- Six new natives: Wapituft → Thornelk (the walking thicket), Scavren →
+  Condorge (Gale/Stone canyon shadow), Mossgrizz (the forest that
+  growls), and Echowing (the voice in the dark rim). Dex 104 → 111
+- Four new roaming trainers, campfires, weather, and elemental birds in
+  both parks; the field map grew two nodes
+- **The Gateway visitor lodge is now a Move Tutor** — full song access
+  without sailing back to Boothbay
+
+---
+
 ## The Battle & World Update — 2026-07-18 (PR #32)
 
 ### Battle
