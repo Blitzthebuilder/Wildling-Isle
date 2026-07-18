@@ -5,6 +5,31 @@ release merged to the live game.
 
 ---
 
+## Unreleased (on beta)
+
+### The character pass — no more squares
+Six parks were rebuilt from the same mirror-box template into places
+with real shape:
+- **Yellowstone Basin**: terraced hot-spring pools behind two ridge
+  walls with offset gaps — wind through the terraces
+- **Everglade Sloughs**: mostly open water now, crossed by a creaking
+  boardwalk ring with grass islands — rain on the planks
+- **Yosemite Heights**: three sheer wall bands with offset breaks — an
+  honest switchback climb to Vespera's gate
+- **Denali Tundra**: braided ribbons of ice snake across the tundra
+- **Saguaro Wastes**: scattered saguaro cacti (a brand-new tile) among
+  dune mounds
+- **Glacier Crown**: jagged crevasse lines to thread on the way to the
+  cracked ice
+
+### More rivals on the road
+Seventeen new roaming trainers — every area now fields one more, from
+Picnicker Berry in the meadow (you stepped on her blanket) to
+Crownstone Keeper Frost at the summit. All replayable; total roster
+now fifty
+
+---
+
 ## Parklands Phase 4: The Summit — 2026-07-18 (PR #34)
 
 ### The Summit

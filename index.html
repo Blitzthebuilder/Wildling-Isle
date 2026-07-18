@@ -2415,6 +2415,12 @@ const AREAS = {
       rematch: ['DUELIST IVY: Back for more? Good. So am I.'],
       win: ['DUELIST IVY: ...Hmph. You are the real thing.', 'Fine. Come test me whenever you dare.'],
       party: () => [makeMon('flarepup', 10), makeMon('petalit', 10), makeMon('zapmite', 11)]
+    }, {
+      key: 'berry', x: 24, y: 8, name: 'PICNICKER BERRY', art: 'scamp',
+      intro: ['PICNICKER BERRY: You stepped on my blanket!', 'Apology battle. Right now.'],
+      rematch: ['BERRY: The jam survived. You will not. Again!'],
+      win: ['BERRY: Okay, you are forgiven.', 'Want a sandwich? Too bad. All gone.'],
+      party: () => [makeMon('bubbet', 6), makeMon('petalit', 6)]
     }]
   },
   cavern: {
@@ -2486,6 +2492,12 @@ const AREAS = {
       rematch: ['FOREMAN GARF: Another cave-in coming. Ready?'],
       win: ['FOREMAN GARF: Bah! Buried by a rookie.', 'Come back down when you want a rematch.'],
       party: () => [makeMon('statikit', 15), makeMon('shalecub', 16), makeMon('boulderit', 16)]
+    }, {
+      key: 'wick', x: 9, y: 6, name: 'SPELUNKER WICK', art: 'salt',
+      intro: ['SPELUNKER WICK: My lantern died an hour ago.', 'Been battling by echo alone. You next!'],
+      rematch: ['WICK: Still down here. Still undefeated. Mostly.'],
+      win: ['WICK: Ha! Now THAT lit up the dark.', 'Mind the loose rocks, friend.'],
+      party: () => [makeMon('statikit', 12), makeMon('rockit', 12)]
     }]
   },
   /* hidden grotto behind the caverns' false wall — the hermit's home */
@@ -2584,6 +2596,12 @@ const AREAS = {
       rematch: ['TIDECALLER NIX: The tide turns again. Face me.'],
       win: ['TIDECALLER NIX: The sea yields to you. As do I.', 'Return when the tide calls you back.'],
       party: () => [makeMon('cyclonet', 22), makeMon('marfin', 22), makeMon('leviafin', 23)]
+    }, {
+      key: 'brine', x: 10, y: 10, name: 'WAVE CHASER BRINE', art: 'scamp',
+      intro: ['WAVE CHASER BRINE: The tide brought you in?', 'Then the tide can watch you lose!'],
+      rematch: ['BRINE: Back with the tide. Poetic. Battle!'],
+      win: ['BRINE: Swept clean off my feet!', 'The shore suits you.'],
+      party: () => [makeMon('finlet', 17), makeMon('breezel', 17)]
     }]
   },
   /* ---- BOOTHBAY ISLE: postgame, unlocked by the champion ferry ---- */
@@ -2664,6 +2682,12 @@ const AREAS = {
       rematch: ['BOSUN HARK: Back on my dock? Then draw!'],
       win: ['BOSUN HARK: Aye... a worthy hand indeed.', 'Any time you want a proper scrap, find me.'],
       party: () => [makeMon('galehoot', 24), makeMon('voltcat', 24), makeMon('bubblun', 24)]
+    }, {
+      key: 'marlowe', x: 10, y: 5, name: 'FISHMONGER MARLOWE', art: 'salt',
+      intro: ['FISHMONGER MARLOWE: Fresh catch! Today only:', 'a battle, free of charge!'],
+      rematch: ['MARLOWE: Back for the catch of the day?'],
+      win: ['MARLOWE: Gutted like a mackerel!', 'Take the win, it is fresher than my fish.'],
+      party: () => [makeMon('marfin', 26), makeMon('bubblun', 26), makeMon('voltcat', 27)]
     }]
   },
   pines: {
@@ -2736,6 +2760,12 @@ const AREAS = {
       rematch: ['TRAPPER BRUNO: The pack remembers you. At them!'],
       win: ['TRAPPER BRUNO: Heh. My pack has met its match.', 'Track me down for a rematch anytime.'],
       party: () => [makeMon('thistlash', 29), makeMon('mycolossus', 29), makeMon('eldermoss', 29)]
+    }, {
+      key: 'norrell', x: 20, y: 10, name: 'SAP TAPPER NORRELL', art: 'scamp',
+      intro: ['SAP TAPPER NORRELL: Shh. The sap is running.', 'So is my patience. Battle!'],
+      rematch: ['NORRELL: The pines drip slow. I do not.'],
+      win: ['NORRELL: Sticky situation, that was.', 'The grove approves of you.'],
+      party: () => [makeMon('shroombler', 29), makeMon('mossoak', 29), makeMon('thistlash', 30)]
     }]
   },
   cliffs: {
@@ -2796,6 +2826,12 @@ const AREAS = {
       rematch: ['WATCHER CRAG: The cliffs test you once more. Begin!'],
       win: ['WATCHER CRAG: You endure like the granite itself.', 'The cliffs will wait for your return.'],
       party: () => [makeMon('thunderlynx', 32), makeMon('bouldbear', 33), makeMon('terragrizz', 33)]
+    }, {
+      key: 'galewind', x: 25, y: 5, name: 'WIND SAILOR GALE', art: 'ace',
+      intro: ['WIND SAILOR GALE: I ride the updrafts off', 'these cliffs. Care to get blown away?'],
+      rematch: ['GALE: The wind called your name. En garde!'],
+      win: ['GALE: Knocked clean out of the sky!', 'The cliffs remember the bold.'],
+      party: () => [makeMon('cyclonet', 32), makeMon('galehoot', 32), makeMon('boulderit', 33)]
     }]
   },
   fogisle: {
@@ -2847,6 +2883,12 @@ const AREAS = {
       rematch: ['PHANTOM VESPER: The fog delivers you to me again. En garde!'],
       win: ['PHANTOM VESPER: A light that cuts the fog... go on.', 'Mara awaits. Return to me when you wish.'],
       party: () => [makeMon('tempestrel', 34), makeMon('verdantis', 34), makeMon('oraclaw', 34)]
+    }, {
+      key: 'murmur', x: 10, y: 12, name: 'FOG LISTENER MURMUR', art: 'ace',
+      intro: ['FOG LISTENER MURMUR: The mist speaks, if you', 'know how to listen. It says: fight me.'],
+      rematch: ['MURMUR: The fog rolled you back to me.'],
+      win: ['MURMUR: The mist parts for you...', 'how curious. Walk carefully.'],
+      party: () => [makeMon('mystifur', 36), makeMon('tempestrel', 36), makeMon('eldermoss', 37)]
     }],
     gate: {
       x:19, y:2, flag:'champion2', name:'MARA', art:'mara',
@@ -2907,6 +2949,12 @@ const AREAS = {
       rematch: ['MOSS: Another ferry, another battle. Tradition!'],
       win: ['MOSS: Sturdy as a bollard! Welcome to', 'the Parklands, friend.'],
       party: () => [makeMon('finlet', 37), makeMon('bubblun', 38)]
+    }, {
+      key: 'posty', x: 17, y: 5, name: 'POSTMASTER POSTY', art: 'scamp',
+      intro: ['POSTMASTER POSTY: Mail for the rangers, every', 'day, on foot. My team keeps me safe. See?'],
+      rematch: ['POSTY: Another delivery, another duel!'],
+      win: ['POSTY: Signed, sealed, defeated.', 'Tell the rangers I said hello.'],
+      party: () => [makeMon('galehoot', 38), makeMon('tuftcalf', 38)]
     }],
     exits: { '1': { to:'yellowstone', x:16, y:18 }, '3': { to:'harbor', x:20, y:16 } },
     sign: [
@@ -2922,22 +2970,22 @@ const AREAS = {
     raw: [
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT',
       'T..............................T',
+      'T..~~~~..........,,,...~~~~~...T',
+      'T.~~~~~~.........,,,..~~~~~~~..T',
+      'T..~~~~..................~~~...T',
+      'T...........TT.................T',
+      'TTTTT..TTTTTTTTT...TTTTTTT..TTTT',
       'T..............................T',
+      'T....,,,,.....~~~~~............T',
+      'T....,,,,....~~~~~~~....,,,,...T',
+      'T....,,,,.....~~~~~.....,,,,...T',
       'T..............................T',
-      'T...~~~~................~~~~...T',
-      'T...~~~~................~~~~...T',
-      'T...~~~~................~~~~...T',
+      'TTTT..TTTTTT......TTTTTTTTT..TTT',
       'T..............................T',
-      'T..,,,,..................,,,,..T',
-      'T..,,,,...RRRR...........,,,,..T',
-      'T..,,,,...RRRR...........,,,,..T',
-      'T.........RRRR.................T',
+      'T......~~~~........TT..........T',
+      'T.....~~~~~~..,,,,.TT..,,,,....T',
+      'T....S.~~~~...,,,,....,,,,.c...T',
       'T..............................T',
-      'T...................RRRR.......T',
-      'T...................RRRR.......T',
-      'T............,,,,,..RRRR.......T',
-      'T....S.......,,,,,........c....T',
-      'T............,,,,,.............T',
       'T..............................T',
       'TTTTTTTTTTTTTTTT1TTTTTTTTTTTTTTT'
     ],
@@ -2949,11 +2997,17 @@ const AREAS = {
       win: ['OPAL: Whoosh! You erupted all over my team.', 'Come watch the basin with me anytime.'],
       party: () => [makeMon('tuftcalf', 38), makeMon('flarepup', 38)]
     }, {
-      key: 'basalt', x: 26, y: 12, name: 'WARDEN AIDE BASALT', art: 'bruiser',
+      key: 'basalt', x: 25, y: 13, name: 'WARDEN AIDE BASALT', art: 'bruiser',
       intro: ["WARDEN AIDE BASALT: Ranger Solene's busy.", 'You get through ME before you bother her.'],
       rematch: ['BASALT: Round two? The bison are watching.'],
       win: ['BASALT: Hrmph. Solid work, visitor.', 'The trail is that way.'],
       party: () => [makeMon('brumbison', 41), makeMon('scorchound', 41), makeMon('boulderit', 42)]
+    }, {
+      key: 'sinter', x: 12, y: 13, name: 'SPRINGS SOAKER SINTER', art: 'salt',
+      intro: ['SOAKER SINTER: Thirty years soaking in these', 'terraces. Toughest skin on the isle. Test it!'],
+      rematch: ['SINTER: The water is fine. Fighting is finer.'],
+      win: ['SINTER: Steamed and defeated!', 'Mind the pools - they bite worse than I do.'],
+      party: () => [makeMon('flarepup', 40), makeMon('geyserun', 40)]
     }],
     bird: 'emberoc', birdLvl: 42,
     exits: { '1': { to:'gateway', x:12, y:1 }, '2': { to:'everglades', x:16, y:18 } },
@@ -2983,22 +3037,22 @@ const AREAS = {
     raw: [
       'TTTTTTTTTTTTTTTT3TTTTTTTTTTTTTTT',
       'T..............................T',
+      'T.~~~~~~~~~~~~~~.~~~~~~~~~~~~~.T',
+      'T.~~=========~~~.~~~=========~.T',
+      'T.X~=~~~~~~~=~~~.~~~=~~~~~~~=~.T',
+      'T..~=~~,,,~~=====.====~~,,,~=~.T',
+      'T.~~=~~,,,~~~~~~~~~~~~~,,,~~=~.T',
+      'T.~~=~~~~~~~~~~~~~~~~~~~~~~~=~.T',
+      'T.~~=======~~~~~~~~~~========~.T',
+      'T.~~~~~~~~=~~~,,,,~~~=~~~~~~~~.T',
+      'T.~~~~~~~~=====,,=====~~~~~~~~.T',
+      'T.~~~~~~~~~~~~~....~~~~~~~~~~~.T',
+      'T..~~~~~~~~~~~~....~~~~~~~~~~..T',
       'T..............................T',
-      'T.................,,,,.........T',
-      'T.X~~~~~~.........,,,,.........T',
-      'T..~~~~~~.........,,,,~~~~~~~..T',
-      'T..~~~~~~.............~~~~~~~..T',
-      'T..~~~~~~.............~~~~~~~..T',
-      'T.....................~~~~~~~..T',
-      'T.....................~~~~~~~..T',
-      'T....,,,,......................T',
-      'T....,,,,......................T',
-      'T....,,,,......................T',
-      'T.........~~~~~~~.......,,,,...T',
-      'T.........~~~~~~~.......,,,,...T',
-      'T.........~~~~~~~.......,,,,...T',
-      'T...S.....~~~~~~~..............T',
-      'T..........................c...T',
+      'T...,,,,....~~~~~~~....,,,,....T',
+      'T...,,,,...~~~~~~~~~...,,,,....T',
+      'T...........~~~~~~.............T',
+      'T....S.....................c...T',
       'T..............................T',
       'TTTTTTTTTTTTTTTT2TTTTTTTTTTTTTTT'
     ],
@@ -3010,11 +3064,17 @@ const AREAS = {
       win: ['SKEET: Slipperier than a mud-eel, you are.', 'Mind the gators on your way.'],
       party: () => [makeMon('chompling', 41), makeMon('finlet', 41)]
     }, {
-      key: 'mirelle', x: 27, y: 11, name: 'SWAMP QUEEN MIRELLE', art: 'ace',
+      key: 'mirelle', x: 17, y: 12, name: 'SWAMP QUEEN MIRELLE', art: 'ace',
       intro: ['SWAMP QUEEN MIRELLE: The marsh keeps its own', 'court, and I rule it. Kneel or battle.'],
       rematch: ['MIRELLE: Back before my court? Bold. En garde!'],
       win: ['MIRELLE: The crown slips... this once.', 'The marsh remembers you, challenger.'],
       party: () => [makeMon('gatorush', 44), makeMon('marfin', 44), makeMon('stinglet', 45)]
+    }, {
+      key: 'heron', x: 20, y: 16, name: 'STILT WALKER HERON', art: 'scamp',
+      intro: ['STILT WALKER HERON: I walk the marsh where', 'boardwalks fear to creak. Battle!'],
+      rematch: ['HERON: Still on stilts. Still standing. You?'],
+      win: ['HERON: Toppled! Into the mud with me.', 'The planks are safer, trust me.'],
+      party: () => [makeMon('chompling', 43), makeMon('stinglet', 43), makeMon('finlet', 44)]
     }],
     weather: 'rain',
     cache: { item:'pendant', flag:'cachePendant', lines: [
@@ -3051,20 +3111,20 @@ const AREAS = {
       'RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR',
       'RRRRRRRRRRRRRRRR4RRRRRRRRRRRRRRR',
       'R..............................R',
+      'R....,,,.......................R',
+      'R...,,,,,..........RRRRR.......R',
+      'R....,,,..........RRRRRRR......R',
+      'R..................RRRRR.......R',
+      'RRRRRRRRRR....RRRRRRRRRRRRRRRRRR',
       'R..............................R',
+      'RRRRRRRRRRRRRRRRRRRRRRRR....RRRR',
       'R..............................R',
+      'RRRR....RRRRRRRRRRRRRRRRRRRRRRRR',
       'R..............................R',
-      'R..,,,,..................,,,,..R',
-      'R..,,,,..................,,,,..R',
-      'R..,,,,..................,,,,..R',
-      'R...RRRR................RRRR...R',
-      'R...RRRR................RRRR...R',
-      'R...RRRR................RRRR...R',
-      'R..............................R',
-      'R..............................R',
-      'R.............,,,,,............R',
-      'R.............,,,,,............R',
-      'R....S........,,,,,........c...R',
+      'R.....,,,,.........,,,,........R',
+      'R.....,,,,.........,,,,........R',
+      'R..............RR..............R',
+      'R....S.........RR..........c...R',
       'R..............................R',
       'R..............................R',
       'RRRRRRRRRRRRRRRR3RRRRRRRRRRRRRRR'
@@ -3082,6 +3142,12 @@ const AREAS = {
       rematch: ['GRANITE JO: Chalk up. The wall waits for no one.'],
       win: ['GRANITE JO: You climb battles the way I', 'climb granite. Respect.'],
       party: () => [makeMon('cragolith', 47), makeMon('verdantis', 47), makeMon('shardling', 48)]
+    }, {
+      key: 'piton', x: 10, y: 12, name: 'WALL SLEEPER PITON', art: 'bruiser',
+      intro: ['WALL SLEEPER PITON: I sleep hanging off the', 'big wall. Fear left me years ago. Battle!'],
+      rematch: ['PITON: The wall and I woke up ready.'],
+      win: ['PITON: Knocked off my anchor!', 'The switchbacks are that way, champ.'],
+      party: () => [makeMon('cragolith', 46), makeMon('shardling', 46), makeMon('bouldbear', 47)]
     }],
     bird: 'voltalon', birdLvl: 48,
     exits: { '3': { to:'everglades', x:16, y:2 }, '4': { to:'denali', x:16, y:18 } },
@@ -3111,20 +3177,20 @@ const AREAS = {
       'IIIIIIIIIIIIIIII5IIIIIIIIIIIIIII',
       'I..............................I',
       'I..............................I',
-      'I..............................I',
-      'I...IIII................IIII...I',
-      'I...IIII................IIII...I',
-      'I...IIII................IIII...I',
-      'I.........III..................I',
-      'I.........III..................I',
-      'I..,,,,..................,,,,..I',
-      'I..,,,,..................,,,,..I',
-      'I..,,,,..................,,,,..I',
-      'I...................III........I',
-      'I............,,,,,,.III........I',
-      'I............,,,,,,............I',
-      'I............,,,,,,............I',
-      'I..............................I',
+      'I....III.......................I',
+      'I...IIIII..........IIII........I',
+      'I..IIIII..........IIIIII.......I',
+      'I...III....II......IIII........I',
+      'I..........III.................I',
+      'I....,......IIII......,,,,.....I',
+      'I...,,,......IIII.....,,,,.....I',
+      'I...,,,......III...............I',
+      'I..............II..............I',
+      'I.....IIII......I....IIII......I',
+      'I....IIIIII..........IIIIII....I',
+      'I.....IIII....,,,,....IIII.....I',
+      'I.............,,,,.............I',
+      'I.............,,,,.............I',
       'I....S....................c....I',
       'I..............................I',
       'IIIIIIIIIIIIIIII4IIIIIIIIIIIIIII'
@@ -3143,6 +3209,12 @@ const AREAS = {
       rematch: ['ORVO: Winter never ends up here. Neither do I.'],
       win: ['ORVO: Ha! Warm blood wins the day.', 'Take the north trail careful-like.'],
       party: () => [makeMon('bouldbear', 50), makeMon('snarlow', 50), makeMon('cragolith', 51)]
+    }, {
+      key: 'aurora', x: 22, y: 7, name: 'LIGHT WATCHER AURORA', art: 'ace',
+      intro: ['LIGHT WATCHER AURORA: I came for the sky', 'fires. Stayed for the battles. Ready?'],
+      rematch: ['AURORA: The lights dance tonight. So do we.'],
+      win: ['AURORA: Radiant! The sky approves.', 'Watch the ribbons of ice out there.'],
+      party: () => [makeMon('flurret', 49), makeMon('wispurr', 49), makeMon('stratowl', 50)]
     }],
     bird: 'voltalon', birdLvl: 51,
     exits: { '4': { to:'yosemite', x:16, y:3 }, '5': { to:'saguaro', x:16, y:18 } },
@@ -3171,22 +3243,22 @@ const AREAS = {
     raw: [
       'RRRRRRRRRRRRRRRR6RRRRRRRRRRRRRRR',
       'R..............................R',
-      'R..............................R',
-      'R..............................R',
-      'R...RRR........................R',
-      'R...RRR..................RRR...R',
-      'R...RRR......,,,,,,......RRR...R',
-      'R...RRR......,,,,,,......RRR...R',
-      'R............,,,,,,......RRR...R',
-      'R..............................R',
-      'R..,,,,........................R',
-      'R..,,,,..................,,,,..R',
-      'R..,,,,..................,,,,..R',
-      'R........................,,,,..R',
-      'R.........RRR..................R',
-      'R.........RRR..................R',
-      'R.........RRR..................R',
-      'R...S......................c...R',
+      'R...x.......x..........x.......R',
+      'R.......RRRR.......x...........R',
+      'R..x...RRRRRR..........x...x...R',
+      'R.......RRRR....,,,,...........R',
+      'R...............,,,,....RRR....R',
+      'R....x..........,,,,...RRRRR...R',
+      'R.......x...............RRR....R',
+      'R..,,,,.................x......R',
+      'R..,,,,......x.................R',
+      'R..,,,,..........RRRR......x...R',
+      'R.....x.........RRRRRR.........R',
+      'R................RRRR....,,,,..R',
+      'R...x....................,,,,..R',
+      'R..........x...................R',
+      'R......,,,,.............x......R',
+      'R...S...,,,,...............c...R',
       'R..............................R',
       'RRRRRRRRRRRRRRRR5RRRRRRRRRRRRRRR'
     ],
@@ -3204,6 +3276,12 @@ const AREAS = {
       rematch: ['CAL: Still drifting. Still dangerous. Draw.'],
       win: ['CAL: Reckon the desert picked a favorite.', 'It was not me.'],
       party: () => [makeMon('sideviper', 53), makeMon('scorchound', 53), makeMon('toxitar', 54)]
+    }, {
+      key: 'sol', x: 20, y: 9, name: 'DUNE RUNNER SOL', art: 'scamp',
+      intro: ['DUNE RUNNER SOL: I race the heat shimmer at', 'noon. You look slower than that. Prove it!'],
+      rematch: ['SOL: Rematch at high noon. Which is now.'],
+      win: ['SOL: Outpaced! First time in years.', 'Hydrate, then head north.'],
+      party: () => [makeMon('rattlet', 52), makeMon('scorchound', 52), makeMon('gilaflare', 53)]
     }],
     bird: 'emberoc', birdLvl: 54,
     exits: { '5': { to:'denali', x:16, y:2 }, '6': { to:'glacier', x:16, y:18 } },
@@ -3235,36 +3313,42 @@ const AREAS = {
       'RRRRRRRRRRRRRRRR.RRRRRRRRRRRRRRR',
       'RRRRRRRRRRRRRRRR.RRRRRRRRRRRRRRR',
       'R..............................R',
+      'R..IIIIIIIII......IIIIIIIIII...R',
       'R..............................R',
-      'R...IIII................IIII...R',
-      'R...IIII................IIII...R',
-      'R...IIII................IIII...7',
-      'R............IIIIII............R',
-      'R............IIIIII............R',
+      'R.....IIIIIIIIIII.....IIIII....R',
+      'R..............................7',
+      'R...IIIIII....IIIIIIIII........R',
       'R..............................R',
-      'R..,,,,..................,,,,..R',
-      'R..,,,,..................,,,,..R',
-      'R..,,,,..................,,,,..R',
-      'R.............,,,,,............R',
-      'R.............,,,,,............R',
-      'R....S........,,,,,.......c....R',
+      'R.IIIIIII...IIIIII....IIIIII...R',
+      'R..,,,,........................R',
+      'R.......IIIII......III....,,,..R',
+      'R..,,,,............III....,,,..R',
+      'R.............,,,,.............R',
+      'R.....IIII....,,,,....IIII.....R',
+      'R....S....................c....R',
       'R..............................R',
       'RRRRRRRRRRRRRRRR6RRRRRRRRRRRRRRR'
     ],
     wilds: ['rambluff','rambluff','rambluff','terragrizz','terragrizz','geyserun','geyserun','quarrol','snarlow','glacielle'], lvl: [53, 57],
     weather: 'snow',
     trainers: [{
-      key: 'noelle', x: 8, y: 5, name: 'ICE FISHER NOELLE', art: 'scamp',
+      key: 'noelle', x: 8, y: 6, name: 'ICE FISHER NOELLE', art: 'scamp',
       intro: ['ICE FISHER NOELLE: Drilled all morning for', 'nothing. You will bite though. Battle!'],
       rematch: ['NOELLE: The fish are shy. You are not. Again!'],
       win: ['NOELLE: Reeled me right in. Nice one.', 'Mind the crevasses up top.'],
       party: () => [makeMon('rambluff', 53), makeMon('flurret', 53)]
     }, {
-      key: 'halvar', x: 24, y: 11, name: 'CROWN VETERAN HALVAR', art: 'warden',
+      key: 'halvar', x: 24, y: 12, name: 'CROWN VETERAN HALVAR', art: 'warden',
       intro: ['CROWN VETERAN HALVAR: I guarded this crown', 'before Boreal was born. Show me your worth.'],
       rematch: ['HALVAR: The old guard never rusts. Once more.'],
       win: ['HALVAR: Strong as the ice and twice as sharp.', 'Boreal will have their hands full.'],
       party: () => [makeMon('cragoram', 56), makeMon('geyserun', 56), makeMon('snarlow', 57)]
+    }, {
+      key: 'crev', x: 18, y: 10, name: 'CREVASSE JUMPER CREV', art: 'bruiser',
+      intro: ['CREVASSE JUMPER CREV: Every crack in this ice', 'has tried to eat me. None succeeded. Battle!'],
+      rematch: ['CREV: The ice shifted. I did not. Go!'],
+      win: ['CREV: Swallowed whole! Well jumped.', 'Thread the crevasses careful now.'],
+      party: () => [makeMon('quarrol', 55), makeMon('snarlow', 55), makeMon('rambluff', 56)]
     }],
     bird: 'tidewing', birdLvl: 57,
     exits: { '6': { to:'saguaro', x:16, y:2 },
@@ -3331,6 +3415,12 @@ const AREAS = {
       rematch: ['CEDAR: The rings of a tree remember. So do I.'],
       win: ['CEDAR: Strong roots, stronger heart.', 'The rim road is north, when you dare.'],
       party: () => [makeMon('mossgrizz', 59), makeMon('eldermoss', 59), makeMon('terragrizz', 60)]
+    }, {
+      key: 'loam', x: 16, y: 11, name: 'MUSHROOM FORAGER LOAM', art: 'scamp',
+      intro: ['FORAGER LOAM: The best chanterelles grow in', 'battle-trampled soil. Help me farm some!'],
+      rematch: ['LOAM: The mushrooms missed you. Sort of.'],
+      win: ['LOAM: A bumper crop of defeat!', 'The old growth keeps its secrets. Mostly.'],
+      party: () => [makeMon('shroombler', 58), makeMon('mycolossus', 58)]
     }],
     exits: { '1': { to:'glacier', x:16, y:3 }, '2': { to:'canyon', x:16, y:18 } },
     gate: {
@@ -3390,6 +3480,12 @@ const AREAS = {
       rematch: ['VEX: The echoes asked for you again.'],
       win: ['VEX: So the echoes lied. Fascinating.', 'Something circles the high aerie. Listen.'],
       party: () => [makeMon('echowing', 62), makeMon('monolythe', 62), makeMon('condorge', 63)]
+    }, {
+      key: 'switch', x: 12, y: 8, name: 'SWITCHBACK RUNNER SWITCH', art: 'scamp',
+      intro: ['SWITCHBACK RUNNER SWITCH: Down and up the rim', 'twice a day. Cardio AND battles. Go!'],
+      rematch: ['SWITCH: Lap two! You know the drill.'],
+      win: ['SWITCH: Winded! And not from the run.', 'The aerie is up top. Bring courage.'],
+      party: () => [makeMon('scavren', 61), makeMon('condorge', 61)]
     }],
     exits: { '1': { to:'redwood', x:16, y:1 }, '2': { to:'summit', x:12, y:12 } },
     gate: {
@@ -3443,6 +3539,12 @@ const AREAS = {
       rematch: ['MORAINE: The ridge remembers. Once more.'],
       win: ['MORAINE: By the old stone... magnificent.', 'Go on. Vance is waiting.'],
       party: () => [makeMon('tundralf', 63), makeMon('monolythe', 63), makeMon('thornelk', 64)]
+    }, {
+      key: 'keeper', x: 12, y: 8, name: 'CROWNSTONE KEEPER FROST', art: 'warden',
+      intro: ['KEEPER FROST: I sweep snow off the crown', 'stone at dawn. It likes a clean fight. So do I.'],
+      rematch: ['KEEPER FROST: The stone is swept. Floor is yours.'],
+      win: ['KEEPER FROST: The crown stone hums...', 'it likes you. Vance is just north.'],
+      party: () => [makeMon('aurorix', 62), makeMon('tundralf', 62), makeMon('monolythe', 63)]
     }],
     exits: { '1': { to:'canyon', x:16, y:2 } },
     gate: {
@@ -3497,7 +3599,7 @@ for (const k in AREAS) {
   a.map = a.raw.map(r => r.padEnd(a.mw, r[0]).slice(0, a.mw));
   a.mh = a.raw.length;
 }
-const SOLID = 'T~HSRcObLXI';
+const SOLID = 'T~HSRcObLXIx';
 const START = { x: 9, y: 18 };
 /* elemental bird spawns: unlocked by gate, rolled per grass encounter;
    secret — hoarding charm orbs above lureOrbs quadruples the rate */
@@ -5167,6 +5269,11 @@ function drawTile(t, x, y, sx, sy) {
     px(sx + 1, sy + 1, 14, 3, '#d5eaf2');
     px(sx + h % 9, sy + 6 + (h >> 2) % 7, 4, 2, '#8ab4c8');
     px(sx + (h >> 4) % 11, sy + 12, 2, 2, '#8ab4c8');
+  } else if (t === 'x') {
+    px(sx + 6, sy + 2, 4, 12, '#3e8a3d');
+    px(sx + 2, sy + 5, 4, 3, '#3e8a3d'); px(sx + 2, sy + 2, 3, 5, '#57b04c');
+    px(sx + 11, sy + 7, 3, 3, '#3e8a3d'); px(sx + 11, sy + 4, 3, 5, '#57b04c');
+    px(sx + 7, sy + 3, 1, 10, '#8fd07a');
   } else if (t === 'F') {
     const col = h % 2 ? '#e86a5f' : '#f5d67b';
     px(sx + 3, sy + 3, 3, 3, col);
