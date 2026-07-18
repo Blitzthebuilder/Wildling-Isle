@@ -3133,6 +3133,7 @@ let ranch = [];               // stored Wildlings beyond the 6-mon team
 const RANCH_MAX = 30;
 let tmMenu = -1;              // team submenu option index (-1 = closed)
 let tmSel = -1;               // mon picked for a switch (-1 = none)
+let moIdx = 0, moSel = -1;    // move-order cursor + picked slot (-1 = none)
 let infoIdx = 0;              // party index shown on the info screen
 let coins = 0;
 let items = { berry: 0, jam: 0, locket: 0, charm: 0, pendant: 0 };
@@ -4013,16 +4014,17 @@ function update() {
   }
 
   if (mode === 'team') {
-    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / ITEM / RENAME / BACK
-      if (tap('up')) { tmMenu = (tmMenu + 4) % 5; sMove(); }
-      if (tap('down')) { tmMenu = (tmMenu + 1) % 5; sMove(); }
+    if (tmMenu >= 0) {                       // submenu: SWITCH / INFO / ITEM / MOVES / RENAME / BACK
+      if (tap('up')) { tmMenu = (tmMenu + 5) % 6; sMove(); }
+      if (tap('down')) { tmMenu = (tmMenu + 1) % 6; sMove(); }
       if (tap('B')) { sBack(); tmMenu = -1; }
       else if (tap('A')) {
         sOk();
         if (tmMenu === 0) { tmSel = teamIdx; tmMenu = -1; }
         else if (tmMenu === 1) { infoIdx = teamIdx; mode = 'info'; tmMenu = -1; }
         else if (tmMenu === 2) { tiIdx = 0; mode = 'teamitem'; tmMenu = -1; }
-        else if (tmMenu === 3) {
+        else if (tmMenu === 3) { moIdx = 0; moSel = -1; mode = 'moveorder'; tmMenu = -1; }
+        else if (tmMenu === 4) {
           const m = party[teamIdx];
           const nick = askNick('Nickname for ' + SPECIES[m.sp].name + '?', m.nick || '');
           if (nick !== undefined) { m.nick = nick; save(); }
@@ -4046,6 +4048,26 @@ function update() {
     else if (tap('B')) {
       if (tmSel >= 0) { tmSel = -1; sBack(); }
       else { sBack(); mode = 'world'; }
+    }
+    return;
+  }
+
+  if (mode === 'moveorder') {
+    const m = party[teamIdx], n = m.moves.length;
+    if (tap('up')) { moIdx = (moIdx + n - 1) % n; sMove(); }
+    if (tap('down')) { moIdx = (moIdx + 1) % n; sMove(); }
+    if (tap('B') || tap('C')) {
+      if (moSel >= 0) { moSel = -1; sBack(); }   // un-pick first, exit second
+      else { sBack(); mode = 'team'; }
+    } else if (tap('A')) {
+      if (moSel < 0) { moSel = moIdx; sOk(); }
+      else {
+        if (moSel !== moIdx) {
+          const t = m.moves[moSel]; m.moves[moSel] = m.moves[moIdx]; m.moves[moIdx] = t;
+          save();
+        }
+        moSel = -1; sOk();
+      }
     }
     return;
   }
@@ -5055,14 +5077,30 @@ function drawTeamList(idx, inBattle) {
     else if (m.st) text(ST[m.st].tag, 210, y + 2, ST[m.st].col, 7);
   });
   if (!inBattle && tmMenu >= 0) {
-    const my = clamp(22 + idx * 22, 14, 84);
-    drawBox(156, my, 76, 74);
-    ['SWITCH', 'INFO', 'ITEM', 'RENAME', 'BACK'].forEach((o, i) => {
+    const my = clamp(22 + idx * 22, 14, 70);
+    drawBox(156, my, 76, 88);
+    ['SWITCH', 'INFO', 'ITEM', 'MOVES', 'RENAME', 'BACK'].forEach((o, i) => {
       const oy = my + 7 + i * 13;
       if (i === tmMenu) text('>', 162, oy, '#a34537', 7);
       text(o, 172, oy, '#20242c', 7);
     });
   }
+}
+
+function drawMoveOrder() {
+  const m = party[teamIdx];
+  px(0, 0, 240, 160, 'rgba(16,22,18,.9)');
+  drawBox(30, 30, 180, 100);
+  text('MOVE ORDER - ' + nameOf(m), 42, 37, '#20242c', 7);
+  m.moves.forEach((mv, i) => {
+    const oy = 52 + i * 14;
+    if (i === moIdx) text('>', 40, oy, '#a34537', 7);
+    if (i === moSel) { px(36, oy - 2, 168, 12, 'rgba(74,144,216,.22)'); text('*', 46, oy, '#4a90d8', 7); }
+    text(mv, 54, oy, '#20242c', 7);
+    const d = MOVES[mv];
+    text(d.type.slice(0, 5) + ' ' + d.pow, 158, oy, TYPE_COL[d.type] || '#4c5c50', 7);
+  });
+  text(moSel >= 0 ? 'A: place here   B: un-pick' : 'A: pick a move   B: done', 42, 116, '#4c5c50', 7);
 }
 
 function drawTeamItemBox() {
@@ -5418,6 +5456,7 @@ function draw() {
   else if (mode === 'world') drawWorld();
   else if (mode === 'team') drawTeamList(teamIdx, false);
   else if (mode === 'teamitem') { drawTeamList(teamIdx, false); drawTeamItemBox(); }
+  else if (mode === 'moveorder') { drawTeamList(teamIdx, false); drawMoveOrder(); }
   else if (mode === 'rest') { drawWorld(); drawRest(); }
   else if (mode === 'travel') { drawWorld(); drawTravel(); }
   else if (mode === 'shop') { drawWorld(); drawShop(); }

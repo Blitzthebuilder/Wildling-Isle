@@ -13,6 +13,10 @@ release merged to the live game.
   fighters earn 50/50. Tracked per enemy in trainer battles, so only those
   who actually faced each foe share in it
 
+### Team
+- **Move reorder**: the team submenu gained MOVES — pick a move, pick a
+  slot, and they trade places. Set your favorite opener as slot one
+
 ---
 
 ## The Quality of Life Update — 2026-07-18 (PR #31)
