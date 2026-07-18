@@ -42,6 +42,11 @@ release merged to the live game.
 - Cleaned two old violations: Cragoram and Mammorime carried Stone
   moves while mono-Frost; type-changing evolutions shed illegal moves
 
+### Fixes
+- Mammorime's frozen mass now wakes from a press on ANY of its tiles —
+  it previously only answered at one exact spot, so most players found
+  a silent wall of ice
+
 ---
 
 ## The Quality of Life Update — 2026-07-18 (PR #31)

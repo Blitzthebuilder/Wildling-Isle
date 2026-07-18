@@ -4527,7 +4527,7 @@ function update() {
       if (area === 'hollow' && fx === 8 && fy === 3) { hermitGift(); return; }
       if (area === 'meadow' && fx === 12 && fy === 16) { docReport(); return; }
       if (area === 'gateway' && fx === 12 && fy === 7) { mode = 'badges'; sOk(); return; }
-      if (area === 'icecave' && fx === 8 && fy === 4) {
+      if (area === 'icecave' && fx >= 6 && fx <= 10 && fy >= 2 && fy <= 4) {   // the whole frozen mass wakes it
         if (flags.mammorime) say(['The great ice stands hollow and calm.', 'Its walker roams at your side now.']);
         else say(['The ice groans... a shape older than winter', 'shifts inside. MAMMORIME wakes!'], () => startBattle(makeMon('mammorime', 52)));
         return;
