@@ -5,6 +5,21 @@ release merged to the live game.
 
 ---
 
+## Save Codes on Mobile — 2026-07-18 (PR #36)
+
+### Fixes
+- **Save codes on mobile**: CODE used to drop the ~300+ character save
+  code into a `window.prompt()` box — a single-line field that's
+  essentially unusable for select-and-copy on a phone. It's now a real
+  in-game overlay: the code sits in a large, word-wrapped, pre-selected
+  textarea, gets copied to the clipboard automatically the moment it
+  opens, and a dedicated **COPY** button is right there if the
+  automatic copy didn't take (with a "Copied to clipboard!"
+  confirmation). Loading a code got the same treatment — **PASTE** a
+  code into the box and tap **LOAD**, no more typing into a tiny prompt
+
+---
+
 ## The World Update — 2026-07-18 (PR #35)
 
 ### The character pass — no more squares
