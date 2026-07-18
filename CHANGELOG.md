@@ -5,6 +5,24 @@ release merged to the live game.
 
 ---
 
+## Unreleased (on beta)
+
+### Parklands Phase 4 — the Summit
+- **THE SUMMIT** crowns the region: a snowbound peak above the Great
+  Rim with elite wilds (L60–64), two trainers, and the crown-stone camp
+- **SUPERINTENDENT VANCE** — the region finale. Five elite Wildlings at
+  L61–64, and the gate itself refuses anyone carrying fewer than all
+  eight Ranger Badges
+- Victory names you **PARK WARDEN** — the title marks your save file
+  and the badge hall
+- Ranger Talus's trail north now truly opens after the eighth badge
+
+### Battle
+- **Divine Horns** (Celestaur's signature) now gores true: +10% critical
+  hit chance on top of the base rate — and it stacks with the Keen Charm
+
+---
+
 ## Parklands Phase 3 — 2026-07-18 (PR #33)
 
 ### The old growth and the great rim
