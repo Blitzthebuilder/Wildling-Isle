@@ -46,6 +46,15 @@ now fifty
   flower plaza around the ranger board, and the postmaster now does his
   rounds by the south lawn
 
+### Balance
+- **Stooping Gale buffed** (95 pow, was 90; +15% crit, was +5%): the
+  new Master Tutor's Slipstream (Gale, +10% crit) was mathematically
+  outcritting Skywarden's own signature move despite being purchasable
+  by anyone. Stooping Gale now clearly leads its type on both power and
+  crit, and a permanent regression test checks every legendary
+  signature against every master song so no future addition can quietly
+  outclass one again
+
 ---
 
 ## Parklands Phase 4: The Summit — 2026-07-18 (PR #34)
