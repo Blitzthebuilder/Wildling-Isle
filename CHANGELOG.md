@@ -15,16 +15,19 @@ GBA Ruby/Sapphire/Emerald-quality art sourced from AI image generation and
 run through a purpose-built conversion pipeline (crop → matte → quantize →
 outline cleanup), each with its own palette rather than the shared global
 one.
-- New `HIRES` data structure (per-species 64×64 pixel grid + palette),
-  used only in the battle scene's two creature renders (enemy and active
-  party member) — every other context (world tiles, team list, dex, ranch,
-  starter select) keeps using the original small `ART`/`PAL` sprites
-  unchanged, so this scales in gradually with zero risk to anything not
-  yet converted
-- Species without a `HIRES` entry render exactly as before — the two
-  battle draw calls fall back to the classic sprite automatically
-- Faint-sink, catch-toss/absorb, and shiny recolor all generalized to work
-  against either sprite format
+- New `HIRES` data structure (per-species 64×64 pixel grid + palette).
+  The battle scene's two creature renders (enemy and active party member)
+  use it directly, with faint-sink, catch-toss/absorb, and shiny recolor
+  all generalized to work against either sprite format
+- Every other icon-sized context that shows a species — team list, dex
+  grid, ranch/nursery lists, the title screen, and starter select — now
+  also uses the hi-res art where available, scaled down to the exact same
+  footprint the classic sprite used to occupy, so no layout changed
+  anywhere. World-map tiles and NPCs are the one deliberate exception:
+  they stay on the small sprite permanently, since a 64×64 sprite next to
+  16px tiles would tower over the scenery
+- Species without a `HIRES` entry render exactly as before everywhere —
+  every call site falls back to the classic sprite automatically
 - 75 species remain on the classic small sprite for now; more batches to
   follow
 

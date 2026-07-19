@@ -4402,6 +4402,14 @@ function drawHiRes(key, x, y, sc, maxRows, shiny) {
     }
   }
 }
+// non-battle icon contexts (team list, dex, ranch, starter select, info
+// screen): use hi-res art at a scale matched to the same footprint the
+// classic 12-wide sprite would have occupied, so no layout changes are
+// needed anywhere this is dropped in. Falls back to drawArt otherwise.
+function drawMon(key, x, y, sc, maxRows, shiny) {
+  if (HIRES[key]) drawHiRes(key, x, y, sc * 12 / 64, maxRows, shiny);
+  else drawArt(key, x, y, sc, maxRows, shiny);
+}
 
 /* ---------- creature data (all original) ---------- */
 const TYPE_COL = { Ember:'#e2573d', Tide:'#4a90d8', Flora:'#57b04c', Spark:'#d8b23c', Gale:'#8fb0c0', Stone:'#a08858', Mystic:'#a678d4', Wild:'#96968a', Frost:'#9ad9e8', Venom:'#c0399b' };
@@ -8287,7 +8295,7 @@ function drawTeamList(idx, inBattle) {
     const y = 22 + i * 22;
     if (i === idx) { px(4, y - 2, 232, 20, 'rgba(232,184,75,.18)'); text('>', 6, y + 4, '#e8b84b'); }
     if (!inBattle && i === tmSel) { px(4, y - 2, 232, 20, 'rgba(74,144,216,.22)'); text('*', 6, y + 4, '#4a90d8'); }
-    drawArt(m.sp, 14, y - 2, 1.5, null, m.shiny);
+    drawMon(m.sp, 14, y - 2, 1.5, null, m.shiny);
     if (m.held) px(34, y + 3, 3, 3, '#8fd07a');
     text(nameOf(m) + '  L' + m.level, 40, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66');
     drawBar(40, y + 11, 60, m.hp / maxHp(m));
@@ -8452,7 +8460,7 @@ function drawInfo() {
   px(0, 0, 240, 160, 'rgba(16,22,18,.96)');
   text('WILDLING INFO', 12, 6, '#e8b84b');
   text('A/B: back', 186, 6, '#8fa396', 7);
-  drawArt(m.sp, 10, 22, 3, null, m.shiny);
+  drawMon(m.sp, 10, 22, 3, null, m.shiny);
   text(nameOf(m), 56, 22, '#f6f2e2');
   if (m.nick) text('(' + s.name + ')', 56, 32, '#8fa396', 7);
   text(typeLabel(m.sp) + '  -  ' + s.blurb, 56, m.nick ? 42 : 34, TYPE_COL[s.type], 7);
@@ -8489,7 +8497,7 @@ function drawDex(idx) {
     const cx = 8 + (i % 8) * 29, cy = 19 + Math.floor(i / 8) * 16;
     if (i === idx) px(cx - 2, cy - 1, 27, 15, 'rgba(232,184,75,.25)');
     const st = dex[sp] || 0;
-    if (st > 0) drawArt(sp, cx + 5, cy + 1, 1);
+    if (st > 0) drawMon(sp, cx + 5, cy + 1, 1);
     else { px(cx + 5, cy + 2, 12, 12, '#22291f'); text('?', cx + 9, cy + 5, '#4c5c50', 7); }
     if (st === 1) text('?', cx + 18, cy + 8, '#e8b84b', 7);
   });
@@ -8590,7 +8598,7 @@ function drawRanch() {
       if (i >= c.list.length) break;
       const m = c.list[i], y = 30 + r * 24;
       if (ci === rnCol && i === rnIdx) { px(c.x, y - 2, c.w, 22, 'rgba(232,184,75,.2)'); text('>', c.x + 1, y + 5, '#e8b84b', 7); }
-      drawArt(m.sp, c.x + 7, y - 1, 1.5, null, m.shiny);
+      drawMon(m.sp, c.x + 7, y - 1, 1.5, null, m.shiny);
       const nm = nursOn ? nameOf(m).slice(0, 8) : nameOf(m);
       text(nm, c.x + 28, y, m.hp > 0 ? '#f6f2e2' : '#8a6a66', 7);
       text('L' + m.level, c.x + 28, y + 9, '#8fb69c', 7);
@@ -8632,7 +8640,7 @@ function drawDevPick() {
   DEX_ORDER.forEach((sp, i) => {
     const cx = 8 + (i % 8) * 29, cy = 19 + Math.floor(i / 8) * 16;
     if (i === devPick) px(cx - 2, cy - 1, 27, 15, 'rgba(232,184,75,.3)');
-    drawArt(sp, cx + 5, cy + 1, 1);
+    drawMon(sp, cx + 5, cy + 1, 1);
   });
   drawBox(4, 140, 232, 18);
   const sp = DEX_ORDER[devPick];
@@ -8655,9 +8663,9 @@ function drawTitle() {
   if (championSeen2) text('* HARBOR CHAMPION *', 116, 68, '#7ac0e8', 7);
   if (championSeen3) text('* PARK WARDEN *', 78, 77, '#7fd08a', 7);
   text('CODE: load a save code', 66, 108, '#5f8a6e', 7);
-  drawArt('cindret', 48, 78, 2);
-  drawArt('drippet', 104, 78, 2);
-  drawArt('thornbud', 160, 78, 2);
+  drawMon('cindret', 48, 78, 2);
+  drawMon('drippet', 104, 78, 2);
+  drawMon('thornbud', 160, 78, 2);
   const options = hasSave() ? 2 : 1;
   if (options === 2) {
     ['CONTINUE', 'NEW GAME'].forEach((o, i) => {
@@ -8678,7 +8686,7 @@ function drawStarter() {
     const sel = i === starterIdx;
     px(x, 34, 64, 74, sel ? '#f6f2e2' : '#ddd2b0');
     if (sel) { px(x, 34, 64, 2, '#a34537'); px(x, 106, 64, 2, '#a34537'); px(x, 34, 2, 74, '#a34537'); px(x + 62, 34, 2, 74, '#a34537'); }
-    drawArt(sp, x + 14, 40, 3);
+    drawMon(sp, x + 14, 40, 3);
     text(SPECIES[sp].name, x + 8, 82, '#20242c', 7);
     text(SPECIES[sp].type, x + 8, 92, TYPE_COL[SPECIES[sp].type], 7);
   });
