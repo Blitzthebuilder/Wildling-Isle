@@ -28,8 +28,15 @@ one.
   16px tiles would tower over the scenery
 - Species without a `HIRES` entry render exactly as before everywhere —
   every call site falls back to the classic sprite automatically
-- 75 species remain on the classic small sprite for now; more batches to
-  follow
+
+### Hi-res battle art — Phase 2 (in progress)
+19 more species converted: the rest of Cliffs and Pines (Thistlash,
+Bouldbear, Cragolith, Skydart, Stratowl, Terragrizz, Thunderlynx), the rest
+of Harbor (Cascadon, Voltcat), the two other new-to-this-phase evolutions
+(Driftling, Eldermoss, Glimmoth, Mycolossus, Scorchound), the three roaming
+"pseudo-legendary" birds (Emberoc, Voltalon, Tidewing), and the first two
+of Fogisle (Fulmite, Geyserun). 56 species remain on the classic small
+sprite; Fogisle's other 6 are next.
 
 ---
 
