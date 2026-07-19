@@ -5,6 +5,31 @@ release merged to the live game.
 
 ---
 
+## Unreleased (on beta)
+
+### Hi-res battle art — Phase 1
+Battle sprites for 36 species (all three starters, every Meadow/Cavern/Shore
+wildling, and all seven legendaries) have been remade at 64×64 with real
+color-banded shading, replacing the old 12×12 blocks for these species —
+GBA Ruby/Sapphire/Emerald-quality art sourced from AI image generation and
+run through a purpose-built conversion pipeline (crop → matte → quantize →
+outline cleanup), each with its own palette rather than the shared global
+one.
+- New `HIRES` data structure (per-species 64×64 pixel grid + palette),
+  used only in the battle scene's two creature renders (enemy and active
+  party member) — every other context (world tiles, team list, dex, ranch,
+  starter select) keeps using the original small `ART`/`PAL` sprites
+  unchanged, so this scales in gradually with zero risk to anything not
+  yet converted
+- Species without a `HIRES` entry render exactly as before — the two
+  battle draw calls fall back to the classic sprite automatically
+- Faint-sink, catch-toss/absorb, and shiny recolor all generalized to work
+  against either sprite format
+- 75 species remain on the classic small sprite for now; more batches to
+  follow
+
+---
+
 ## Save Codes on Mobile — 2026-07-18 (PR #36)
 
 ### Fixes
