@@ -40,8 +40,15 @@ Verdantis).
 
 **The entire original isle is now fully converted**: every starter, every
 Meadow/Cavern/Hollow/Shore/Harbor/Pines/Cliffs/Fog Isle wildling, all seven
-legendaries, and the roaming bird trio — 61 of 111 species. The Great
-Parklands region (Gateway through the Summit) is next.
+legendaries, and the roaming bird trio — 61 of 111 species.
+
+### Hi-res battle art — Phase 3: The Great Parklands begins
+First batch of the new region: the Gateway hub and Yellowstone Basin lines
+(Tuftcalf → Brumbison → Tatankron, Joltfly → Voltwasp → Stormhive). Also
+changed how later-stage prompts get built: each one is now paired with its
+already-accepted pre-evolution's image as a visual reference, which keeps
+the line looking like a real progression rather than three independently
+generated designs. 67 of 111 species now converted.
 
 ---
 
