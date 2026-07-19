@@ -29,14 +29,19 @@ one.
 - Species without a `HIRES` entry render exactly as before everywhere —
   every call site falls back to the classic sprite automatically
 
-### Hi-res battle art — Phase 2 (in progress)
-19 more species converted: the rest of Cliffs and Pines (Thistlash,
+### Hi-res battle art — Phase 2
+25 more species converted: the rest of Cliffs and Pines (Thistlash,
 Bouldbear, Cragolith, Skydart, Stratowl, Terragrizz, Thunderlynx), the rest
 of Harbor (Cascadon, Voltcat), the two other new-to-this-phase evolutions
 (Driftling, Eldermoss, Glimmoth, Mycolossus, Scorchound), the three roaming
-"pseudo-legendary" birds (Emberoc, Voltalon, Tidewing), and the first two
-of Fogisle (Fulmite, Geyserun). 56 species remain on the classic small
-sprite; Fogisle's other 6 are next.
+"pseudo-legendary" birds (Emberoc, Voltalon, Tidewing), and all of Fog Isle
+(Fulmite, Geyserun, Leviafin, Lunamoth, Oraclaw, Pyrewolf, Tempestrel,
+Verdantis).
+
+**The entire original isle is now fully converted**: every starter, every
+Meadow/Cavern/Hollow/Shore/Harbor/Pines/Cliffs/Fog Isle wildling, all seven
+legendaries, and the roaming bird trio — 61 of 111 species. The Great
+Parklands region (Gateway through the Summit) is next.
 
 ---
 
